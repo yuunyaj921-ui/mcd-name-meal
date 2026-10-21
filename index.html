@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>你的名字是一份麦当劳套餐</title>
+<meta name="description" content="输入名字，用 FNV-1a 哈希算出属于你的麦当劳套餐。同名同套餐，这不是算命，是密码学。" />
+<style>
+  /* ============ 设计令牌 ============ */
+  :root {
+    --mcd-red: #DA291C;
+    --mcd-red-dark: #B71C12;
+    --mcd-yellow: #FFC72C;
+    --ink: #241C15;
+    --ink-soft: #6B5C4E;
+    --ink-faint: #9A8B7C;
+    --paper: #FFFFFF;
+    --page: #FBF7F2;
+    --line: #EBDFD2;
+    --line-strong: #E0D1BF;
+    --radius-card: 20px;
+    --shadow-card: 0 10px 34px rgba(90, 62, 40, 0.10), 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+    --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+            "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background:
+      radial-gradient(1100px 460px at 50% -160px, #FFF2D6 0%, rgba(255, 242, 214, 0) 70%),
+      var(--page);
+    color: var(--ink);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    padding: 34px 16px 56px;
+    line-height: 1.55;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* ============ 头部 ============ */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+
+  .brand-badge {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 3px 10px;
+    background: rgba(255, 255, 255, 0.7);
+  }
+
+  h1 {
+    font-size: 24px;
+    line-height: 1.32;
+    margin: 0 0 8px;
+    text-align: center;
+    letter-spacing: -0.01em;
+    font-weight: 800;
+  }
+
+  h1 .hl {
+    color: var(--mcd-red);
+    position: relative;
+    white-space: nowrap;
+  }
+
+  h1 .hl::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -3px;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--mcd-yellow);
+    opacity: 0.55;
+    z-index: -1;
+  }
+
+  .lede {
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+  }
+
+  .lede strong {
+    color: var(--mcd-red);
+    font-weight: 700;
+  }
+
+  /* ============ 输入区 ============ */
+  .finder {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  #nameInput {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 48px;
+    padding: 0 16px;
+    font-size: 16px;
+    font-family: var(--font);
+    color: var(--ink);
+    background: var(--paper);
+    border: 1.5px solid var(--line-strong);
+    border-radius: 13px;
+    outline: none;
+    transition: border-color 0.16s ease, box-shadow 0.16s ease;
+  }
+
+  #nameInput::placeholder { color: #B7A897; }
+
+  #nameInput:focus {
+    border-color: var(--mcd-red);
+    box-shadow: 0 0 0 4px rgba(218, 41, 28, 0.11);
+  }
+
+  .btn {
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: 13px;
+    cursor: pointer;
+    transition: transform 0.1s ease, background 0.16s ease, box-shadow 0.16s ease;
+    white-space: nowrap;
+  }
+
+  .btn:active { transform: scale(0.97); }
+
+  .btn-primary {
+    height: 48px;
+    padding: 0 20px;
+    background: var(--mcd-red);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(218, 41, 28, 0.24);
+  }
+
+  .btn-primary:hover { background: var(--mcd-red-dark); }
+
+  .btn-ghost {
+    height: 44px;
+    padding: 0 16px;
+    background: #fff;
+    color: var(--ink-soft);
+    border: 1.5px solid var(--line-strong);
+  }
+
+  .btn-ghost:hover { border-color: var(--ink-faint); color: var(--ink); }
+
+  .shake { animation: shake 0.3s ease; }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  /* ============ 结果凭证卡 ============ */
+  .hidden { display: none !important; }
+
+  .ticket {
+    position: relative;
+    background: var(--paper);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    padding: 24px 22px 20px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    animation: rise 0.34s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .ticket::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--mcd-red) 0%, var(--mcd-red) 55%, var(--mcd-yellow) 55%, var(--mcd-yellow) 100%);
+  }
+
+  .ticket-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+
+  .ticket-owner {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--mcd-red);
+    letter-spacing: 0.02em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ticket-stamp {
+    flex: 0 0 auto;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-faint);
+    border: 1px solid var(--line-strong);
+    border-radius: 5px;
+    padding: 2px 6px;
+    transform: rotate(-4deg);
+  }
+
+  .meal-name {
+    font-size: 26px;
+    line-height: 1.25;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    margin: 6px 0 16px;
+    color: var(--ink);
+    word-break: break-word;
+  }
+
+  .meal-name .quote {
+    color: var(--mcd-yellow);
+    -webkit-text-stroke: 0;
+  }
+
+  .items {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-bottom: 4px;
+  }
+
+  .item {
+    display: grid;
+    grid-template-columns: 34px 1fr auto auto;
+    align-items: baseline;
+    gap: 9px;
+    font-size: 14.5px;
+  }
+
+  .item-role {
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    background: #FBF4EA;
+    border-radius: 5px;
+    padding: 2px 0;
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+
+  .item-name {
+    color: var(--ink);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .item-kcal {
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+  }
+
+  .item-price {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+    min-width: 46px;
+    text-align: right;
+  }
+
+  .divider {
+    position: relative;
+    border-top: 1.5px dashed var(--line-strong);
+    margin: 18px -22px 16px;
+  }
+
+  .divider::before,
+  .divider::after {
+    content: "";
+    position: absolute;
+    top: -8.5px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--page);
+    border: 1.5px solid var(--line);
+  }
+
+  .divider::before { left: -8px; }
+  .divider::after { right: -8px; }
+
+  .totals {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .total-block { display: flex; flex-direction: column; }
+
+  .total-label {
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+    margin-bottom: 2px;
+  }
+
+  .total-value {
+    font-size: 24px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+
+  .total-value small {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-faint);
+    letter-spacing: 0;
+    margin-left: 3px;
+  }
+
+  .total-value.is-red { color: var(--mcd-red); }
+
+  .right-align { text-align: right; }
+
+  .comment {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    background: #FFFBF0;
+    border-left: 3px solid var(--mcd-yellow);
+    border-radius: 0 8px 8px 0;
+    padding: 9px 12px;
+    margin: 0 0 14px;
+  }
+
+  .fingerprint {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+  }
+
+  .fingerprint code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    background: #F7F1E8;
+    border-radius: 4px;
+    padding: 1px 5px;
+    letter-spacing: 0.06em;
+  }
+
+  .fingerprint .dot { color: var(--line-strong); }
+
+  /* ============ 操作按钮 ============ */
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+
+  .actions .btn-primary { flex: 1 1 auto; }
+
+  /* ============ 通用卡片 ============ */
+  .card {
+    background: var(--paper);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-card);
+    box-shadow: 0 4px 18px rgba(90, 62, 40, 0.06);
+    padding: 20px 20px 18px;
+  }
+
+  .fade-in { animation: rise 0.4s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+
+  .card-head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .card-head h2 {
+    font-size: 15px;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: 0.01em;
+  }
+
+  .card-head .tag {
+    font-size: 10.5px;
+    color: var(--ink-faint);
+  }
+
+  .card-sub {
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    margin: 0 0 14px;
+  }
+
+  .budget-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .budget-row .btn-primary {
+    height: 44px;
+    padding: 0 18px;
+    box-shadow: none;
+  }
+
+  #budgetInput {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 44px;
+    padding: 0 14px;
+    font-size: 15px;
+    font-family: var(--font);
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    background: #FFFDF9;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 12px;
+    outline: none;
+  }
+
+  #budgetInput:focus {
+    border-color: var(--mcd-yellow);
+    box-shadow: 0 0 0 4px rgba(255, 199, 44, 0.18);
+  }
+
+  .convert-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .convert-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    padding: 9px 12px;
+    background: #FCF8F2;
+    border-radius: 10px;
+  }
+
+  .convert-list li .num {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--mcd-red);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  .convert-list li .unit {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .budget-note {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    background: #FFFBF0;
+    border-radius: 10px;
+    padding: 9px 12px;
+    margin: 12px 0 0;
+  }
+
+  .rates {
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin: 12px 0 0;
+    line-height: 1.6;
+  }
+
+  /* ============ 算法说明 ============ */
+  details.howto {
+    margin-top: 14px;
+    background: var(--paper);
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    padding: 0 16px;
+  }
+
+  details.howto summary {
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    padding: 14px 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  details.howto summary::-webkit-details-marker { display: none; }
+
+  details.howto summary::after {
+    content: "＋";
+    color: var(--ink-faint);
+    font-weight: 400;
+  }
+
+  details.howto[open] summary::after { content: "－"; }
+
+  .howto-body {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    padding-bottom: 16px;
+    border-top: 1px dashed var(--line);
+    margin-top: 0;
+    padding-top: 12px;
+    line-height: 1.75;
+  }
+
+  .howto-body ol {
+    margin: 0 0 10px;
+    padding-left: 18px;
+  }
+
+  .howto-body code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px;
+    background: #F7F1E8;
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: var(--mcd-red-dark);
+  }
+
+  .howto-live {
+    background: #FCF8F2;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .howto-live b { color: var(--ink); }
+
+  /* ============ 页脚 ============ */
+  footer {
+    margin-top: 28px;
+    font-size: 11px;
+    line-height: 1.75;
+    color: var(--ink-faint);
+    text-align: center;
+  }
+
+  footer .rule {
+    height: 1px;
+    background: var(--line);
+    margin: 0 24px 14px;
+  }
+
+  footer p { margin: 0 0 5px; }
+
+  /* ============ 提示条 ============ */
+  #toast {
+    position: fixed;
+    left: 50%;
+    bottom: 34px;
+    transform: translate(-50%, 20px);
+    background: rgba(36, 28, 21, 0.94);
+    color: #fff;
+    font-size: 13px;
+    padding: 11px 20px;
+    border-radius: 999px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    z-index: 60;
+    max-width: calc(100% - 40px);
+    text-align: center;
+  }
+
+  #toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  /* ============ 复制兜底面板 ============ */
+  #copySheet {
+    position: fixed;
+    inset: 0;
+    background: rgba(36, 28, 21, 0.46);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 80;
+  }
+
+  .sheet-box {
+    width: 100%;
+    max-width: 440px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px;
+  }
+
+  .sheet-box h3 {
+    font-size: 14px;
+    margin: 0 0 4px;
+  }
+
+  .sheet-box p {
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin: 0 0 10px;
+  }
+
+  #copyArea {
+    width: 100%;
+    height: 168px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--ink);
+    background: #FCF8F2;
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    padding: 10px;
+    resize: none;
+    outline: none;
+  }
+
+  .sheet-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
+
+  /* ============ 响应式 ============ */
+  @media (max-width: 400px) {
+    body { padding: 22px 12px 40px; }
+    h1 { font-size: 21px; }
+    .meal-name { font-size: 22px; }
+    .item { font-size: 13.5px; grid-template-columns: 32px 1fr auto auto; gap: 7px; }
+    .total-value { font-size: 21px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">
+    <svg viewBox="0 0 64 48" width="30" height="23" aria-hidden="true" focusable="false">
+      <path d="M8 44V21.5c0-6.9 4-11.5 9-11.5s8 3.5 9 9.5c1-6 4-9.5 9-9.5s9 4.6 9 11.5V44"
+            fill="none" stroke="#FFC72C" stroke-width="9" stroke-linejoin="round" />
+    </svg>
+    <span class="brand-badge">麦当劳 1024 程序员创意开发大赛 · 参赛作品</span>
+  </div>
+
+  <h1>你的名字是一份<br /><span class="hl">麦当劳套餐</span></h1>
+  <p class="lede">
+    输入名字，用 <strong>FNV-1a 哈希</strong>算出专属四件套。<br />
+    同名同套餐，这不是算命，是密码学。
+  </p>
+
+  <form class="finder" id="finderForm" autocomplete="off">
+    <input
+      id="nameInput"
+      type="text"
+      placeholder="输入你的名字"
+      maxlength="32"
+      autocomplete="off"
+      autocapitalize="off"
+      spellcheck="false"
+      aria-label="输入你的名字"
+    />
+    <button class="btn btn-primary" type="submit" id="generateBtn">生成我的套餐</button>
+  </form>
+
+  <!-- ============ 结果凭证卡 ============ -->
+  <section class="ticket hidden" id="ticket" aria-live="polite">
+    <div class="ticket-top">
+      <span class="ticket-owner" id="ownerLabel"></span>
+      <span class="ticket-stamp">MEAL TICKET</span>
+    </div>
+
+    <h2 class="meal-name" id="mealName"></h2>
+
+    <div class="items" id="items"></div>
+
+    <div class="divider" aria-hidden="true"></div>
+
+    <div class="totals">
+      <div class="total-block">
+        <span class="total-label">合计</span>
+        <span class="total-value is-red" id="totalPrice"></span>
+      </div>
+      <div class="total-block right-align">
+        <span class="total-label">热量</span>
+        <span class="total-value" id="totalKcal"></span>
+      </div>
+    </div>
+
+    <p class="comment" id="comment"></p>
+
+    <div class="fingerprint">
+      <span>常见度 <b id="commonness"></b></span>
+      <span class="dot">·</span>
+      <span>哈希指纹 <code id="hashHex"></code></span>
+    </div>
+  </section>
+
+  <div class="actions hidden" id="actions">
+    <button class="btn btn-primary" type="button" id="copyBtn">复制文案</button>
+    <button class="btn btn-ghost" type="button" id="resetBtn">再测一个</button>
+  </div>
+
+  <!-- ============ 第二屏：消费换算（生成套餐后才出现） ============ -->
+  <section class="card hidden" id="budgetCard">
+    <div class="card-head">
+      <h2>我一年在麦当劳花多少钱</h2>
+      <span class="tag">自己换算，图一乐</span>
+    </div>
+    <p class="card-sub">先算出套餐，再填个年花销，看看这笔钱还能变成什么。</p>
+
+    <form class="budget-row" id="budgetForm" autocomplete="off">
+      <input
+        id="budgetInput"
+        type="number"
+        inputmode="decimal"
+        min="0"
+        step="1"
+        placeholder="比如 2400（元 / 年）"
+        aria-label="一年在麦当劳花多少钱"
+      />
+      <button class="btn btn-primary" type="submit">换算</button>
+    </form>
+
+    <p class="budget-note hidden" id="budgetVerdict"></p>
+
+    <ul class="convert-list hidden" id="convertList"></ul>
+
+    <p class="rates">
+      换算口径：鹤岗房子 2000 元/㎡、iPhone 5999 元/台、电影票 45 元/张。<br />
+      纯属自我调侃，钱怎么花都是我的自由。
+    </p>
+  </section>
+
+  <!-- ============ 算法说明（可自行验证） ============ -->
+  <details class="howto">
+    <summary>怎么算的（可以自己验证）</summary>
+    <div class="howto-body">
+      <ol>
+        <li>把名字处理成 <code>name.trim().toLowerCase()</code>，再编码成 <b>UTF-8 字节</b>
+          （<code>new TextEncoder().encode()</code>，中文一个字 3 字节）。</li>
+        <li>对字节逐个跑 FNV-1a 32 位：<code>h = 2166136261</code>，每个字节先 <code>h ^= byte</code>，
+          再 <code>h = (h × 16777619) mod 2³²</code>（代码里用 <code>Math.imul(h, 16777619)</code> 做精确 32 位乘法）。</li>
+        <li>主食 <code>(h &gt;&gt;&gt; 0) % 5</code>、小食 <code>(h &gt;&gt;&gt; 8) % 5</code>、
+          饮料 <code>(h &gt;&gt;&gt; 16) % 4</code>、甜品 <code>(h &gt;&gt;&gt; 24) % 4</code>。</li>
+        <li>常见度 <code>((h &gt;&gt;&gt; 0) % 1000) / 10</code>，指纹为 <code>h</code> 的 8 位小写十六进制。</li>
+      </ol>
+      <div class="howto-live" id="howtoLive">先在上面输入一个名字，这里会显示本次的中间值。</div>
+    </div>
+  </details>
+
+  <footer>
+    <div class="rule"></div>
+    <p>本页面为 2026 麦当劳程序员创意开发大赛参赛作品，非麦当劳官方产品。价格为数据快照，实际以门店为准。</p>
+    <p>数据来自麦当劳 MCP 官方接口快照（2026-10-22），价格与供应以门店实时为准。</p>
+    <p>本页不含任何预测或健康评价内容，全部结果由哈希函数确定性生成。</p>
+  </footer>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<div id="copySheet" class="hidden">
+  <div class="sheet-box">
+    <h3>文案已准备好</h3>
+    <p>如果没自动复制成功，点一下下面的框，全选后按 Ctrl/⌘ + C。</p>
+    <textarea id="copyArea" readonly></textarea>
+    <div class="sheet-actions">
+      <button class="btn btn-ghost" type="button" id="sheetClose">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* =====================================================================
+   * 1. 菜单数据（硬编码，离线可用）
+   *    kcal 取自 nutrition.json 的 energyKcal（按 productName 精确匹配）
+   *    price 取自 menu.raw.json 的 price；标了 ref:true 的为同一快照门店的参考价
+   * ===================================================================== */
+  var MENU = {
+    mains: [
+      { code: 'BIGMAC',   name: '巨无霸',        short: '巨无霸',     price: 25.5, kcal: 513, meat: 'beef' },
+      { code: 'MCSPICY',  name: '麦辣鸡腿汉堡',  short: '麦辣鸡腿堡', price: 21.5, kcal: 485, meat: 'chicken', spicy: true },
+      { code: 'MCCRISPY', name: '板烧鸡腿堡',    short: '板烧鸡腿堡', price: 22.5, kcal: 391, meat: 'chicken' },
+      { code: 'DUBLECHE', name: '双层吉士汉堡',  short: '双层吉士堡', price: 18.0, kcal: 429, meat: 'beef' },
+      { code: 'FILEFISH', name: '麦香鱼',        short: '麦香鱼',     price: 17.5, kcal: 325, meat: 'fish' }
+    ],
+    sides: [
+      { code: 'FRIES_M',    name: '中薯条',         price: 12.5, kcal: 289 },
+      { code: 'FRIES_L',    name: '大薯条',         price: 15.0, kcal: 379 },
+      { code: 'NUGGETS_5',  name: '麦乐鸡 5 块',    price: 13.5, kcal: 213 },
+      { code: 'WINGS_2',    name: '麦辣鸡翅 2 块',  price: 12.5, kcal: 224, spicy: true },
+      { code: 'FRIES_S',    name: '小薯条',         price: 11.5, kcal: 210, ref: true }
+    ],
+    drinks: [
+      { code: 'COKE_M',     name: '可口可乐 中杯',    price: 9.0,  kcal: 147 },
+      { code: 'SPRITE_M',   name: '雪碧 中杯',        price: 9.0,  kcal: 105 },
+      { code: 'COFFEE_H',   name: '鲜萃咖啡 大杯',    price: 12.0, kcal: 13, coffee: true, ref: true },
+      { code: 'COKE_ZERO',  name: '无糖可乐 中杯',    price: 9.0,  kcal: 0,  ref: true }
+    ],
+    desserts: [
+      { code: 'MCFLURRY',   name: '奥利奥麦旋风', price: 12.5, kcal: 266, type: 'flurry' },
+      { code: 'PIE_TARO',   name: '香芋派',       price: 7.5,  kcal: 232, type: 'pie' },
+      { code: 'CONE',       name: '圆筒冰淇淋',   price: 4.0,  kcal: 93,  type: 'cone' },
+      { code: 'PIE_PINE',   name: '菠萝派',       price: 8.0,  kcal: 221, type: 'pie', ref: true }
+    ]
+  };
+
+  /** 热量分档阈值（实测套餐热量区间 628–1305 kcal）。 */
+  var THRESHOLD = { HEAVY: 1200, MID: 1000, LIGHT: 850 };
+
+  /** 消费换算口径。 */
+  var RATE = { HOUSE_PER_SQM: 2000, IPHONE: 5999, MOVIE_TICKET: 45 };
+
+  /* =====================================================================
+   * 2. 套餐名模板
+   *    辣味优先级最高：只要主食或小食带辣，就走 spicy 桶（咖啡×甜品 = 6 桶），
+   *    否则按「肉类 × 咖啡 × 甜品」（3×2×3 = 18 桶）。
+   *    共 24 桶、每桶 4–5 个候选，用哈希衍生位在桶内挑选，同桶不同组合尽量不撞名。
+   * ===================================================================== */
+  var NAMING = {
+    'beef|nocof|cone':   ['经典到不需要解释套餐', '牛肉原教旨套餐', '稳稳的幸福套餐', '牛肉配甜筒套餐'],
+    'beef|nocof|pie':    ['派里派外都是牛套餐', '务实牛肉套餐', '老派牛肉局套餐', '牛肉派系套餐'],
+    'beef|nocof|flurry': ['牛气加冰套餐', '饭后旋转套餐', '牛肉配奥利奥套餐', '牛肉旋一圈套餐'],
+    'beef|cof|cone':     ['牛马人续命套餐', '冰火两重天套餐', '工位标准配置套餐', '牛马人甜筒套餐'],
+    'beef|cof|pie':      ['咖啡配派的牛肉套餐', '跨部门加班套餐', '甜的累的都要套餐', '牛肉咖啡派套餐'],
+    'beef|cof|flurry':   ['咖啡因与糖套餐', '下午三点急救套餐', '会前自我投资套餐', '牛肉咖啡旋风套餐'],
+
+    'chicken|nocof|cone':   ['鸡肉自由套餐', '圆筒收尾套餐', '轻装上阵套餐', '板烧配甜筒套餐'],
+    'chicken|nocof|pie':    ['派系鸡腿套餐', '甜咸通吃套餐', '一步到胃套餐', '鸡腿配派套餐'],
+    'chicken|nocof|flurry': ['鸡肉加冰套餐', '甜咸都有套餐', '鸡腿与旋风套餐', '鸡腿配麦旋风套餐'],
+    'chicken|cof|cone':     ['成年人的体面套餐', '咖啡鸡肉两不误套餐', '续命加甜筒套餐', '鸡腿咖啡甜筒套餐'],
+    'chicken|cof|pie':      ['派与咖啡的组合套餐', '下午三点套餐', '加班鸡腿套餐', '鸡腿配咖啡派套餐'],
+    'chicken|cof|flurry':   ['糖分与咖啡因套餐', '双卡双待套餐', '满血复活套餐', '咖啡鸡腿旋风套餐'],
+
+    'fish|nocof|cone':   ['海的味道套餐', '轻负担套餐', '假装在海边套餐', '清淡配甜筒套餐'],
+    'fish|nocof|pie':    ['鱼和派都来了套餐', '温柔派套餐', '低卡也要甜套餐', '麦香鱼配派套餐'],
+    'fish|nocof|flurry': ['鱼配奥利奥套餐', '意外组合套餐', '甜品压轴套餐', '鱼与旋风套餐'],
+    'fish|cof|cone':     ['咖啡配鱼套餐', '清醒地吃鱼套餐', '自律到最后套餐', '鱼配咖啡甜筒套餐'],
+    'fish|cof|pie':      ['派对上喝咖啡套餐', '斯文吃法套餐', '慢慢来的套餐', '鱼派咖啡三件套套餐'],
+    'fish|cof|flurry':   ['咖啡鱼旋风套餐', '三重人格套餐', '甜咸苦都有了套餐', '鱼咖啡旋风套餐'],
+
+    /* 辣味桶：避免「麦辣鸡翅 + 温柔派」这类错配，每桶 5 个候选 */
+    'spicy|nocof|cone':   ['无辣不欢套餐', '辣到收尾套餐', '微辣也上头套餐', '辣完来支甜筒套餐', '辣到冒汗套餐'],
+    'spicy|nocof|pie':    ['辣完再来点甜套餐', '辣味派系套餐', '先辣后甜套餐', '辣完吃个派套餐', '辣与派的谈判套餐'],
+    'spicy|nocof|flurry': ['辣到旋转套餐', '冰火双修套餐', '辣完吃冰套餐', '一边辣一边冰套餐', '辣到要降温套餐'],
+    'spicy|cof|cone':     ['辣配咖啡套餐', '清醒地吃辣套餐', '辣椒与咖啡因套餐', '辣完喝口咖啡套餐', '辣味加班甜筒套餐'],
+    'spicy|cof|pie':      ['辣配派的加班套餐', '辣完喝咖啡套餐', '三重刺激套餐', '辣苦甜三件套套餐', '辣到需要咖啡套餐'],
+    'spicy|cof|flurry':   ['辣味咖啡因套餐', '全套刺激套餐', '辣完满血套餐', '辣苦冰三重套餐', '辣完靠咖啡回血套餐']
+  };
+
+  var CALORIE_LINES = {
+    heavy: ['今天先别称体重。', '这一顿顶我两天饭。', '热量是快乐的计量单位。'],
+    mid:   ['刚好够撑到下班。', '下午不用偷偷点外卖了。', '碳水给够，效率起飞。'],
+    light: ['勉强算一顿正餐。', '吃到八分饱，礼貌收手。', '不多不少，刚刚好。'],
+    tiny:  ['你居然还留了余地。', '轻量套餐，主打一个克制。', '这点热量，我还能再走两站路。']
+  };
+
+  /* =====================================================================
+   * 3. 哈希核心
+   * ===================================================================== */
+
+  /**
+   * 把字符串编码成 UTF-8 字节序列。
+   * FNV-1a 标准定义迭代的是字节而非 UTF-16 码元，因此中文必须走这一步，
+   * 否则结果与任何标准实现都对不上。
+   * @param {string} text 待编码字符串
+   * @returns {Uint8Array} UTF-8 字节
+   */
+  function encodeUtf8(text) {
+    if (typeof TextEncoder !== 'undefined') {
+      return new TextEncoder().encode(text);
+    }
+    // 极老旧环境兜底：手工 UTF-8 编码，输出与 TextEncoder 完全一致
+    var out = [];
+    for (var i = 0; i < text.length; i += 1) {
+      var code = text.charCodeAt(i);
+      if (code < 0x80) {
+        out.push(code);
+      } else if (code < 0x800) {
+        out.push(0xc0 | (code >> 6), 0x80 | (code & 0x3f));
+      } else if (code >= 0xd800 && code <= 0xdbff && i + 1 < text.length &&
+                 text.charCodeAt(i + 1) >= 0xdc00 && text.charCodeAt(i + 1) <= 0xdfff) {
+        // 代理对 → 四字节
+        var low = text.charCodeAt(i + 1);
+        var cp = 0x10000 + ((code - 0xd800) << 10) + (low - 0xdc00);
+        out.push(
+          0xf0 | (cp >> 18),
+          0x80 | ((cp >> 12) & 0x3f),
+          0x80 | ((cp >> 6) & 0x3f),
+          0x80 | (cp & 0x3f)
+        );
+        i += 1;
+      } else if (code >= 0xdc00 && code <= 0xdfff) {
+        // 孤立低代理，按 U+FFFD 替换
+        out.push(0xef, 0xbf, 0xbd);
+      } else {
+        out.push(0xe0 | (code >> 12), 0x80 | ((code >> 6) & 0x3f), 0x80 | (code & 0x3f));
+      }
+    }
+    return new Uint8Array(out);
+  }
+
+  /**
+   * 对字节序列做 FNV-1a 32 位哈希。
+   * Math.imul 做精确 32 位乘法，等价于 (h * 16777619) mod 2^32 且不会溢出。
+   * @param {Uint8Array} bytes UTF-8 字节序列
+   * @returns {number} 0 ~ 4294967295 的无符号 32 位整数
+   */
+  function fnv1aBytes(bytes) {
+    var h = 2166136261 >>> 0;
+    for (var i = 0; i < bytes.length; i += 1) {
+      h ^= bytes[i];
+      h = Math.imul(h, 16777619) >>> 0;
+    }
+    return h >>> 0;
+  }
+
+  /**
+   * 标准 FNV-1a 32 位哈希（输入按 UTF-8 编码后逐字节迭代）。
+   * @param {string} input 待哈希字符串
+   * @returns {number} 0 ~ 4294967295 的无符号 32 位整数
+   */
+  function fnv1a(input) {
+    return fnv1aBytes(encodeUtf8(String(input)));
+  }
+
+  /**
+   * 把哈希值映射成一份套餐（纯函数，无随机、无时间因素）。
+   * @param {string} rawName 用户输入的名字
+   * @returns {object|null} 套餐对象；名字为空时返回 null
+   */
+  function buildMeal(rawName) {
+    var display = String(rawName == null ? '' : rawName).trim();
+    if (!display) { return null; }
+
+    var key = display.toLowerCase();
+    var bytes = encodeUtf8(key);
+    var hash = fnv1aBytes(bytes);
+
+    var main = MENU.mains[hash % MENU.mains.length];
+    var side = MENU.sides[(hash >>> 8) % MENU.sides.length];
+    var drink = MENU.drinks[(hash >>> 16) % MENU.drinks.length];
+    var dessert = MENU.desserts[(hash >>> 24) % MENU.desserts.length];
+
+    var items = [
+      { role: '主食', data: main },
+      { role: '小食', data: side },
+      { role: '饮料', data: drink },
+      { role: '甜品', data: dessert }
+    ];
+
+    var totalPrice = 0;
+    var totalKcal = 0;
+    for (var i = 0; i < items.length; i += 1) {
+      totalPrice += items[i].data.price;
+      totalKcal += items[i].data.kcal;
+    }
+    totalPrice = Math.round(totalPrice * 10) / 10;
+
+    var features = {
+      meat: main.meat,
+      spicy: Boolean(main.spicy || side.spicy),
+      coffee: Boolean(drink.coffee),
+      dessertType: dessert.type
+    };
+
+    return {
+      display: display,
+      key: key,
+      hash: hash,
+      hashHex: toHex8(hash),
+      byteLength: bytes.length,
+      main: main,
+      side: side,
+      drink: drink,
+      dessert: dessert,
+      items: items,
+      totalPrice: totalPrice,
+      totalKcal: totalKcal,
+      /* 常见度：数值越大表示这一档越常见，直接由哈希值映射，与 hash 本身保持一致 */
+      commonness: ((hash >>> 0) % 1000) / 10,
+      mealName: pickMealName(features, hash),
+      comment: pickComment(features, totalKcal, hash),
+      features: features,
+      indexes: {
+        main: hash % MENU.mains.length,
+        side: (hash >>> 8) % MENU.sides.length,
+        drink: (hash >>> 16) % MENU.drinks.length,
+        dessert: (hash >>> 24) % MENU.desserts.length
+      }
+    };
+  }
+
+  /**
+   * 取 8 位小写十六进制指纹。
+   * @param {number} hash
+   * @returns {string}
+   */
+  function toHex8(hash) {
+    var hex = (hash >>> 0).toString(16);
+    while (hex.length < 8) { hex = '0' + hex; }
+    return hex;
+  }
+
+  /**
+   * 依据组合特征挑选套餐名。
+   * 辣是最强的口味信号，优先级最高：只要主食或小食带辣，就走 spicy 桶，
+   * 避免出现「麦辣鸡翅 + 温柔派」这类错配。
+   * @param {{meat: string, spicy: boolean, coffee: boolean, dessertType: string}} f
+   * @param {number} hash
+   * @returns {string}
+   */
+  function pickMealName(f, hash) {
+    var flavour = f.spicy ? 'spicy' : f.meat;
+    var bucketKey = flavour + '|' + (f.coffee ? 'cof' : 'nocof') + '|' + f.dessertType;
+    var bucket = NAMING[bucketKey] || NAMING['beef|nocof|cone'];
+    return bucket[(hash >>> 4) % bucket.length];
+  }
+
+  /**
+   * 依据总热量与组合特征生成一句评语（热量句 + 最多一条特征句）。
+   * @param {{meat: string, spicy: boolean, coffee: boolean, dessertType: string}} f
+   * @param {number} totalKcal
+   * @param {number} hash
+   * @returns {string}
+   */
+  function pickComment(f, totalKcal, hash) {
+    var tier;
+    if (totalKcal >= THRESHOLD.HEAVY) {
+      tier = CALORIE_LINES.heavy;
+    } else if (totalKcal >= THRESHOLD.MID) {
+      tier = CALORIE_LINES.mid;
+    } else if (totalKcal >= THRESHOLD.LIGHT) {
+      tier = CALORIE_LINES.light;
+    } else {
+      tier = CALORIE_LINES.tiny;
+    }
+    var calorieLine = tier[(hash >>> 20) % tier.length];
+
+    var extras = [];
+    if (f.coffee) { extras.push('咖啡因是成年人最后的体面。'); }
+    if (f.dessertType === 'flurry' || f.dessertType === 'pie') { extras.push('甜品是另一台胃装的。'); }
+    if (f.dessertType === 'cone') { extras.push('圆筒是这顿的句号。'); }
+    if (f.spicy) { extras.push('辣是一种态度，不是痛觉。'); }
+    if (f.meat === 'fish') { extras.push('吃鱼的人主打一个清爽。'); }
+
+    if (!extras.length) { return calorieLine; }
+    return calorieLine + ' ' + extras[(hash >>> 28) % extras.length];
+  }
+
+  /* =====================================================================
+   * 4. 格式化工具
+   * ===================================================================== */
+
+  /**
+   * 金额格式化：统一保留一位小数，价格列视觉整齐。
+   * @param {number} value
+   * @returns {string} 例如 "¥53.5" / "¥9.0"
+   */
+  function money(value) {
+    var rounded = Math.round(value * 10) / 10;
+    return '¥' + rounded.toFixed(1);
+  }
+
+  /**
+   * 金额格式化（强制一位小数），用于合计栏。
+   * @param {number} value
+   * @returns {string}
+   */
+  function moneyFixed(value) {
+    return '¥' + (Math.round(value * 10) / 10).toFixed(1);
+  }
+
+  /**
+   * 千分位整数格式化。
+   * @param {number} value
+   * @returns {string}
+   */
+  function thousands(value) {
+    return Math.round(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  /**
+   * 换算数量格式化：大数取整并加千分位，小数保留一位。
+   * @param {number} value
+   * @returns {string}
+   */
+  function amount(value) {
+    if (!isFinite(value) || value <= 0) { return '0'; }
+    if (value >= 100) { return thousands(value); }
+    if (value >= 10) { return String(Math.round(value)); }
+    return (Math.round(value * 10) / 10).toFixed(1);
+  }
+
+  /* =====================================================================
+   * 5. DOM 与交互
+   * ===================================================================== */
+  var dom = {
+    form: document.getElementById('finderForm'),
+    input: document.getElementById('nameInput'),
+    ticket: document.getElementById('ticket'),
+    owner: document.getElementById('ownerLabel'),
+    mealName: document.getElementById('mealName'),
+    items: document.getElementById('items'),
+    totalPrice: document.getElementById('totalPrice'),
+    totalKcal: document.getElementById('totalKcal'),
+    comment: document.getElementById('comment'),
+    commonness: document.getElementById('commonness'),
+    hashHex: document.getElementById('hashHex'),
+    actions: document.getElementById('actions'),
+    copyBtn: document.getElementById('copyBtn'),
+    resetBtn: document.getElementById('resetBtn'),
+    budgetCard: document.getElementById('budgetCard'),
+    budgetForm: document.getElementById('budgetForm'),
+    budgetInput: document.getElementById('budgetInput'),
+    budgetVerdict: document.getElementById('budgetVerdict'),
+    convertList: document.getElementById('convertList'),
+    howtoLive: document.getElementById('howtoLive'),
+    toast: document.getElementById('toast'),
+    copySheet: document.getElementById('copySheet'),
+    copyArea: document.getElementById('copyArea'),
+    sheetClose: document.getElementById('sheetClose')
+  };
+
+  /** 当前展示的套餐。 */
+  var current = null;
+  var toastTimer = null;
+
+  /**
+   * 弹出轻提示。
+   * @param {string} text
+   */
+  function toast(text) {
+    dom.toast.textContent = text;
+    dom.toast.classList.add('show');
+    if (toastTimer) { window.clearTimeout(toastTimer); }
+    toastTimer = window.setTimeout(function () {
+      dom.toast.classList.remove('show');
+    }, 2000);
+  }
+
+  /**
+   * 渲染结果凭证卡。
+   * @param {object} meal buildMeal 的返回值
+   */
+  function render(meal) {
+    current = meal;
+
+    dom.owner.textContent = meal.display + '的麦当劳套餐';
+    dom.mealName.textContent = '「' + meal.mealName + '」';
+
+    var rows = '';
+    for (var i = 0; i < meal.items.length; i += 1) {
+      var row = meal.items[i];
+      rows +=
+        '<div class="item">' +
+          '<span class="item-role">' + row.role + '</span>' +
+          '<span class="item-name">' + escapeHtml(row.data.name) + '</span>' +
+          '<span class="item-kcal">' + thousands(row.data.kcal) + ' kcal</span>' +
+          '<span class="item-price">' + money(row.data.price) + '</span>' +
+        '</div>';
+    }
+    dom.items.innerHTML = rows;
+
+    dom.totalPrice.textContent = moneyFixed(meal.totalPrice);
+    dom.totalKcal.innerHTML = thousands(meal.totalKcal) + '<small>kcal</small>';
+    dom.comment.textContent = meal.comment;
+    dom.commonness.textContent = meal.commonness.toFixed(1) + '%';
+    dom.hashHex.textContent = meal.hashHex;
+
+    dom.ticket.classList.remove('hidden');
+    dom.actions.classList.remove('hidden');
+    // 换算卡属于第二屏：算出套餐后才出现
+    dom.budgetCard.classList.remove('hidden');
+    dom.budgetCard.classList.add('fade-in');
+
+    // 算法说明区的实时中间值
+    dom.howtoLive.innerHTML =
+      '本次计算：<b>' + escapeHtml(meal.display) + '</b> → 归一化 <code>' + escapeHtml(meal.key) + '</code>' +
+      ' → UTF-8 <b>' + meal.byteLength + '</b> 字节 → h = <b>' + meal.hash + '</b>（<code>' + meal.hashHex + '</code>）<br />' +
+      '主食索引 ' + meal.indexes.main + ' · 小食索引 ' + meal.indexes.side +
+      ' · 饮料索引 ' + meal.indexes.drink + ' · 甜品索引 ' + meal.indexes.dessert;
+
+    // 换算区跟随当前套餐的单价
+    if (!dom.convertList.classList.contains('hidden')) {
+      var spend = Number(dom.budgetInput.value);
+      if (isFinite(spend) && spend > 0) { renderBudget(spend); }
+    }
+  }
+
+  /**
+   * 简单 HTML 转义，防止名字注入。
+   * @param {string} text
+   * @returns {string}
+   */
+  function escapeHtml(text) {
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  /**
+   * 生成可分享的纯文本文案。
+   * @param {object} meal
+   * @returns {string}
+   */
+  function buildCopyText(meal) {
+    var parts = [];
+    for (var i = 0; i < meal.items.length; i += 1) {
+      parts.push(meal.items[i].data.name + ' ' + money(meal.items[i].data.price));
+    }
+    return [
+      '我的麦当劳套餐是「' + meal.mealName + '」：',
+      parts.join(' + '),
+      '合计 ' + moneyFixed(meal.totalPrice) + ' / ' + thousands(meal.totalKcal) + ' kcal · 常见度 ' + meal.commonness.toFixed(1) + '%',
+      '哈希指纹 ' + meal.hashHex,
+      '你的名字是什么套餐？'
+    ].join('\n');
+  }
+
+  /**
+   * 复制文本，优先 Clipboard API，失败时退回 execCommand，再失败弹面板。
+   * @param {string} text
+   */
+  function copyText(text) {
+    var done = function () { toast('已复制，去发给朋友吧'); };
+    var fallback = function () { legacyCopy(text, done); };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(fallback);
+    } else {
+      fallback();
+    }
+  }
+
+  /**
+   * 旧版复制兜底（file:// 打开时 Clipboard API 不可用）。
+   * @param {string} text
+   * @param {Function} onSuccess
+   */
+  function legacyCopy(text, onSuccess) {
+    var area = document.createElement('textarea');
+    area.value = text;
+    area.setAttribute('readonly', 'readonly');
+    area.style.position = 'fixed';
+    area.style.top = '-1000px';
+    area.style.opacity = '0';
+    document.body.appendChild(area);
+    area.select();
+    area.setSelectionRange(0, text.length);
+
+    var ok = false;
+    try {
+      ok = document.execCommand('copy');
+    } catch (err) {
+      ok = false;
+    }
+    document.body.removeChild(area);
+
+    if (ok) {
+      onSuccess();
+    } else {
+      openCopySheet(text);
+    }
+  }
+
+  /**
+   * 打不开剪贴板时的手动复制面板。
+   * @param {string} text
+   */
+  function openCopySheet(text) {
+    dom.copyArea.value = text;
+    dom.copySheet.classList.remove('hidden');
+    window.setTimeout(function () {
+      dom.copyArea.focus();
+      dom.copyArea.select();
+    }, 30);
+  }
+
+  /**
+   * 渲染消费换算结果。
+   * @param {number} spend 年花销（元）
+   */
+  function renderBudget(spend) {
+    var combo = current ? current.totalPrice : 0;
+    var lines = [];
+
+    if (combo > 0) {
+      lines.push({ num: amount(spend / combo), unit: '次同款套餐', tail: '（就是上面这一份）' });
+    }
+    lines.push({ num: amount(spend / RATE.HOUSE_PER_SQM), unit: '平米鹤岗房子', tail: '（按 2000 元/㎡）' });
+    lines.push({ num: amount(spend / RATE.IPHONE), unit: '台 iPhone', tail: '（按 5999 元）' });
+    lines.push({ num: amount(spend / RATE.MOVIE_TICKET), unit: '张电影票', tail: '（按 45 元）' });
+
+    var html = '';
+    for (var i = 0; i < lines.length; i += 1) {
+      html +=
+        '<li>' +
+          '<span class="num">' + lines[i].num + '</span>' +
+          '<span class="unit">' + lines[i].unit + '</span>' +
+          '<span>' + lines[i].tail + '</span>' +
+        '</li>';
+    }
+    dom.convertList.innerHTML = html;
+    dom.convertList.classList.remove('hidden');
+
+    var verdict;
+    if (spend < 100) {
+      verdict = '一年花不到 100 块，你相当克制，我敬你。';
+    } else if (spend < 1000) {
+      verdict = '算下来也就几顿的事，我把钱花在了让自己开心的东西上。';
+    } else if (spend < 6000) {
+      verdict = '这个数我认，快乐是有成本的，我付得起。';
+    } else {
+      verdict = '数字有点大，但每一分都是我自愿掏的，下一年我继续。';
+    }
+    dom.budgetVerdict.textContent = verdict;
+    dom.budgetVerdict.classList.remove('hidden');
+  }
+
+  /* =====================================================================
+   * 6. 事件绑定
+   * ===================================================================== */
+
+  dom.form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    var value = dom.input.value.trim();
+    if (!value) {
+      dom.input.classList.add('shake');
+      window.setTimeout(function () { dom.input.classList.remove('shake'); }, 320);
+      toast('先输入一个名字吧');
+      dom.input.focus();
+      return;
+    }
+    render(buildMeal(value));
+    dom.ticket.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  dom.copyBtn.addEventListener('click', function () {
+    if (!current) { return; }
+    copyText(buildCopyText(current));
+  });
+
+  dom.resetBtn.addEventListener('click', function () {
+    dom.input.value = '';
+    dom.ticket.classList.add('hidden');
+    dom.actions.classList.add('hidden');
+    // 换算卡也退回第二屏，避免"还没算套餐就催填年花销"
+    dom.budgetCard.classList.add('hidden');
+    dom.budgetCard.classList.remove('fade-in');
+    dom.convertList.classList.add('hidden');
+    dom.convertList.innerHTML = '';
+    dom.budgetVerdict.classList.add('hidden');
+    dom.budgetVerdict.textContent = '';
+    dom.budgetInput.value = '';
+    dom.howtoLive.textContent = '先在上面输入一个名字，这里会显示本次的中间值。';
+    current = null;
+    dom.input.focus();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  dom.budgetForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    var spend = Number(dom.budgetInput.value);
+    if (!isFinite(spend) || spend <= 0) {
+      dom.budgetInput.classList.add('shake');
+      window.setTimeout(function () { dom.budgetInput.classList.remove('shake'); }, 320);
+      toast('填个大于 0 的金额试试');
+      dom.budgetInput.focus();
+      return;
+    }
+    if (spend > 100000000) {
+      toast('金额太大啦，随便填个真实点的数');
+      return;
+    }
+    renderBudget(spend);
+  });
+
+  dom.sheetClose.addEventListener('click', function () {
+    dom.copySheet.classList.add('hidden');
+  });
+
+  dom.copySheet.addEventListener('click', function (event) {
+    if (event.target === dom.copySheet) {
+      dom.copySheet.classList.add('hidden');
+    }
+  });
+
+  dom.copyArea.addEventListener('click', function () {
+    dom.copyArea.select();
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && !dom.copySheet.classList.contains('hidden')) {
+      dom.copySheet.classList.add('hidden');
+    }
+  });
+
+  /* 便于自测与第三方验证：在控制台可直接调用 */
+  window.MealHash = {
+    fnv1a: fnv1a,
+    fnv1aBytes: fnv1aBytes,
+    encodeUtf8: encodeUtf8,
+    buildMeal: buildMeal,
+    menu: MENU,
+    comboCount: MENU.mains.length * MENU.sides.length * MENU.drinks.length * MENU.desserts.length
+  };
+})();
+</script>
+</body>
+</html>
