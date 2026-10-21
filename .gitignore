@@ -3,3 +3,7 @@ __pycache__/
 .env
 .DS_Store
 Thumbs.db
+
+# 个人真实订单导出文件：含个人消费记录，不要提交
+my-orders.json
+my-orders*.json
