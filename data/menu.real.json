@@ -1,0 +1,93 @@
+{
+ "storeCode": "3450314",
+ "source": "McDonald's China MCP live",
+ "pools": {
+  "burger": [
+   {
+    "code": "1100",
+    "name": "巨无霸",
+    "price": 26.5,
+    "calories": 513,
+    "protein": 27,
+    "fat": 26,
+    "carbohydrate": 42,
+    "sodium": 961
+   },
+   {
+    "code": "1440",
+    "name": "麦辣鸡腿汉堡",
+    "price": 22.5,
+    "calories": 485,
+    "protein": 24,
+    "fat": 24,
+    "carbohydrate": 42,
+    "sodium": 1208
+   },
+   {
+    "code": "1406",
+    "name": "板烧鸡腿堡",
+    "price": 23.5,
+    "calories": 391,
+    "protein": 23,
+    "fat": 17,
+    "carbohydrate": 35,
+    "sodium": 1041
+   },
+   {
+    "code": "1120",
+    "name": "双层吉士汉堡",
+    "price": 23.0,
+    "calories": 429,
+    "protein": 27,
+    "fat": 22,
+    "carbohydrate": 31,
+    "sodium": 1017
+   }
+  ],
+  "side": [
+   {
+    "code": "4810",
+    "name": "中薯条",
+    "price": 14.0,
+    "calories": 289,
+    "protein": 4,
+    "fat": 12,
+    "carbohydrate": 38,
+    "sodium": 165
+   },
+   {
+    "code": "1401",
+    "name": "麦乐鸡5块",
+    "price": 14.5,
+    "calories": 213,
+    "protein": 12,
+    "fat": 12,
+    "carbohydrate": 13,
+    "sodium": 422
+   },
+   {
+    "code": "1700",
+    "name": "麦辣鸡翅2块",
+    "price": 14.5,
+    "calories": null,
+    "protein": null,
+    "fat": null,
+    "carbohydrate": null,
+    "sodium": null
+   }
+  ],
+  "drink": [],
+  "dessert": [
+   {
+    "code": "515837",
+    "name": "圆筒冰淇淋",
+    "price": 5.0,
+    "calories": 93,
+    "protein": 2,
+    "fat": 3,
+    "carbohydrate": 14,
+    "sodium": 36
+   }
+  ]
+ }
+}
