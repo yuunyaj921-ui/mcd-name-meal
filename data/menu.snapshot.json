@@ -1,0 +1,22 @@
+{
+  "store_code": "SZ0001",
+  "currency": "CNY",
+  "source": "demo · 结构对齐 MCP query-meals / list-nutrition-foods 归一化结果",
+  "items": [
+    {"code": "BIGMAC",     "name": "巨无霸",        "category": "burger", "price": 25.5, "calories": 550, "tags": ["牛肉", "汉堡", "牛肉汉堡", "经典"]},
+    {"code": "MCSPICY",    "name": "麦辣鸡腿汉堡",   "category": "burger", "price": 21.5, "calories": 530, "tags": ["鸡肉", "汉堡", "辣", "炸鸡"]},
+    {"code": "MCCRISPY",   "name": "板烧鸡腿堡",     "category": "burger", "price": 22.5, "calories": 450, "tags": ["鸡肉", "汉堡", "板烧", "健康"]},
+    {"code": "DUBLECHE",   "name": "双层吉士堡",     "category": "burger", "price": 18.0, "calories": 440, "tags": ["牛肉", "汉堡", "芝士"]},
+    {"code": "FILEFISH",   "name": "麦香鱼",         "category": "burger", "price": 17.5, "calories": 340, "tags": ["鱼", "汉堡", "低卡"]},
+    {"code": "FRIES_M",    "name": "中薯条",         "category": "side",   "price": 12.5, "calories": 340, "tags": ["薯条", "小食", "油炸"]},
+    {"code": "FRIES_L",    "name": "大薯条",         "category": "side",   "price": 15.0, "calories": 440, "tags": ["薯条", "小食", "油炸"]},
+    {"code": "NUGGETS_5",  "name": "麦乐鸡 5 块",    "category": "side",   "price": 13.5, "calories": 250, "tags": ["麦乐鸡", "鸡块", "小食", "鸡肉"]},
+    {"code": "WINGS_2",    "name": "麦辣鸡翅 2 块",  "category": "side",   "price": 12.5, "calories": 240, "tags": ["鸡翅", "小食", "鸡肉", "辣"]},
+    {"code": "COKE_M",     "name": "可口可乐 中杯",  "category": "drink",  "price": 9.0,  "calories": 150, "tags": ["可乐", "饮料", "碳酸"]},
+    {"code": "SPRITE_M",   "name": "雪碧 中杯",      "category": "drink",  "price": 9.0,  "calories": 140, "tags": ["雪碧", "饮料", "碳酸"]},
+    {"code": "COFFEE_M",   "name": "麦咖啡 中杯",    "category": "drink",  "price": 10.0, "calories": 5,   "tags": ["咖啡", "饮料", "低卡"]},
+    {"code": "MCFLURRY",   "name": "奥利奥麦旋风",   "category": "dessert","price": 12.5, "calories": 300, "tags": ["甜品", "冰淇淋", "麦旋风"]},
+    {"code": "PIE_TARO",   "name": "香芋派",         "category": "dessert","price": 7.5,  "calories": 230, "tags": ["派", "甜品", "香芋"]},
+    {"code": "CONE",       "name": "圆筒冰淇淋",     "category": "dessert","price": 4.0,  "calories": 150, "tags": ["冰淇淋", "甜品", "甜筒"]}
+  ]
+}
