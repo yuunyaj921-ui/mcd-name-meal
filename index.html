@@ -436,36 +436,109 @@
     margin: 0 0 14px;
   }
 
-  .budget-row {
+  /* ============ 订单导入区 ============ */
+  .import-row {
     display: flex;
+    align-items: center;
+    flex-wrap: wrap;
     gap: 10px;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
   }
 
-  .budget-row .btn-primary {
+  /* 视觉隐藏但仍可聚焦 / 可点击，保证键盘与读屏可用 */
+  #orderFile {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .btn-import {
+    display: inline-flex;
+    align-items: center;
     height: 44px;
     padding: 0 18px;
     box-shadow: none;
   }
 
-  #budgetInput {
-    flex: 1 1 auto;
-    min-width: 0;
-    height: 44px;
-    padding: 0 14px;
-    font-size: 15px;
-    font-family: var(--font);
-    font-variant-numeric: tabular-nums;
-    color: var(--ink);
-    background: #FFFDF9;
-    border: 1.5px solid var(--line-strong);
-    border-radius: 12px;
-    outline: none;
+  #orderFile:focus-visible + .btn-import {
+    outline: 2px solid var(--mcd-red);
+    outline-offset: 2px;
   }
 
-  #budgetInput:focus {
-    border-color: var(--mcd-yellow);
-    box-shadow: 0 0 0 4px rgba(255, 199, 44, 0.18);
+  .import-hint {
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+
+  .import-help {
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    line-height: 1.7;
+    margin: 0 0 12px;
+  }
+
+  .import-help code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11px;
+    background: #F7F1E8;
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: var(--ink-soft);
+  }
+
+  .import-error {
+    font-size: 12.5px;
+    color: var(--mcd-red-dark);
+    background: #FDF0EE;
+    border-left: 3px solid var(--mcd-red);
+    border-radius: 0 8px 8px 0;
+    padding: 9px 12px;
+    margin: 0 0 12px;
+    line-height: 1.65;
+  }
+
+  .order-headline {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin: 0 0 12px;
+    line-height: 1.7;
+  }
+
+  .order-headline b {
+    color: var(--mcd-red);
+    font-size: 17px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  .order-insight {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    background: #FCF8F2;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin: 12px 0 0;
+    line-height: 1.85;
+  }
+
+  .order-insight p { margin: 0; }
+
+  .order-insight .k {
+    color: var(--ink);
+    font-weight: 700;
   }
 
   .convert-list {
@@ -762,31 +835,41 @@
   <section class="card hidden" id="budgetCard">
     <div class="card-head">
       <h2>我一年在麦当劳花多少钱</h2>
-      <span class="tag">自己换算，图一乐</span>
+      <span class="tag">读你自己的真实订单</span>
     </div>
-    <p class="card-sub">先算出套餐，再填个年花销，看看这笔钱还能变成什么。</p>
+    <p class="card-sub">用你自己的真实订单，看看这笔钱还能变成什么。</p>
 
-    <form class="budget-row" id="budgetForm" autocomplete="off">
+    <div class="import-row">
       <input
-        id="budgetInput"
-        type="number"
-        inputmode="decimal"
-        min="0"
-        step="1"
-        placeholder="比如 2400（元 / 年）"
-        aria-label="一年在麦当劳花多少钱"
+        id="orderFile"
+        type="file"
+        accept=".json,application/json"
+        aria-label="导入我的订单文件"
       />
-      <button class="btn btn-primary" type="submit">换算</button>
-    </form>
+      <label class="btn btn-primary btn-import" for="orderFile" id="importLabel">导入我的订单</label>
+      <span class="import-hint" id="importHint">选择一个 JSON 文件</span>
+    </div>
 
-    <p class="budget-note hidden" id="budgetVerdict"></p>
-
-    <ul class="convert-list hidden" id="convertList"></ul>
-
-    <p class="rates">
-      换算口径：鹤岗房子 2000 元/㎡、iPhone 5999 元/台、电影票 45 元/张。<br />
-      纯属自我调侃，钱怎么花都是我的自由。
+    <p class="import-help">
+      本地计算，数据不上传。先用 <code>python export_orders.py</code> 导出 <code>my-orders.json</code>
     </p>
+
+    <p class="import-error hidden" id="importError" role="alert"></p>
+
+    <div class="hidden" id="orderResult">
+      <p class="order-headline" id="orderHeadline"></p>
+
+      <ul class="convert-list" id="convertList"></ul>
+
+      <div class="order-insight" id="orderInsight"></div>
+
+      <p class="budget-note hidden" id="budgetVerdict"></p>
+
+      <p class="rates">
+        换算口径：鹤岗房子 2000 元/㎡、iPhone 5999 元/台、电影票 45 元/张。<br />
+        金额全部来自你导入的订单文件，全程在浏览器里算，没有任何数据离开这台电脑。
+      </p>
+    </div>
   </section>
 
   <!-- ============ 算法说明（可自行验证） ============ -->
@@ -1141,15 +1224,73 @@
   }
 
   /**
-   * 换算数量格式化：大数取整并加千分位，小数保留一位。
+   * 金额格式化：固定两位小数，用于订单总额等真实金额。
+   * @param {number} value
+   * @returns {string} 例如 "¥86.80"
+   */
+  function money2(value) {
+    var n = Number(value);
+    if (!isFinite(n)) { n = 0; }
+    return '¥' + n.toFixed(2);
+  }
+
+  /**
+   * 换算倍率格式化：大数取整并加千分位，小数按量级给 1~3 位。
+   * 真实订单总额往往不大，0.04 平米这种量级也要显示得出来。
    * @param {number} value
    * @returns {string}
    */
-  function amount(value) {
+  function ratioText(value) {
     if (!isFinite(value) || value <= 0) { return '0'; }
     if (value >= 100) { return thousands(value); }
     if (value >= 10) { return String(Math.round(value)); }
-    return (Math.round(value * 10) / 10).toFixed(1);
+    if (value >= 1) { return (Math.round(value * 10) / 10).toFixed(1); }
+    if (value >= 0.01) { return (Math.round(value * 100) / 100).toFixed(2); }
+    return (Math.round(value * 1000) / 1000).toFixed(3);
+  }
+
+  /**
+   * 安全转数字，非法值返回兜底值。
+   * @param {*} value
+   * @param {number} fallback
+   * @returns {number}
+   */
+  function toNumber(value, fallback) {
+    var n = Number(value);
+    return isFinite(n) ? n : fallback;
+  }
+
+  /**
+   * 从 "2025-11-10 17:16:24" 里取日期部分。
+   * @param {string} createTime
+   * @returns {string} 例如 "2025-11-10"
+   */
+  function datePart(createTime) {
+    return String(createTime || '').slice(0, 10);
+  }
+
+  /**
+   * 把 "2025-11" 换算成绝对月序号，用于算月份跨度。
+   * @param {string} text
+   * @returns {number|null}
+   */
+  function monthIndex(text) {
+    var m = /^(\d{4})-(\d{2})/.exec(String(text || ''));
+    if (!m) { return null; }
+    return parseInt(m[1], 10) * 12 + parseInt(m[2], 10);
+  }
+
+  /**
+   * 月份跨度（含首尾，例如 2025-11 → 2026-09 记作 11 个月）。
+   * @param {string} first
+   * @param {string} last
+   * @returns {number}
+   */
+  function monthSpanBetween(first, last) {
+    var a = monthIndex(first);
+    var b = monthIndex(last);
+    if (a === null || b === null) { return 0; }
+    return b - a + 1;
   }
 
   /* =====================================================================
@@ -1171,8 +1312,12 @@
     copyBtn: document.getElementById('copyBtn'),
     resetBtn: document.getElementById('resetBtn'),
     budgetCard: document.getElementById('budgetCard'),
-    budgetForm: document.getElementById('budgetForm'),
-    budgetInput: document.getElementById('budgetInput'),
+    orderFile: document.getElementById('orderFile'),
+    importHint: document.getElementById('importHint'),
+    importError: document.getElementById('importError'),
+    orderResult: document.getElementById('orderResult'),
+    orderHeadline: document.getElementById('orderHeadline'),
+    orderInsight: document.getElementById('orderInsight'),
     budgetVerdict: document.getElementById('budgetVerdict'),
     convertList: document.getElementById('convertList'),
     howtoLive: document.getElementById('howtoLive'),
@@ -1184,6 +1329,8 @@
 
   /** 当前展示的套餐。 */
   var current = null;
+  /** 已导入的订单统计（null 表示还没导入）。 */
+  var importedStats = null;
   var toastTimer = null;
 
   /**
@@ -1241,11 +1388,8 @@
       '主食索引 ' + meal.indexes.main + ' · 小食索引 ' + meal.indexes.side +
       ' · 饮料索引 ' + meal.indexes.drink + ' · 甜品索引 ' + meal.indexes.dessert;
 
-    // 换算区跟随当前套餐的单价
-    if (!dom.convertList.classList.contains('hidden')) {
-      var spend = Number(dom.budgetInput.value);
-      if (isFinite(spend) && spend > 0) { renderBudget(spend); }
-    }
+    // 已经导入过订单的话，用新套餐的单价重算一遍（"份你这份套餐" 会变）
+    if (importedStats) { renderOrders(importedStats); }
   }
 
   /**
@@ -1340,25 +1484,164 @@
     }, 30);
   }
 
-  /**
-   * 渲染消费换算结果。
-   * @param {number} spend 年花销（元）
-   */
-  function renderBudget(spend) {
-    var combo = current ? current.totalPrice : 0;
-    var lines = [];
+  /* =====================================================================
+   * 5.5 真实订单导入：读取 → 校验 → 统计 → 渲染
+   *     数据全程留在浏览器里，不发任何网络请求。
+   * ===================================================================== */
 
-    if (combo > 0) {
-      lines.push({ num: amount(spend / combo), unit: '次同款套餐', tail: '（就是上面这一份）' });
+  /** 导入失败时的统一文案（都不抛异常、不白屏）。 */
+  var ORDER_ERROR = {
+    read: '这个文件不是 export_orders.py 导出的订单文件（文件是空的，或读取失败）。',
+    parse: '这个文件不是 export_orders.py 导出的订单文件（不是合法的 JSON）。',
+    shape: '这个文件不是 export_orders.py 导出的订单文件。',
+    empty: '这份订单文件是空的。'
+  };
+
+  /**
+   * 校验订单文件结构。
+   * @param {*} data JSON.parse 之后的对象
+   * @returns {{ok: boolean, message: (string|undefined), orders: (Array|undefined), summary: (object|undefined)}}
+   */
+  function validateOrderFile(data) {
+    if (!data || typeof data !== 'object' || Object.prototype.toString.call(data) === '[object Array]') {
+      return { ok: false, message: ORDER_ERROR.shape, orders: undefined, summary: undefined };
     }
-    lines.push({ num: amount(spend / RATE.HOUSE_PER_SQM), unit: '平米鹤岗房子', tail: '（按 2000 元/㎡）' });
-    lines.push({ num: amount(spend / RATE.IPHONE), unit: '台 iPhone', tail: '（按 5999 元）' });
-    lines.push({ num: amount(spend / RATE.MOVIE_TICKET), unit: '张电影票', tail: '（按 45 元）' });
+    var orders = data.orders;
+    if (!isArray(orders)) {
+      return { ok: false, message: ORDER_ERROR.shape, orders: undefined, summary: undefined };
+    }
+    if (orders.length === 0) {
+      return { ok: false, message: ORDER_ERROR.empty, orders: undefined, summary: undefined };
+    }
+    var summary = data.summary;
+    if (!summary || typeof summary !== 'object' ||
+        typeof summary.orderCount !== 'number' ||
+        typeof summary.totalAmount !== 'number') {
+      return { ok: false, message: ORDER_ERROR.shape, orders: undefined, summary: undefined };
+    }
+    return { ok: true, message: undefined, orders: orders, summary: summary };
+  }
+
+  /**
+   * Array.isArray 的兜底（极老旧浏览器）。
+   * @param {*} value
+   * @returns {boolean}
+   */
+  function isArray(value) {
+    return Object.prototype.toString.call(value) === '[object Array]';
+  }
+
+  /**
+   * 从订单数组里统计出现次数最多的餐品。
+   * 口径：把每单的 items[].name 与 items[].combo[] 名称摊平，同一单内同名只算一次，
+   * 所以 "N 次" 表示它出现在 N 单里。只统计 items[].name 会因为套餐名几乎不重复
+   * 而全是 1 次并列，得不出有效洞察。
+   * @param {Array} orders
+   * @returns {{name: string, count: number}|null} 没有重复餐品时返回 null
+   */
+  function topItemOf(orders) {
+    var counts = {};
+    var names = [];
+    for (var i = 0; i < orders.length; i += 1) {
+      var order = orders[i] || {};
+      var items = isArray(order.items) ? order.items : [];
+      var seenThisOrder = {};
+      for (var j = 0; j < items.length; j += 1) {
+        var item = items[j] || {};
+        var bucket = [];
+        if (item.name) { bucket.push(String(item.name)); }
+        if (isArray(item.combo)) {
+          for (var k = 0; k < item.combo.length; k += 1) {
+            if (item.combo[k]) { bucket.push(String(item.combo[k])); }
+          }
+        }
+        for (var n = 0; n < bucket.length; n += 1) {
+          var label = bucket[n].replace(/^\s+|\s+$/g, '');
+          if (!label || seenThisOrder[label]) { continue; }
+          seenThisOrder[label] = true;
+          if (!Object.prototype.hasOwnProperty.call(counts, label)) {
+            counts[label] = 0;
+            names.push(label);
+          }
+          counts[label] += 1;
+        }
+      }
+    }
+    var best = null;
+    for (var m = 0; m < names.length; m += 1) {
+      var name = names[m];
+      var count = counts[name];
+      // 次数相同取字典序更小的，保证同一份文件每次渲染结果一致
+      if (!best || count > best.count || (count === best.count && name < best.name)) {
+        best = { name: name, count: count };
+      }
+    }
+    if (best && best.count < 2) { return null; }
+    return best;
+  }
+
+  /**
+   * 把导入的订单整理成渲染需要的统计对象。
+   * summary 优先用文件里的值，缺失或非法时从 orders 自己算，避免出现 undefined。
+   * @param {Array} orders
+   * @param {object} summary
+   * @returns {object} 统计对象
+   */
+  function buildOrderStats(orders, summary) {
+    var s = summary || {};
+    var times = [];
+    var storeMap = {};
+    var sum = 0;
+    for (var i = 0; i < orders.length; i += 1) {
+      var o = orders[i] || {};
+      if (o.createTime) { times.push(String(o.createTime)); }
+      var key = o.storeName || o.storeCode || '';
+      if (key) { storeMap[key] = true; }
+      sum += toNumber(o.amount, 0);
+    }
+    times.sort();
+
+    var firstOrder = s.firstOrder ? String(s.firstOrder) : (times.length ? times[0] : '');
+    var lastOrder = s.lastOrder ? String(s.lastOrder) : (times.length ? times[times.length - 1] : '');
+    var storeCount = Math.round(toNumber(s.storeCount, 0));
+    if (!storeCount) { storeCount = Object.keys(storeMap).length; }
+
+    return {
+      totalAmount: Math.round(toNumber(s.totalAmount, sum) * 100) / 100,
+      orderCount: Math.round(toNumber(s.orderCount, orders.length)),
+      firstOrder: firstOrder,
+      lastOrder: lastOrder,
+      storeCount: storeCount,
+      monthSpan: Math.round(toNumber(s.monthSpan, monthSpanBetween(firstOrder, lastOrder))),
+      topItem: topItemOf(orders)
+    };
+  }
+
+  /**
+   * 渲染导入结果：核心结论 + 4 条换算 + 基于真实订单的洞察。
+   * @param {object} stats buildOrderStats 的返回值
+   */
+  function renderOrders(stats) {
+    importedStats = stats;
+    var spend = stats.totalAmount;
+    var unit = current ? current.totalPrice : 0;
+
+    dom.orderHeadline.innerHTML =
+      '你在麦当劳花了 <b>' + money2(spend) + '</b>，一共 <b>' + stats.orderCount + '</b> 单';
+
+    var lines = [];
+    if (unit > 0) {
+      lines.push({ num: ratioText(spend / unit), unit: '份你这份套餐', tail: '（就是上面这一份）' });
+    }
+    lines.push({ num: ratioText(spend / RATE.HOUSE_PER_SQM), unit: '平米鹤岗房子', tail: '（按 2000 元/㎡）' });
+    lines.push({ num: ratioText(spend / RATE.IPHONE), unit: '台 iPhone', tail: '（按 5999 元）' });
+    lines.push({ num: ratioText(spend / RATE.MOVIE_TICKET), unit: '张电影票', tail: '（按 45 元）' });
 
     var html = '';
     for (var i = 0; i < lines.length; i += 1) {
       html +=
         '<li>' +
+          '<span class="lead">相当于</span>' +
           '<span class="num">' + lines[i].num + '</span>' +
           '<span class="unit">' + lines[i].unit + '</span>' +
           '<span>' + lines[i].tail + '</span>' +
@@ -1367,18 +1650,142 @@
     dom.convertList.innerHTML = html;
     dom.convertList.classList.remove('hidden');
 
+    var insight = '';
+    if (stats.firstOrder) {
+      insight += '<p>你最早的一单在 <span class="k">' + escapeHtml(datePart(stats.firstOrder)) + '</span>';
+      if (stats.lastOrder) {
+        insight += '，最近一单在 <span class="k">' + escapeHtml(String(stats.lastOrder)) + '</span>';
+      }
+      insight += '。</p>';
+    }
+    if (stats.monthSpan > 0 || stats.storeCount > 0) {
+      insight += '<p>横跨 <span class="k">' + stats.monthSpan + '</span> 个月，去过 <span class="k">' +
+                 stats.storeCount + '</span> 家门店。</p>';
+    }
+    if (stats.topItem) {
+      insight += '<p>点得最多的是「<span class="k">' + escapeHtml(stats.topItem.name) +
+                 '</span>」，<span class="k">' + stats.topItem.count + '</span> 次。</p>';
+    } else {
+      insight += '<p>这些订单里没有重复出现的餐品，每次都不一样。</p>';
+    }
+    if (spend <= 0) {
+      insight += '<p>这些订单金额都是 0，大概是积分兑换或活动送的。</p>';
+    }
+    dom.orderInsight.innerHTML = insight;
+
     var verdict;
     if (spend < 100) {
-      verdict = '一年花不到 100 块，你相当克制，我敬你。';
+      verdict = '一年不到 100 块，你相当克制，我敬你。';
     } else if (spend < 1000) {
-      verdict = '算下来也就几顿的事，我把钱花在了让自己开心的东西上。';
+      verdict = '算下来也就几顿的事，钱花在了让自己开心的东西上。';
     } else if (spend < 6000) {
       verdict = '这个数我认，快乐是有成本的，我付得起。';
     } else {
-      verdict = '数字有点大，但每一分都是我自愿掏的，下一年我继续。';
+      verdict = '数字有点大，但每一分都是我自己愿意掏的，下一年继续。';
     }
     dom.budgetVerdict.textContent = verdict;
     dom.budgetVerdict.classList.remove('hidden');
+
+    dom.orderResult.classList.remove('hidden');
+  }
+
+  /**
+   * 显示导入错误提示。
+   * @param {string} message
+   */
+  function showImportError(message) {
+    dom.importError.textContent = message;
+    dom.importError.classList.remove('hidden');
+  }
+
+  /** 清空错误提示。 */
+  function clearImportError() {
+    dom.importError.textContent = '';
+    dom.importError.classList.add('hidden');
+  }
+
+  /** 清空已导入结果（不动文件选择框与错误提示）。 */
+  function clearOrderResult() {
+    importedStats = null;
+    dom.orderResult.classList.add('hidden');
+    dom.orderHeadline.innerHTML = '';
+    dom.convertList.innerHTML = '';
+    dom.convertList.classList.add('hidden');
+    dom.orderInsight.innerHTML = '';
+    dom.budgetVerdict.textContent = '';
+    dom.budgetVerdict.classList.add('hidden');
+  }
+
+  /** 彻底重置导入状态（"再测一个"时调用，避免下次显示旧数字）。 */
+  function resetOrderImport() {
+    clearOrderResult();
+    clearImportError();
+    if (dom.orderFile) {
+      try { dom.orderFile.value = ''; } catch (err) { dom.orderFile.value = null; }
+    }
+    dom.importHint.textContent = '选择一个 JSON 文件';
+  }
+
+  /**
+   * 处理订单文件文本：解析 → 校验 → 渲染，任何一步失败都只给友好提示。
+   * @param {string} text 文件内容
+   * @returns {boolean} 是否导入成功
+   */
+  function handleOrderText(text) {
+    var raw = String(text == null ? '' : text).replace(/^\s+|\s+$/g, '');
+    clearOrderResult();
+    clearImportError();
+
+    if (!raw) {
+      showImportError(ORDER_ERROR.read);
+      return false;
+    }
+    var data;
+    try {
+      data = JSON.parse(raw);
+    } catch (err) {
+      showImportError(ORDER_ERROR.parse);
+      return false;
+    }
+    var checked = validateOrderFile(data);
+    if (!checked.ok) {
+      showImportError(checked.message);
+      return false;
+    }
+    renderOrders(buildOrderStats(checked.orders, checked.summary));
+    return true;
+  }
+
+  /**
+   * 用 FileReader 异步读取用户选择的文件（不阻塞页面其他功能）。
+   * @param {File} file
+   */
+  function readOrderFile(file) {
+    clearImportError();
+    clearOrderResult();
+
+    if (typeof FileReader === 'undefined') {
+      showImportError('这个浏览器不支持读取本地文件，换 Chrome / Edge / Safari 试试。');
+      dom.importHint.textContent = '选择一个 JSON 文件';
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function () {
+      var text = typeof reader.result === 'string' ? reader.result : '';
+      var ok = handleOrderText(text);
+      dom.importHint.textContent = ok ? ('已导入：' + file.name) : '选择一个 JSON 文件';
+    };
+    reader.onerror = function () {
+      clearOrderResult();
+      showImportError(ORDER_ERROR.read);
+      dom.importHint.textContent = '选择一个 JSON 文件';
+    };
+    try {
+      reader.readAsText(file, 'utf-8');
+    } catch (err) {
+      showImportError(ORDER_ERROR.read);
+      dom.importHint.textContent = '选择一个 JSON 文件';
+    }
   }
 
   /* =====================================================================
@@ -1408,35 +1815,23 @@
     dom.input.value = '';
     dom.ticket.classList.add('hidden');
     dom.actions.classList.add('hidden');
-    // 换算卡也退回第二屏，避免"还没算套餐就催填年花销"
+    // 换算卡也退回第二屏：没算套餐就不该出现
     dom.budgetCard.classList.add('hidden');
     dom.budgetCard.classList.remove('fade-in');
-    dom.convertList.classList.add('hidden');
-    dom.convertList.innerHTML = '';
-    dom.budgetVerdict.classList.add('hidden');
-    dom.budgetVerdict.textContent = '';
-    dom.budgetInput.value = '';
+    // 已导入的订单数据一并清空，避免下次显示上一轮的旧数字
+    resetOrderImport();
     dom.howtoLive.textContent = '先在上面输入一个名字，这里会显示本次的中间值。';
     current = null;
     dom.input.focus();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  dom.budgetForm.addEventListener('submit', function (event) {
-    event.preventDefault();
-    var spend = Number(dom.budgetInput.value);
-    if (!isFinite(spend) || spend <= 0) {
-      dom.budgetInput.classList.add('shake');
-      window.setTimeout(function () { dom.budgetInput.classList.remove('shake'); }, 320);
-      toast('填个大于 0 的金额试试');
-      dom.budgetInput.focus();
-      return;
-    }
-    if (spend > 100000000) {
-      toast('金额太大啦，随便填个真实点的数');
-      return;
-    }
-    renderBudget(spend);
+  dom.orderFile.addEventListener('change', function () {
+    var files = dom.orderFile.files;
+    var file = files && files.length ? files[0] : null;
+    if (!file) { return; }
+    dom.importHint.textContent = '正在读取：' + file.name;
+    readOrderFile(file);
   });
 
   dom.sheetClose.addEventListener('click', function () {
@@ -1466,7 +1861,14 @@
     encodeUtf8: encodeUtf8,
     buildMeal: buildMeal,
     menu: MENU,
-    comboCount: MENU.mains.length * MENU.sides.length * MENU.drinks.length * MENU.desserts.length
+    comboCount: MENU.mains.length * MENU.sides.length * MENU.drinks.length * MENU.desserts.length,
+    /* 订单换算相关：可直接用文本验证导入链路，例如
+       MealHash.handleOrderText(JSON.stringify({orders:[...], summary:{...}})) */
+    handleOrderText: handleOrderText,
+    buildOrderStats: buildOrderStats,
+    validateOrderFile: validateOrderFile,
+    topItemOf: topItemOf,
+    ratioText: ratioText
   };
 })();
 </script>
