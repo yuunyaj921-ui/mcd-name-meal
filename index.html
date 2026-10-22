@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>你的名字是一份麦门人格</title>
-<meta name="description" content="输入名字，用 FNV-1a 哈希算出你的麦门人格和专属四件套：55 句点餐时说过的话、一张只有你能看到的成分表、一句拆穿你的解读。同名同人格，这不是算命，是密码学。" />
+<title>你是哪一种麦门人格 · 9 题点餐人格测试</title>
+<meta name="description" content="9 个点餐场景，测出你是哪种麦门人格：6 个类型 + 2 个混合型，每个类型配一份真套餐、一张基于真实营养数据的成分表、三段解析。零依赖、单文件、断网可用。" />
 <style>
   /* ============ 设计令牌 ============ */
   :root {
@@ -48,6 +48,8 @@
     margin: 0 auto;
   }
 
+  .hidden { display: none !important; }
+
   /* ============ 头部 ============ */
   .brand {
     display: flex;
@@ -68,7 +70,7 @@
   }
 
   h1 {
-    font-size: 24px;
+    font-size: 25px;
     line-height: 1.32;
     margin: 0 0 8px;
     text-align: center;
@@ -97,9 +99,10 @@
 
   .lede {
     text-align: center;
-    font-size: 13px;
+    font-size: 13.5px;
     color: var(--ink-soft);
-    margin: 0 0 20px;
+    margin: 12px 0 22px;
+    line-height: 1.7;
   }
 
   .lede strong {
@@ -107,35 +110,50 @@
     font-weight: 700;
   }
 
-  /* ============ 输入区 ============ */
-  .finder {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  #nameInput {
-    flex: 1 1 auto;
-    min-width: 0;
-    height: 48px;
-    padding: 0 16px;
+  /* ============ 首屏 ============ */
+  /* 主按钮：加 .btn 前缀提高优先级，确保 54px 高度不被 .btn-primary 覆盖 */
+  .btn.hero-cta {
+    display: block;
+    width: 100%;
+    height: 54px;
     font-size: 16px;
-    font-family: var(--font);
-    color: var(--ink);
-    background: var(--paper);
-    border: 1.5px solid var(--line-strong);
-    border-radius: 13px;
-    outline: none;
-    transition: border-color 0.16s ease, box-shadow 0.16s ease;
   }
 
-  #nameInput::placeholder { color: #B7A897; }
-
-  #nameInput:focus {
-    border-color: var(--mcd-red);
-    box-shadow: 0 0 0 4px rgba(218, 41, 28, 0.11);
+  .hero-note {
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    margin: 10px 0 0;
   }
 
+  .hero-points {
+    list-style: none;
+    margin: 24px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .hero-point {
+    display: flex;
+    gap: 9px;
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+  }
+
+  .hero-point::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--mcd-yellow);
+    margin-top: 8px;
+  }
+
+  /* ============ 通用按钮 ============ */
   .btn {
     font-family: var(--font);
     font-size: 15px;
@@ -143,7 +161,7 @@
     border: none;
     border-radius: 13px;
     cursor: pointer;
-    transition: transform 0.1s ease, background 0.16s ease, box-shadow 0.16s ease;
+    transition: transform 0.1s ease, background 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, color 0.16s ease;
     white-space: nowrap;
   }
 
@@ -169,17 +187,147 @@
 
   .btn-ghost:hover { border-color: var(--ink-faint); color: var(--ink); }
 
-  .shake { animation: shake 0.3s ease; }
+  .btn[disabled] {
+    opacity: 0.42;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
 
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-6px); }
-    75% { transform: translateX(6px); }
+  .btn[disabled]:active { transform: none; }
+
+  /* ============ 答题页 ============ */
+  .quiz-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .quiz-step {
+    flex: 0 0 auto;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--mcd-red);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+
+  .progress {
+    flex: 1 1 auto;
+    height: 6px;
+    background: #EFE3D5;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--mcd-red), var(--mcd-yellow));
+    transition: width 0.26s ease;
+  }
+
+  .quiz-card {
+    background: var(--paper);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    padding: 22px 20px 20px;
+    margin-bottom: 14px;
+  }
+
+  .quiz-index {
+    margin: 0 0 8px;
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    color: var(--ink-faint);
+    font-weight: 700;
+  }
+
+  .quiz-q {
+    margin: 0 0 18px;
+    font-size: 18px;
+    line-height: 1.55;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* 手机端大按钮：整行可点，高度 ≥ 56px */
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 56px;
+    padding: 14px 15px;
+    text-align: left;
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.55;
+    font-weight: 600;
+    color: var(--ink);
+    background: #FFFDF9;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: border-color 0.14s ease, background 0.14s ease, transform 0.1s ease, box-shadow 0.14s ease;
+  }
+
+  .opt:hover {
+    border-color: var(--mcd-red);
+    background: #FFF7F2;
+  }
+
+  .opt:active { transform: scale(0.985); }
+
+  .opt.is-picked {
+    border-color: var(--mcd-red);
+    background: #FFF3EF;
+    box-shadow: 0 0 0 3px rgba(218, 41, 28, 0.08);
+  }
+
+  .opt-key {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+    background: #FBF4EA;
+    color: var(--ink-faint);
+    font-size: 11px;
+    font-weight: 800;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  .opt.is-picked .opt-key {
+    background: var(--mcd-red);
+    color: #fff;
+  }
+
+  .opt-text { flex: 1 1 auto; }
+
+  .quiz-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .quiz-hint {
+    font-size: 11.5px;
+    color: var(--ink-faint);
   }
 
   /* ============ 结果凭证卡 ============ */
-  .hidden { display: none !important; }
-
   .ticket {
     position: relative;
     background: var(--paper);
@@ -216,10 +364,10 @@
   }
 
   .ticket-owner {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 700;
-    color: var(--mcd-red);
-    letter-spacing: 0.02em;
+    color: var(--ink-faint);
+    letter-spacing: 0.06em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -242,16 +390,40 @@
     flex-wrap: wrap;
     gap: 6px 10px;
     font-size: 26px;
-    line-height: 1.25;
+    line-height: 1.28;
     font-weight: 800;
     letter-spacing: -0.015em;
-    margin: 6px 0 12px;
-    color: var(--ink);
+    margin: 6px 0 6px;
+    color: var(--mcd-red);
     word-break: break-word;
   }
 
-  /* 人格名：一句点餐时会说出口的话，不再有任何字母代号 */
-  .meal-name .pn-zh { color: var(--ink); }
+  /* 身份行用块级流式排版：长句能正常折行，混合型徽标内联跟在类型名后面 */
+  .type-identity {
+    display: block;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    margin: 0 0 18px;
+  }
+
+  .type-name {
+    color: var(--ink);
+    font-weight: 700;
+    margin-right: 2px;
+  }
+
+  .type-badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--mcd-red);
+    border: 1px solid rgba(218, 41, 28, 0.36);
+    border-radius: 999px;
+    padding: 1px 7px;
+    margin-right: 6px;
+    vertical-align: 1px;
+  }
 
   /* ============ 成分表：仿食品包装的营养成分表 ============ */
   .panel {
@@ -260,7 +432,7 @@
     border: 1.5px solid var(--ink);
     border-radius: 10px;
     padding: 12px 14px 10px;
-    margin: 0 0 16px;
+    margin: 16px 0 0;
   }
 
   .panel-head {
@@ -323,31 +495,11 @@
     color: var(--ink-faint);
   }
 
-  /* 人格描述：这句才是让人截图的东西 */
-  .persona-desc {
-    font-size: 13.5px;
-    line-height: 1.72;
-    color: var(--ink);
-    background: #FFFBF0;
-    border-left: 3px solid var(--mcd-red);
-    border-radius: 0 8px 8px 0;
-    padding: 10px 12px;
-    margin: 0 0 16px;
-  }
-
-  .disclaimer {
-    font-size: 10.5px;
-    color: var(--ink-faint);
-    text-align: center;
-    margin: 12px 0 0;
-    line-height: 1.6;
-  }
-
+  /* ============ 套餐明细 ============ */
   .items {
     display: flex;
     flex-direction: column;
     gap: 9px;
-    margin-bottom: 4px;
   }
 
   .item {
@@ -417,7 +569,7 @@
     align-items: flex-end;
     justify-content: space-between;
     gap: 10px;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
   }
 
   .total-block { display: flex; flex-direction: column; }
@@ -450,34 +602,7 @@
 
   .right-align { text-align: right; }
 
-  .comment {
-    font-size: 13.5px;
-    color: var(--ink-soft);
-    background: #FFFBF0;
-    border-left: 3px solid var(--mcd-yellow);
-    border-radius: 0 8px 8px 0;
-    padding: 9px 12px;
-    margin: 0 0 14px;
-  }
-
-  .fingerprint {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    font-size: 11.5px;
-    color: var(--ink-faint);
-    border-top: 1px solid var(--line);
-    padding-top: 12px;
-  }
-
-  .fingerprint-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 6px 10px;
-  }
-
-  /* 稀有度话术：常见度数值下方的小字 */
+  /* 未核实单价 / 签名的小字提示 */
   .rarity-note {
     margin: 0;
     font-size: 11px;
@@ -486,7 +611,15 @@
     opacity: 0.85;
   }
 
-  .fingerprint code {
+  .sign-line {
+    margin: 12px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+    color: var(--ink-faint);
+  }
+
+  .sign-line code {
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     font-size: 11.5px;
     color: var(--ink-soft);
@@ -496,16 +629,13 @@
     letter-spacing: 0.06em;
   }
 
-  .fingerprint .dot { color: var(--line-strong); }
-
-  /* ============ 操作按钮 ============ */
-  .actions {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 30px;
+  .disclaimer {
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    text-align: center;
+    margin: 14px 0 0;
+    line-height: 1.6;
   }
-
-  .actions .btn-primary { flex: 1 1 auto; }
 
   /* ============ 通用卡片 ============ */
   .card {
@@ -514,6 +644,7 @@
     border-radius: var(--radius-card);
     box-shadow: 0 4px 18px rgba(90, 62, 40, 0.06);
     padding: 20px 20px 18px;
+    margin-bottom: 14px;
   }
 
   .fade-in { animation: rise 0.4s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
@@ -522,7 +653,8 @@
     display: flex;
     align-items: baseline;
     gap: 8px;
-    margin-bottom: 4px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
   }
 
   .card-head h2 {
@@ -541,7 +673,126 @@
     font-size: 12.5px;
     color: var(--ink-faint);
     margin: 0 0 14px;
+    line-height: 1.65;
   }
+
+  /* 三段解析 */
+  .ana { margin: 0 0 15px; }
+  .ana:last-child { margin-bottom: 0; }
+
+  .ana-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0 0 5px;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    font-weight: 700;
+  }
+
+  .ana-label::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 14px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--mcd-yellow);
+  }
+
+  .ana-text {
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.78;
+    color: var(--ink);
+  }
+
+  /* 关系区 */
+  .rel {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .rel li {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    padding-bottom: 11px;
+    border-bottom: 1px dashed var(--line);
+  }
+
+  .rel li:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .rel-tag {
+    display: inline-block;
+    font-size: 10.5px;
+    color: var(--mcd-red);
+    background: #FFF3EF;
+    border-radius: 5px;
+    padding: 1px 6px;
+    margin-right: 6px;
+    vertical-align: 1px;
+    font-weight: 700;
+  }
+
+  .rel b { color: var(--ink); font-weight: 700; }
+
+  /* ============ 输入框（小票签名） ============ */
+  .text-input {
+    display: block;
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    font-size: 16px;
+    font-family: var(--font);
+    color: var(--ink);
+    background: var(--paper);
+    border: 1.5px solid var(--line-strong);
+    border-radius: 13px;
+    outline: none;
+    transition: border-color 0.16s ease, box-shadow 0.16s ease;
+  }
+
+  .text-input::placeholder { color: #B7A897; }
+
+  .text-input:focus {
+    border-color: var(--mcd-red);
+    box-shadow: 0 0 0 4px rgba(218, 41, 28, 0.11);
+  }
+
+  /* ============ 操作按钮 ============ */
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .actions .btn-primary { flex: 1 1 auto; }
+
+  /* ============ Star 引导 ============ */
+  .star-line {
+    margin: 20px 0 0;
+    font-size: 11.5px;
+    line-height: 1.8;
+    color: var(--ink-faint);
+    text-align: center;
+  }
+
+  .star-line a {
+    color: var(--mcd-red);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(218, 41, 28, 0.36);
+    padding-bottom: 1px;
+  }
+
+  .star-line a:hover { border-bottom-color: var(--mcd-red); }
 
   /* ============ 订单导入区 ============ */
   .import-row {
@@ -660,6 +911,7 @@
   .convert-list li {
     display: flex;
     align-items: baseline;
+    flex-wrap: wrap;
     gap: 8px;
     font-size: 13.5px;
     color: var(--ink-soft);
@@ -699,7 +951,7 @@
 
   /* ============ 算法说明 ============ */
   details.howto {
-    margin-top: 14px;
+    margin-top: 18px;
     background: var(--paper);
     border: 1.5px solid var(--line);
     border-radius: 14px;
@@ -735,13 +987,17 @@
     border-top: 1px dashed var(--line);
     margin-top: 0;
     padding-top: 12px;
-    line-height: 1.75;
+    line-height: 1.78;
   }
+
+  .howto-body p { margin: 0 0 10px; }
 
   .howto-body ol {
     margin: 0 0 10px;
     padding-left: 18px;
   }
+
+  .howto-body li { margin-bottom: 6px; }
 
   .howto-body code {
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -757,10 +1013,34 @@
     border-radius: 10px;
     padding: 10px 12px;
     font-size: 12px;
+    line-height: 1.85;
     margin-top: 4px;
   }
 
   .howto-live b { color: var(--ink); }
+
+  .map-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 6px 0 12px;
+    font-size: 11.5px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .map-table th,
+  .map-table td {
+    border: 1px solid var(--line-strong);
+    padding: 5px 7px;
+    text-align: left;
+  }
+
+  .map-table th {
+    background: #FBF4EA;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .map-table td { color: var(--ink-soft); }
 
   /* ============ 页脚 ============ */
   footer {
@@ -778,6 +1058,15 @@
   }
 
   footer p { margin: 0 0 5px; }
+
+  footer code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    background: #F7F1E8;
+    border-radius: 3px;
+    padding: 0 4px;
+    color: var(--ink-soft);
+  }
 
   /* ============ 提示条 ============ */
   #toast {
@@ -859,9 +1148,12 @@
   @media (max-width: 400px) {
     body { padding: 22px 12px 40px; }
     h1 { font-size: 21px; }
-    .meal-name { font-size: 22px; }
+    .meal-name { font-size: 23px; }
+    .quiz-q { font-size: 17px; }
+    .opt { font-size: 14.5px; padding: 13px 13px; }
     .item { font-size: 13.5px; grid-template-columns: 32px 1fr auto auto; gap: 7px; }
     .total-value { font-size: 21px; }
+    .panel { padding: 11px 12px 9px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -880,153 +1172,264 @@
     <span class="brand-badge">麦当劳 1024 程序员创意开发大赛 · 参赛作品</span>
   </div>
 
-  <h1>你的名字是一份<br /><span class="hl">麦门人格</span></h1>
-  <p class="lede">
-    输入名字，用 <strong>FNV-1a 哈希</strong>算出你会说的那句点餐话 + 专属四件套。<br />
-    同名同人格，这不是算命，是密码学。
-  </p>
+  <!-- ============================================================
+       第一屏：介绍 + 开始
+       ============================================================ -->
+  <section id="screenIntro">
+    <h1>你是哪一种<br /><span class="hl">麦门人格</span></h1>
+    <p class="lede">9 个点餐场景，测出你是哪种麦门人格</p>
 
-  <form class="finder" id="finderForm" autocomplete="off">
-    <input
-      id="nameInput"
-      type="text"
-      placeholder="输入你的名字"
-      maxlength="32"
-      autocomplete="off"
-      autocapitalize="off"
-      spellcheck="false"
-      aria-label="输入你的名字"
-    />
-    <button class="btn btn-primary" type="submit" id="generateBtn">测我的麦门人格</button>
-  </form>
+    <button class="btn btn-primary hero-cta" type="button" id="startBtn">开始测试</button>
+    <p class="hero-note">9 题 · 约 40 秒 · 没有对错，只有习惯</p>
 
-  <!-- ============ 结果凭证卡 ============ -->
-  <section class="ticket hidden" id="ticket" aria-live="polite">
-    <div class="ticket-top">
-      <span class="ticket-owner" id="ownerLabel"></span>
-      <span class="ticket-stamp">点单凭条</span>
-    </div>
+    <ul class="hero-points">
+      <li class="hero-point">9 道题只测三件事：你怎么下决定、要不要一个完整的结构、现在就要还是可以等。</li>
+      <li class="hero-point">8 种组合对应 6 个类型 + 2 个混合型，每个类型固定一份真套餐。</li>
+      <li class="hero-point">成分表用的是官方营养数据，前三项是真占比，两项娱乐成分，整张表恒等 100%。</li>
+    </ul>
 
-    <h2 class="meal-name" id="mealName"></h2>
+    <!-- ============ 算法说明（可自行验证） ============ -->
+    <details class="howto">
+      <summary>怎么算的（可以自己验证）</summary>
+      <div class="howto-body">
+        <p><b>9 道题只测 3 个维度，每题只值 1 分，没有加权、没有随机数，所以你自己就能核对。</b></p>
+        <ol>
+          <li><b>A 维度 · 你怎么下决定</b>：Q1 + Q2 + Q3，选第一个选项得 1 分，选第二个得 0 分，满分 3。
+            <b>≥2 记「算计」，否则「凭感觉」</b>。</li>
+          <li><b>B 维度 · 你要不要结构</b>：Q4 + Q5 + Q6，同一套算法，满分 3。
+            <b>≥2 记「整装」，否则「散装」</b>。</li>
+          <li><b>C 维度 · 现在还是要等</b>：Q7 + Q8 + Q9，同一套算法，满分 3。
+            <b>≥2 记「即时」，否则「延后」</b>。</li>
+          <li>三个维度各 2 种取值，一共 8 种组合，全部有对应类型：</li>
+        </ol>
 
-    <p class="persona-desc" id="personaDesc"></p>
+        <table class="map-table">
+          <thead>
+            <tr><th>A 怎么决定</th><th>B 结构</th><th>C 时间</th><th>结果</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>算计</td><td>整装</td><td>即时</td><td>中薯换大薯</td></tr>
+            <tr><td>算计</td><td>整装</td><td>延后</td><td>可乐换无糖</td></tr>
+            <tr><td>算计</td><td>散装</td><td>即时</td><td>这个要啃</td></tr>
+            <tr><td>算计</td><td>散装</td><td>延后</td><td>攒着用（混合型）</td></tr>
+            <tr><td>感觉</td><td>整装</td><td>即时</td><td>跟着感觉走（混合型）</td></tr>
+            <tr><td>感觉</td><td>整装</td><td>延后</td><td>老样子</td></tr>
+            <tr><td>感觉</td><td>散装</td><td>即时</td><td>先来个甜的</td></tr>
+            <tr><td>感觉</td><td>散装</td><td>延后</td><td>不要主食</td></tr>
+          </tbody>
+        </table>
 
-    <!-- 成分表：仿食品包装营养成分表，前三项是真实营养占比 -->
-    <div class="panel">
-      <div class="panel-head">
-        <span class="panel-name">成分表</span>
-        <span class="panel-sub">每份你这份套餐</span>
+        <ol start="5">
+          <li>每个类型对应一份<b>固定</b>套餐，不随名字变化，也不随答题细节变化：
+            同一个类型永远是同一份，所以结果可以复现。</li>
+          <li>名字只用来算一个<b>签名</b>，不影响类型和套餐：把名字 <code>name.trim().toLowerCase()</code>
+            编码成 UTF-8 字节，逐个跑 FNV-1a 32 位（<code>h = 2166136261</code>，
+            每个字节先 <code>h ^= byte</code>，再 <code>h = Math.imul(h, 16777619) mod 2³²</code>），
+            取 8 位小写十六进制印在小票底部。名字不一样，只是签名不一样。</li>
+          <li>成分表前三项是真的：营养数据来自<b>麦当劳官方 list-nutrition-foods 接口</b>
+            （160 条商品营养记录，本项目取其中 18 项）。把套餐里每样东西的碳水 × 4、脂肪 × 9、
+            蛋白质 × 4 折成热量，算出碳水 / 脂肪 / 蛋白质各自占这三大营养素热量的百分比，
+            四舍五入取整，零头归到「其他」。</li>
+          <li>后两项是娱乐成分，各占 2%~8%，从前面三项里按比例扣掉，所以整张表恒等于 100%。
+            前三项之外剩下的零头会给「其他」，永远不会凑不满。</li>
+          <li>为什么折算热量和商品标称热量会差一两个百分点：营养素折算必然有误差。
+            我们没有去凑这个数——成分表用营养素折算值，热量合计用官方标称值。</li>
+        </ol>
+        <div class="howto-live">
+          结果页会列出你这次的 A / B / C 三个分数，你可以拿它直接对上面那张映射表。
+        </div>
       </div>
-      <div class="panel-rows" id="panelRows"></div>
-      <p class="panel-note">前三项为真实营养占比，后两项为娱乐。</p>
-    </div>
-
-    <div class="items" id="items"></div>
-
-    <div class="divider" aria-hidden="true"></div>
-
-    <div class="totals">
-      <div class="total-block">
-        <span class="total-label">合计</span>
-        <span class="total-value is-red" id="totalPrice"></span>
-      </div>
-      <div class="total-block right-align">
-        <span class="total-label">热量</span>
-        <span class="total-value" id="totalKcal"></span>
-      </div>
-    </div>
-
-    <p class="comment" id="comment"></p>
-
-    <p class="rarity-note hidden" id="priceNote">* 该商品价格未在本门店核实，合计为约数</p>
-
-    <div class="fingerprint">
-      <div class="fingerprint-row">
-        <span>常见度 <b id="commonness"></b></span>
-        <span class="dot">·</span>
-        <span>哈希指纹 <code id="hashHex"></code></span>
-      </div>
-      <p class="rarity-note" id="rarityNote"></p>
-    </div>
-
-    <p class="rarity-note">试试改一个字，看看你的套餐会发生什么变化。</p>
-
-    <p class="disclaimer">纯属娱乐，不构成任何营养或心理建议。</p>
+    </details>
   </section>
 
-  <div class="actions hidden" id="actions">
-    <button class="btn btn-primary" type="button" id="copyBtn">复制文案</button>
-    <button class="btn btn-ghost" type="button" id="resetBtn">再测一个</button>
-  </div>
-
-  <!-- ============ 第二屏：消费换算（生成套餐后才出现） ============ -->
-  <section class="card hidden" id="budgetCard">
-    <div class="card-head">
-      <h2>我一年在麦当劳花多少钱</h2>
-      <span class="tag">读你自己的真实订单</span>
+  <!-- ============================================================
+       第二屏：答题（一题一屏）
+       ============================================================ -->
+  <section id="screenQuiz" class="hidden">
+    <div class="quiz-head">
+      <span class="quiz-step" id="quizStep">1/9</span>
+      <div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="9"
+           aria-valuenow="1" aria-label="答题进度">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
     </div>
-    <p class="card-sub">用你自己的真实订单，看看这笔钱还能变成什么。</p>
 
-    <div class="import-row">
+    <div class="quiz-card" id="quizCard">
+      <p class="quiz-index" id="quizIndex">Q1</p>
+      <p class="quiz-q" id="quizQuestion"></p>
+      <div class="quiz-options" id="quizOptions"></div>
+    </div>
+
+    <div class="quiz-nav">
+      <button class="btn btn-ghost" type="button" id="backBtn" disabled>上一题</button>
+      <span class="quiz-hint">选完自动进入下一题</span>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       第三屏：结果
+       ============================================================ -->
+  <section id="screenResult" class="hidden">
+
+    <!-- 1. 类型卡（小票风格） + 2. 成分表 -->
+    <section class="ticket" id="ticket" aria-live="polite">
+      <div class="ticket-top">
+        <span class="ticket-owner" id="ownerLabel">麦门人格测试 · 9 题</span>
+        <span class="ticket-stamp">MEAL TICKET</span>
+      </div>
+
+      <h2 class="meal-name" id="typeTitle"></h2>
+      <p class="type-identity" id="typeIdentity"></p>
+
+      <div class="items" id="items"></div>
+
+      <div class="divider" aria-hidden="true"></div>
+
+      <div class="totals">
+        <div class="total-block">
+          <span class="total-label">合计</span>
+          <span class="total-value is-red" id="totalPrice"></span>
+        </div>
+        <div class="total-block right-align">
+          <span class="total-label">热量</span>
+          <span class="total-value" id="totalKcal"></span>
+        </div>
+      </div>
+
+      <p class="rarity-note hidden" id="priceNote">* 该商品价格未在本门店核实，合计为约数</p>
+
+      <!-- 成分表：仿食品包装营养成分表，前三项是真实营养占比 -->
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-name">成分表</span>
+          <span class="panel-sub">每份你这份套餐</span>
+        </div>
+        <div class="panel-rows" id="panelRows"></div>
+        <p class="panel-note">前三项为真实营养占比，后两项为娱乐。</p>
+      </div>
+
+      <p class="sign-line hidden" id="signLine">你的小票签名 <code id="signHex"></code></p>
+
+      <p class="disclaimer">纯属娱乐，不构成任何营养或心理建议。</p>
+    </section>
+
+    <!-- 得分明细（可自行核对） -->
+    <details class="howto" id="scoreDetails">
+      <summary>这次的分数（可以自己核对）</summary>
+      <div class="howto-body">
+        <div class="howto-live" id="scoreLive"></div>
+        <p>每题只有一个选项得 1 分：Q1–Q3 计入 A 维度，Q4–Q6 计入 B 维度，Q7–Q9 计入 C 维度。
+          <b>≥2 取前一个标签，&lt;2 取后一个标签</b>，三个标签查表即可得到上面的类型。</p>
+      </div>
+    </details>
+
+    <!-- 3. 三段解析 -->
+    <section class="card">
+      <div class="card-head">
+        <h2>三段解析</h2>
+        <span class="tag">说得难听的那段是真的</span>
+      </div>
+      <div class="ana">
+        <p class="ana-label">你的优势</p>
+        <p class="ana-text" id="anaStrength"></p>
+      </div>
+      <div class="ana">
+        <p class="ana-label">你的阴影</p>
+        <p class="ana-text" id="anaShadow"></p>
+      </div>
+      <div class="ana">
+        <p class="ana-label">你最矛盾的地方</p>
+        <p class="ana-text" id="anaParadox"></p>
+      </div>
+    </section>
+
+    <!-- 4. 关系区 -->
+    <section class="card">
+      <div class="card-head">
+        <h2>你和别人</h2>
+        <span class="tag">6 个类型 + 2 个混合型互相评价</span>
+      </div>
+      <ul class="rel">
+        <li id="relKin"></li>
+        <li id="relOpposite"></li>
+        <li id="relClash"></li>
+      </ul>
+    </section>
+
+    <!-- 5. 名字个性化（可选，不影响类型和套餐） -->
+    <section class="card">
+      <div class="card-head">
+        <h2>给你的小票签个名</h2>
+        <span class="tag">可选</span>
+      </div>
+      <p class="card-sub">名字只印在小票上，不会改变你的类型、套餐和分数。</p>
       <input
-        id="orderFile"
-        type="file"
-        accept=".json,application/json"
-        aria-label="导入我的订单文件"
+        class="text-input"
+        id="signInput"
+        type="text"
+        placeholder="输入名字"
+        maxlength="16"
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+        aria-label="输入名字，给小票签名"
       />
-      <label class="btn btn-primary btn-import" for="orderFile" id="importLabel">导入我的订单</label>
-      <span class="import-hint" id="importHint">选择一个 JSON 文件</span>
+    </section>
+
+    <!-- 6. 分享 -->
+    <div class="actions">
+      <button class="btn btn-primary" type="button" id="copyBtn">复制文案</button>
+      <button class="btn btn-ghost" type="button" id="resetBtn">再测一次</button>
     </div>
 
-    <p class="import-help">
-      本地计算，数据不上传。先用 <code>python export_orders.py</code> 导出 <code>my-orders.json</code>
-    </p>
+    <!-- 消费换算（导入你自己的真实订单） -->
+    <section class="card hidden" id="budgetCard">
+      <div class="card-head">
+        <h2>我一年在麦当劳花多少钱</h2>
+        <span class="tag">读你自己的真实订单</span>
+      </div>
+      <p class="card-sub">用你自己的真实订单，看看这笔钱还能变成什么。</p>
 
-    <p class="import-error hidden" id="importError" role="alert"></p>
+      <div class="import-row">
+        <input
+          id="orderFile"
+          type="file"
+          accept=".json,application/json"
+          aria-label="导入我的订单文件"
+        />
+        <label class="btn btn-primary btn-import" for="orderFile" id="importLabel">导入我的订单</label>
+        <span class="import-hint" id="importHint">选择一个 JSON 文件</span>
+      </div>
 
-    <div class="hidden" id="orderResult">
-      <p class="order-headline" id="orderHeadline"></p>
-
-      <ul class="convert-list" id="convertList"></ul>
-
-      <div class="order-insight" id="orderInsight"></div>
-
-      <p class="budget-note hidden" id="budgetVerdict"></p>
-
-      <p class="rates">
-        换算口径：鹤岗房子 2000 元/㎡、iPhone 5999 元/台、电影票 45 元/张。<br />
-        金额全部来自你导入的订单文件，全程在浏览器里算，没有任何数据离开这台电脑。
+      <p class="import-help">
+        本地计算，数据不上传。先用 <code>python export_orders.py</code> 导出 <code>my-orders.json</code>
       </p>
-    </div>
-  </section>
 
-  <!-- ============ 算法说明（可自行验证） ============ -->
-  <details class="howto">
-    <summary>怎么算的（可以自己验证）</summary>
-    <div class="howto-body">
-      <ol>
-        <li>把名字处理成 <code>name.trim().toLowerCase()</code>，再编码成 <b>UTF-8 字节</b>
-          （<code>new TextEncoder().encode()</code>，中文一个字 3 字节）。</li>
-        <li>对字节逐个跑 FNV-1a 32 位：<code>h = 2166136261</code>，每个字节先 <code>h ^= byte</code>，
-          再 <code>h = (h × 16777619) mod 2³²</code>（代码里用 <code>Math.imul(h, 16777619)</code> 做精确 32 位乘法）。</li>
-        <li>主食 <code>(h &gt;&gt;&gt; 0) % 5</code>、小食 <code>(h &gt;&gt;&gt; 8) % 5</code>、
-          饮料 <code>(h &gt;&gt;&gt; 16) % 4</code>、甜品 <code>(h &gt;&gt;&gt; 24) % 4</code>。</li>
-        <li>人格名字不看哈希，只看你点了什么：按 <b>肉类 / 辣度（含双辣）/ 咖啡 / 甜品类型 / 热量档 / 份量感</b>
-          规则依次匹配，再按总热量选最终档位。哈希决定商品，商品决定人格。</li>
-        <li>成分表前三项是真的：营养数据来自<b>麦当劳官方 list-nutrition-foods 接口</b>
-          （160 条商品营养记录，本项目取其中 18 项，落盘在 <code>data/nutrition.official.json</code>）。
-          把四件套里每样的碳水 × 4、脂肪 × 9、蛋白质 × 4 折成热量，算出碳水 / 脂肪 / 蛋白质
-          各自占这三大营养素热量的百分比，四舍五入取整，零头归到「其他」。
-          后两项是娱乐成分，占 2%~8%，从前面三项里按比例扣掉，所以整张表恒等于 100%。</li>
-        <li>为什么折算热量和商品热量会差一点：营养素折算必然有 1% 左右的误差，
-          例如「张三」的 98 g 碳水 × 4 + 40 g 脂肪 × 9 + 31 g 蛋白质 × 4 = 876 kcal，
-          而四件套标称热量是 886 kcal，差 1.1%。我们没有去凑这个数，
-          成分表用的是营养素折算值，热量合计用的是官方标称值。</li>
-        <li>常见度 <code>((h &gt;&gt;&gt; 0) % 1000) / 10</code>，指纹为 <code>h</code> 的 8 位小写十六进制。</li>
-      </ol>
-      <div class="howto-live" id="howtoLive">先在上面输入一个名字，这里会显示本次的中间值。</div>
-    </div>
-  </details>
+      <p class="import-error hidden" id="importError" role="alert"></p>
+
+      <div class="hidden" id="orderResult">
+        <p class="order-headline" id="orderHeadline"></p>
+
+        <ul class="convert-list" id="convertList"></ul>
+
+        <div class="order-insight" id="orderInsight"></div>
+
+        <p class="budget-note hidden" id="budgetVerdict"></p>
+
+        <p class="rates">
+          换算口径：鹤岗房子 2000 元/㎡、iPhone 5999 元/台、电影票 45 元/张。<br />
+          金额全部来自你导入的订单文件，全程在浏览器里算，没有任何数据离开这台电脑。
+        </p>
+      </div>
+    </section>
+
+    <!-- 7. Star 引导：一行小字，不阻断任何东西 -->
+    <p class="star-line">
+      这个测试是一个人的业余作品，参加麦当劳 1024 创意开发大赛。如果你觉得有意思，
+      <a href="https://github.com/yuunyaj921-ui/mcd-name-meal" target="_blank" rel="noopener">给个 Star</a>
+      会让更多人看到它。
+    </p>
+  </section>
 
   <footer>
     <div class="rule"></div>
@@ -1036,7 +1439,7 @@
     <p>其中 <b>11 项已核实</b>：巨无霸、麦辣鸡腿汉堡、板烧鸡腿堡、双层吉士汉堡、麦香鱼、中薯条、麦乐鸡 5 块、麦辣鸡翅 2 块、香芋派、圆筒冰淇淋、可口可乐中杯——这些按门店实价计算。</p>
     <p>带 <sup>*</sup> 的 <b>7 项单价未经核实</b>（大薯条、小薯条、雪碧中杯、鲜萃咖啡大杯、无糖可乐中杯、奥利奥麦旋风、菠萝派），该门店无同规格单品，仅作参考。含这类商品的合计用「≈」标注，<b>只表示这份套餐里有未核实的单价、总价仅供参考</b>，其余已核实商品仍按门店实价相加。</p>
     <p>营养成分来自官方 <code>list-nutrition-foods</code> 接口（160 条），与价格数据相互独立。</p>
-    <p>本页不含任何预测或健康评价内容，全部结果由哈希函数确定性生成。</p>
+    <p>本页不含任何预测或健康评价内容，全部结果由你的选项确定性计算得出。</p>
   </footer>
 </div>
 
@@ -1060,7 +1463,7 @@
   /* =====================================================================
    * 1. 菜单数据（硬编码，离线可用）
    *    kcal 取自 nutrition.json 的 energyKcal（按 productName 精确匹配）
-   *    price 取自 menu.raw.json 的 price；标了 ref:true 的为同一快照门店的参考价
+   *    price 取自 menu.raw.json 的 price；标了 unverified:true 的为未核实参考价
    * ===================================================================== */
   var MENU = {
     mains: [
@@ -1091,127 +1494,15 @@
     ]
   };
 
-  /** 热量分档阈值（实测套餐热量区间 628–1305 kcal）。 */
-  var THRESHOLD = { HEAVY: 1200, MID: 1000, LIGHT: 850 };
-
   /** 消费换算口径。 */
   var RATE = { HOUSE_PER_SQM: 2000, IPHONE: 5999, MOVIE_TICKET: 45 };
-
-  /* =====================================================================
-   * 2. 麦门人格：55 句「点餐时在柜台前会说出口的话」+ 一句解读 + 两项荒诞成分
-   *
-   *    命名标准（硬规则，改名字前先过这一条）：
-   *      每个名字必须命中一个只有点餐场景才成立的东西——
-   *        a) 麦当劳专属物件：巨无霸 / 麦香鱼(鱼堡) / 麦辣鸡翅(鸡翅) / 薯条(中薯/大薯) /
-   *           可乐(无糖可乐) / 派 / 圆筒(甜筒) / 麦旋风 / 麦咖啡 / 套餐 / 纸袋 …
-   *        b) 或者一个只在柜台前才成立的动作：换 / 加 / 少放 / 现炸 / 现做 / 再来一个 /
-   *           还有吗 / 分开装 / 留一个 / 先上 …
-   *      不允许出现"通用的自嘲状态词"（例如"假装犒劳""我在做实验""工位蹲守"这类
-   *      换成任何消费场景都成立的短语），那样会和答题测试的人格标签同质化。
-   *      名字里不得出现任何字母代号，全部中文短句，≤8 字。
-   *
-   *    人格仍由套餐特征决定（肉类 / 辣度含双辣 / 咖啡 / 甜品类型 / 热量档 / 份量感），
-   *    规则表自上而下匹配，命中后按总热量选档。400 种组合（5×5×4×4）全部有名字，
-   *    55 个名字全部有组合命中，不存在从未被用到的死名字。
-   *
-   *    字段说明：
-   *      zh   —— 结果卡上显示的那句话（≤8 字，点餐动作）
-   *      desc —— 1~2 句解读，主语是"你"，可以有情绪，但名字本身必须是点餐动作
-   *      mix  —— 成分表后两项的荒诞成分，[名称, 百分比]，各取 2%~8%
-   * ===================================================================== */
-  var PERSONAS = {
-    /* ===== 双辣：麦辣鸡腿堡 + 麦辣鸡翅 ===== */
-    wingsMild:        { zh: '鸡翅别太辣',   desc: '“鸡翅别太辣”，说完自己先笑，因为上次也这么讲，辣度一次都没降过。你要的是个说法，不是真的少辣。', mix: [['嘴硬', 7], ['面子', 2]] },
-    wingsMore:        { zh: '再来份鸡翅',   desc: '鸡翅还剩一半，你已经把下一份算好了。汉堡还没动，追加的那句已经先出口了。',                     mix: [['贪心', 6], ['面子', 2]] },
-    /* ===== 牛 + 可乐 + 中薯：十年不变的那一套 ===== */
-    midFriesCoke:     { zh: '中薯可乐，谢谢', desc: '报单只有六个字：中薯可乐，谢谢。不用看菜单，不用想，这套组合你点了几百次。',                   mix: [['松弛', 5], ['拖延', 2]] },
-    /* ===== 牛 + 无糖可乐 + 中薯：自欺欺人的经典款 ===== */
-    zeroCoke:         { zh: '可乐换无糖',   desc: '巨无霸、中薯，一样没少，只有可乐换成无糖。你不是在控糖，你是在给这顿找一个能过关的说法。',     mix: [['自欺', 6], ['侥幸', 3]] },
-    /* ===== 份量拉满：大薯 + 麦旋风 ===== */
-    bigFriesFlurry:   { zh: '大薯加麦旋风', desc: '大薯和麦旋风同时报出来，柜台抬头看了你一眼。你说“今天就当没吃”，说得很有底气。',               mix: [['自欺', 5], ['拖延', 3]] },
-    upgradeFries:     { zh: '中薯换大薯',   desc: '服务员问要中薯还是大薯，你说中薯。三秒后改口：还是大薯吧。你的人生充满了这种三秒后的改口。',   mix: [['贪心', 6], ['纠结', 2]] },
-    friesFresh:       { zh: '薯条要现炸的', desc: '“薯条要现炸的”，说完就站到柜台边上等。你不是挑，你只是愿意为一包热薯条多站三分钟。',           mix: [['面子', 4], ['纠结', 4]] },
-    /* ===== 辣 + 麦旋风 ===== */
-    flurryCookie:     { zh: '麦旋风多加饼干', desc: '“麦旋风多加饼干”，说得特别熟练。你不是爱吃甜，你是需要一点能自己加的东西。',                 mix: [['贪心', 5], ['自欺', 3]] },
-    flurryAgain:      { zh: '再来个麦旋风', desc: '麦旋风见底，你说再来个。柜台问要一样的吗，你说对，一样的，就一样的。',                         mix: [['贪心', 7], ['侥幸', 2]] },
-    /* ===== 辣 + 派 ===== */
-    spicyPiePlease:   { zh: '辣完来个派',   desc: '辣到吸气，马上补一句“来个派”。谁也不许占上风，你处理矛盾的方式就是往嘴里再加一样。',         mix: [['嘴硬', 7], ['面子', 2]] },
-    pieFresh:         { zh: '派要现炸的吗', desc: '“派要现炸的吗”，问完自己也觉得多余。你就是想确认一下，这一份是不是刚出锅的。',                 mix: [['纠结', 5], ['侥幸', 3]] },
-    pieReserve:       { zh: '派给我留一个', desc: '单都下完了，特意补一句“派给我留一个”。你不怕别的卖完，只怕最后那个派没了。',                   mix: [['侥幸', 6], ['贪心', 2]] },
-    pieOneMore:       { zh: '再加一个派',   desc: '单都报完了，你又补一句“再加一个派”。你不是想吃，你是不想让这单结束得太干脆。',               mix: [['贪心', 6], ['拖延', 2]] },
-    /* ===== 辣 + 圆筒 ===== */
-    coneOnly:         { zh: '就要个圆筒',   desc: '排了半天队，最后只要一个圆筒。克制得让人心疼，你自己还挺得意。',                               mix: [['面子', 4], ['自欺', 4]] },
-    coneOne:          { zh: '圆筒来一个',   desc: '“圆筒来一个”，说得像顺便。其实你从进门前就在等这一句，等了一路。',                                       mix: [['侥幸', 4], ['松弛', 3]] },
-    /* ===== 辣 + 咖啡 + 麦旋风 ===== */
-    flurryCoffee:     { zh: '麦旋风配咖啡', desc: '麦旋风配咖啡，一冷一热一起上。你说这叫平衡，其实是两头都不肯放。',                             mix: [['逞强', 5], ['贪心', 3]] },
-    flurryNow:        { zh: '麦旋风现在吃', desc: '“麦旋风现在吃”，不打包。你受不了它在纸袋里多待十分钟，一分钟都不行。',                                       mix: [['松弛', 5], ['贪心', 3]] },
-    /* ===== 辣 + 咖啡 + 派 ===== */
-    coffeeAndPie:     { zh: '麦咖啡和派',   desc: '麦咖啡和派，一起报。你不需要想，这两样在你心里早就绑成一单了。',                               mix: [['松弛', 4], ['拖延', 4]] },
-    coffeePie:        { zh: '麦咖啡配个派', desc: '麦咖啡配个派，是你能想到最省事的安慰。苦的喝完，甜的收尾，然后继续。',                         mix: [['自欺', 4], ['拖延', 4]] },
-    /* ===== 辣 + 咖啡 + 圆筒 ===== */
-    coffeeCone:       { zh: '咖啡加个圆筒', desc: '咖啡加个圆筒，苦的甜的都要。你说这是一天的完整流程，其实只是不肯收尾。',                       mix: [['自欺', 5], ['逞强', 3]] },
-    coneCoolSpicy:    { zh: '圆筒压一压辣', desc: '辣到不行，先咬一口圆筒压下去。你对付辣的办法，从来不是点不辣的。',                             mix: [['逞强', 7], ['面子', 2]] },
-    /* ===== 牛 + 麦旋风 ===== */
-    flurryFresh:      { zh: '麦旋风要现做的', desc: '“麦旋风要现做的”，说完就站边上等。你愿意为一杯刚打出来的多站两分钟。',                       mix: [['纠结', 5], ['面子', 3]] },
-    flurryExtra:      { zh: '麦旋风多加料', desc: '“多加料”，说得很小声，怕被人听见。你连贪心都要贪得体面，还怕多花那两块钱。',                                       mix: [['贪心', 6], ['面子', 2]] },
-    /* ===== 牛 + 派 ===== */
-    taroAsk:          { zh: '香芋派还有吗', desc: '每次都要问一句“香芋派还有吗”，哪怕答案从来没变过。你问的不是派，是那点确定感。',               mix: [['纠结', 5], ['拖延', 3]] },
-    pieHotPlease:     { zh: '派要热的谢谢', desc: '“派要热的，谢谢”，提完要求还要补一句谢谢。你连开口都不好意思。',                               mix: [['面子', 6], ['纠结', 2]] },
-    taroOneMore:      { zh: '香芋派加一个', desc: '“香芋派加一个”，语气很随意。其实你心里清楚，这是今天第二个了。',                               mix: [['贪心', 6], ['侥幸', 2]] },
-    comboOneMore:     { zh: '套餐再加一份', desc: '套餐都点完了，你说再加一份。柜台问确定吗，你说确定，然后自己先笑了。',                         mix: [['贪心', 7], ['面子', 2]] },
-    /* ===== 牛 + 圆筒 ===== */
-    coneFirst:        { zh: '圆筒先上',     desc: '“圆筒先上”，主食还没到。你把甜的安排在前面，理由是不想等。',                                 mix: [['松弛', 5], ['贪心', 3]] },
-    coneSeparate:     { zh: '圆筒分开装',   desc: '“圆筒分开装”，怕它化在袋子里。你对一支圆筒的照顾，比对自己还细致。',                           mix: [['面子', 5], ['纠结', 3]] },
-    /* ===== 牛 + 咖啡 + 麦旋风 ===== */
-    coffeeFlurry:     { zh: '麦咖啡配旋风', desc: '麦咖啡配旋风，苦的冰的一起上。你上班的每个下午，都靠这一对撑着。',                             mix: [['逞强', 5], ['自欺', 3]] },
-    flurryDouble:     { zh: '麦旋风双份',   desc: '“麦旋风双份”，说得很轻，怕柜台多问一句。你不是请客，你是给自己留了后路。',                                     mix: [['贪心', 7], ['自欺', 2]] },
-    /* ===== 牛 + 咖啡 + 派 ===== */
-    coffeePieAdd:     { zh: '麦咖啡加派',   desc: '麦咖啡加派，报得飞快，怕被人听出来。你在会上偷偷下的单，比谁都熟练。',                                       mix: [['松弛', 4], ['拖延', 4]] },
-    coffeePieTogether: { zh: '咖啡派一起上', desc: '咖啡派一起上，报单不到五秒。你把复杂的事交给这两样，简单得像在敷衍自己。',                     mix: [['贪心', 5], ['逞强', 3]] },
-    /* ===== 牛 + 咖啡 + 圆筒 ===== */
-    coffeeConeLight:  { zh: '咖啡配圆筒',   desc: '咖啡配圆筒，一个负责醒，一个负责哄。你把自己拆成两半来照顾。',                                 mix: [['自欺', 5], ['松弛', 3]] },
-    coneCoffee:       { zh: '圆筒配麦咖啡', desc: '圆筒配麦咖啡，先甜后苦。你说这样能收心，其实只是想让下午慢一点。',                             mix: [['纠结', 4], ['自欺', 4]] },
-    /* ===== 鸡 + 麦旋风 ===== */
-    flurrySingle:     { zh: '麦旋风要一个', desc: '“麦旋风要一个”，说得毫无起伏。你已经不需要给自己找理由了。',                                   mix: [['松弛', 5], ['自欺', 3]] },
-    flurryScoop:      { zh: '麦旋风多给一勺', desc: '“多给一勺行吗”，问得很客气。柜台真多给了，你能高兴一下午。',                                 mix: [['面子', 5], ['侥幸', 3]] },
-    /* ===== 鸡 + 派 ===== */
-    pieSwap:          { zh: '派换个口味',   desc: '“派换个口味吧”，其实上次也这么换。你不是想尝新，你只是不想每次都一样。',                       mix: [['纠结', 6], ['拖延', 2]] },
-    pieAddOne:        { zh: '派再加一个',   desc: '派再加一个，说的时候眼睛盯着柜台。你怕对方拒绝，又怕自己反悔。',                               mix: [['纠结', 5], ['侥幸', 3]] },
-    /* ===== 鸡 + 圆筒 ===== */
-    coneAgain:        { zh: '再要一个甜筒', desc: '甜筒吃完，你说再要一个。你不是热，你是想让这顿的结尾再长一点。',                               mix: [['贪心', 6], ['侥幸', 2]] },
-    coneNow:          { zh: '甜筒现在吃',   desc: '“甜筒现在吃”，不带走。你连一支甜筒都要趁它最好的那两分钟。',                                   mix: [['松弛', 5], ['贪心', 3]] },
-    /* ===== 鸡 + 咖啡 + 麦旋风 ===== */
-    flurryTakeaway:   { zh: '麦旋风打包',   desc: '“麦旋风打包”，带回去慢慢吃。你的快乐要留到晚上，白天不配。',                                   mix: [['拖延', 6], ['自欺', 2]] },
-    /* ===== 鸡 + 咖啡 + 派 ===== */
-    threepm:          { zh: '三点麦咖啡',   desc: '三点一到，麦咖啡和派一起报，总共五个字。你不是饿，你需要一件事把下午切成两半。',               mix: [['拖延', 5], ['装死', 3]] },
-    pieCoffeeTakeaway: { zh: '派配咖啡打包', desc: '派配咖啡打包，一路拎回工位。你连吃都排在别人后面，还觉得挺合理。',                                         mix: [['拖延', 5], ['面子', 3]] },
-    /* ===== 鸡 + 咖啡 + 圆筒 ===== */
-    coneHold:         { zh: '圆筒留一个',   desc: '“圆筒留一个”，说得像给别人留的。其实到最后，你谁也舍不得给。',                                 mix: [['面子', 6], ['自欺', 2]] },
-    /* ===== 鱼 + 麦旋风 ===== */
-    fishFlurry:       { zh: '麦香鱼配旋风', desc: '麦香鱼配旋风，谁看都觉得怪。只有你觉得这叫搭，还得意了一整路。',                                     mix: [['纠结', 5], ['面子', 3]] },
-    fishCombo:        { zh: '麦香鱼要套餐', desc: '“麦香鱼要套餐”，说得规规矩矩。你在柜台前最老实，老实得像个模范顾客。',                         mix: [['松弛', 5], ['拖延', 3]] },
-    /* ===== 鱼 + 派 ===== */
-    fishPie:          { zh: '麦香鱼加个派', desc: '麦香鱼加个派，鱼是点给别人看的，派才是点给自己吃的。你不骗人，只是先骗过自己。',               mix: [['纠结', 5], ['贪心', 3]] },
-    fishFresh:        { zh: '鱼堡要现做的', desc: '“鱼堡要现做的”，说完自己都有点不好意思。你难得提一次要求，还得先道歉。',                       mix: [['面子', 5], ['侥幸', 3]] },
-    /* ===== 鱼 + 圆筒 ===== */
-    fishCone:         { zh: '鱼堡配圆筒',   desc: '鱼堡配圆筒，一份咸的一份甜的。你把一顿饭安排得很讲究，讲究得有点空。',                         mix: [['松弛', 4], ['自欺', 4]] },
-    coneDinner:       { zh: '圆筒当晚饭',   desc: '圆筒当晚饭，说得轻描淡写。你不是不饿，你是懒得再想一遍吃什么。',                                   mix: [['拖延', 5], ['装死', 3]] },
-    /* ===== 鱼 + 咖啡 + 麦旋风 ===== */
-    fishComboFlurry:  { zh: '麦香鱼旋风套餐', desc: '“麦香鱼旋风套餐”，报得很顺，一个字都没错。你把一份套餐点成了一套流程。',                                   mix: [['装死', 4], ['松弛', 4]] },
-    /* ===== 鱼 + 咖啡 + 派 ===== */
-    fishCoffee:       { zh: '麦香鱼配咖啡', desc: '麦香鱼配咖啡，清淡得像在照顾自己。演完这一场，晚上还得再补一顿真的。',                         mix: [['自欺', 6], ['面子', 2]] },
-    fishComboPie:     { zh: '麦香鱼套餐加派', desc: '套餐再加个派，加得毫不犹豫。你说这叫刚好，其实你从来没算过。',                               mix: [['贪心', 5], ['拖延', 3]] },
-    /* ===== 鱼 + 咖啡 + 圆筒 ===== */
-    fishConeEnough:   { zh: '鱼堡圆筒就够', desc: '“鱼堡圆筒就够”，说完还真觉得够了。你一向很会给自己做减法，减到只剩甜。',                       mix: [['嘴硬', 6], ['自欺', 2]] }
-  };
 
   /**
    * 营养成分表：按商品 code 索引，单位克（碳水 / 蛋白质 / 脂肪）。
    * 数据来自麦当劳官方 list-nutrition-foods 接口的 160 条商品营养记录，逐项对应后
    * 落盘在 data/nutrition.official.json，本表与那份文件逐格一致（18 项）。
    * 与 MENU 里同商品的 kcal 交叉校验过：三大营养素按 4 / 4 / 9 kcal/g 折算出的热量
-   * 与商品 kcal 的偏差都在 5% 以内，整份套餐合计偏差约 1%，所以成分表的前三项
-   * 是真的从「这份套餐」算出来的，不是编的。
+   * 与商品 kcal 的偏差都在 5% 以内，所以成分表的前三项是真的从「这份套餐」算出来的。
    */
   var NUTRI = {
     BIGMAC:    { carb: 42, protein: 27, fat: 26 },
@@ -1234,177 +1525,263 @@
     CONE:      { carb: 14, protein:  2, fat:  3 }
   };
 
-  /** 兜底荒诞成分（人格数据缺字段时使用，正常不会触发）。 */
+  /** 兜底荒诞成分（类型数据缺字段时使用，正常不会触发）。 */
   var FALLBACK_MIX = [['嘴硬', 5], ['侥幸', 3]];
 
-  /**
-   * 人格规则表：自上而下第一条命中即生效，再按总热量落在哪个区间决定最终名字。
-   * 判定维度只取六项——肉类 / 辣度（含双辣）/ 咖啡 / 甜品类型 / 热量档 / 份量感（大薯+甜品），
-   * 所以名字一定和用户"点了什么"绑定，不会出现随机命名。
-   * slots 里的 max 是总热量（kcal）的开区间上界。
-   */
-  var PERSONA_RULES = [
-    /* 双辣：主食辣 + 小食辣 */
-    { when: { dbl: true }, slots: [
-      { max: 1000,  id: 'wingsMild' },
-      { max: 99999, id: 'wingsMore' }
-    ] },
-    /* 最经典款：牛 + 可乐 + 中薯 */
-    { when: { meat: 'beef', drink: 'coke', side: 'FRIES_M' }, slots: [
-      { max: 99999, id: 'midFriesCoke' }
-    ] },
-    /* 牛 + 无糖可乐 + 中薯：可乐换无糖 */
-    { when: { meat: 'beef', drink: 'zero', side: 'FRIES_M' }, slots: [
-      { max: 99999, id: 'zeroCoke' }
-    ] },
-    /* 份量感全开：大薯 + 麦旋风 */
-    { when: { fullOpen: true, meat: 'beef', kcalMin: 1200 }, slots: [
-      { max: 99999, id: 'bigFriesFlurry' }
-    ] },
-    { when: { fullOpen: true, meat: 'beef' }, slots: [
-      { max: 99999, id: 'upgradeFries' }
-    ] },
-    { when: { fullOpen: true }, slots: [
-      { max: 99999, id: 'friesFresh' }
-    ] },
-
-    /* 辣 + 麦旋风 */
-    { when: { spicy: true, coffee: false, dessert: 'flurry' }, slots: [
-      { max: 1040,  id: 'flurryCookie' },
-      { max: 99999, id: 'flurryAgain' }
-    ] },
-    /* 辣 + 派 */
-    { when: { spicy: true, coffee: false, dessert: 'pie' }, slots: [
-      { max: 900,   id: 'spicyPiePlease' },
-      { max: 1010,  id: 'pieFresh' },
-      { max: 1100,  id: 'pieReserve' },
-      { max: 99999, id: 'pieOneMore' }
-    ] },
-    /* 辣 + 圆筒 */
-    { when: { spicy: true, coffee: false, dessert: 'cone' }, slots: [
-      { max: 805,   id: 'coneOnly' },
-      { max: 99999, id: 'coneOne' }
-    ] },
-    /* 辣 + 咖啡 + 麦旋风 */
-    { when: { spicy: true, coffee: true, dessert: 'flurry' }, slots: [
-      { max: 980,   id: 'flurryCoffee' },
-      { max: 99999, id: 'flurryNow' }
-    ] },
-    /* 辣 + 咖啡 + 派 */
-    { when: { spicy: true, coffee: true, dessert: 'pie' }, slots: [
-      { max: 950,   id: 'coffeeAndPie' },
-      { max: 99999, id: 'coffeePie' }
-    ] },
-    /* 辣 + 咖啡 + 圆筒 */
-    { when: { spicy: true, coffee: true, dessert: 'cone' }, slots: [
-      { max: 800,   id: 'coffeeCone' },
-      { max: 99999, id: 'coneCoolSpicy' }
-    ] },
-
-    /* 牛 + 麦旋风 */
-    { when: { meat: 'beef', coffee: false, dessert: 'flurry' }, slots: [
-      { max: 1080,  id: 'flurryFresh' },
-      { max: 99999, id: 'flurryExtra' }
-    ] },
-    /* 牛 + 派 */
-    { when: { meat: 'beef', coffee: false, dessert: 'pie' }, slots: [
-      { max: 940,   id: 'taroAsk' },
-      { max: 1020,  id: 'pieHotPlease' },
-      { max: 1110,  id: 'taroOneMore' },
-      { max: 99999, id: 'comboOneMore' }
-    ] },
-    /* 牛 + 圆筒 */
-    { when: { meat: 'beef', coffee: false, dessert: 'cone' }, slots: [
-      { max: 860,   id: 'coneFirst' },
-      { max: 99999, id: 'coneSeparate' }
-    ] },
-    /* 牛 + 咖啡 + 麦旋风 */
-    { when: { meat: 'beef', coffee: true, dessert: 'flurry' }, slots: [
-      { max: 1000,  id: 'coffeeFlurry' },
-      { max: 99999, id: 'flurryDouble' }
-    ] },
-    /* 牛 + 咖啡 + 派 */
-    { when: { meat: 'beef', coffee: true, dessert: 'pie' }, slots: [
-      { max: 960,   id: 'coffeePieAdd' },
-      { max: 99999, id: 'coffeePieTogether' }
-    ] },
-    /* 牛 + 咖啡 + 圆筒 */
-    { when: { meat: 'beef', coffee: true, dessert: 'cone' }, slots: [
-      { max: 790,   id: 'coffeeConeLight' },
-      { max: 99999, id: 'coneCoffee' }
-    ] },
-
-    /* 鸡 + 麦旋风 */
-    { when: { meat: 'chicken', coffee: false, dessert: 'flurry' }, slots: [
-      { max: 980,   id: 'flurrySingle' },
-      { max: 99999, id: 'flurryScoop' }
-    ] },
-    /* 鸡 + 派 */
-    { when: { meat: 'chicken', coffee: false, dessert: 'pie' }, slots: [
-      { max: 930,   id: 'pieSwap' },
-      { max: 99999, id: 'pieAddOne' }
-    ] },
-    /* 鸡 + 圆筒 */
-    { when: { meat: 'chicken', coffee: false, dessert: 'cone' }, slots: [
-      { max: 800,   id: 'coneAgain' },
-      { max: 99999, id: 'coneNow' }
-    ] },
-    /* 鸡 + 咖啡 + 麦旋风 */
-    { when: { meat: 'chicken', coffee: true, dessert: 'flurry' }, slots: [
-      { max: 99999, id: 'flurryTakeaway' }
-    ] },
-    /* 鸡 + 咖啡 + 派 */
-    { when: { meat: 'chicken', coffee: true, dessert: 'pie' }, slots: [
-      { max: 880,   id: 'threepm' },
-      { max: 99999, id: 'pieCoffeeTakeaway' }
-    ] },
-    /* 鸡 + 咖啡 + 圆筒 */
-    { when: { meat: 'chicken', coffee: true, dessert: 'cone' }, slots: [
-      { max: 99999, id: 'coneHold' }
-    ] },
-
-    /* 鱼 + 麦旋风 */
-    { when: { meat: 'fish', coffee: false, dessert: 'flurry' }, slots: [
-      { max: 910,   id: 'fishFlurry' },
-      { max: 99999, id: 'fishCombo' }
-    ] },
-    /* 鱼 + 派 */
-    { when: { meat: 'fish', coffee: false, dessert: 'pie' }, slots: [
-      { max: 870,   id: 'fishPie' },
-      { max: 99999, id: 'fishFresh' }
-    ] },
-    /* 鱼 + 圆筒 */
-    { when: { meat: 'fish', coffee: false, dessert: 'cone' }, slots: [
-      { max: 720,   id: 'fishCone' },
-      { max: 99999, id: 'coneDinner' }
-    ] },
-    /* 鱼 + 咖啡 + 麦旋风 */
-    { when: { meat: 'fish', coffee: true, dessert: 'flurry' }, slots: [
-      { max: 99999, id: 'fishComboFlurry' }
-    ] },
-    /* 鱼 + 咖啡 + 派 */
-    { when: { meat: 'fish', coffee: true, dessert: 'pie' }, slots: [
-      { max: 800,   id: 'fishCoffee' },
-      { max: 99999, id: 'fishComboPie' }
-    ] },
-    /* 鱼 + 咖啡 + 圆筒 */
-    { when: { meat: 'fish', coffee: true, dessert: 'cone' }, slots: [
-      { max: 99999, id: 'fishConeEnough' }
-    ] }
+  /* =====================================================================
+   * 2. 9 道题
+   *    每题两个选项，每个选项只标记一个维度（A / B / C）和 1 分或 0 分。
+   *    维度名与计分标记都不显示给用户，用户不该知道自己在被测什么。
+   * ===================================================================== */
+  var QUESTIONS = [
+    {
+      id: 'Q1',
+      text: '你走进一家没去过的麦当劳，柜台前在排队。',
+      options: [
+        { label: '先扫一眼今天有什么活动、有没有券', dim: 'A', score: 1 },
+        { label: '哪张图顺眼就点哪个', dim: 'A', score: 0 }
+      ]
+    },
+    {
+      id: 'Q2',
+      text: '朋友问你“你怎么总点这个”。',
+      options: [
+        { label: '我能说出具体理由：价格、热量、还是口味', dim: 'A', score: 1 },
+        { label: '说不上来，就是习惯了', dim: 'A', score: 0 }
+      ]
+    },
+    {
+      id: 'Q3',
+      text: '菜单上出现了没吃过的新品。',
+      options: [
+        { label: '先看它的热量和价格，再决定试不试', dim: 'A', score: 1 },
+        { label: '看着有意思就点一个', dim: 'A', score: 0 }
+      ]
+    },
+    {
+      id: 'Q4',
+      text: '一个人吃饭，你怎么点。',
+      options: [
+        { label: '点个套餐，省事', dim: 'B', score: 1 },
+        { label: '单点几样自己喜欢的', dim: 'B', score: 0 }
+      ]
+    },
+    {
+      id: 'Q5',
+      text: '下面哪种情况你更受不了。',
+      options: [
+        { label: '一顿饭没有主食，总觉得没吃', dim: 'B', score: 1 },
+        { label: '一顿饭全是主食，太单调', dim: 'B', score: 0 }
+      ]
+    },
+    {
+      id: 'Q6',
+      text: '看到「随心配 1+1」。',
+      options: [
+        { label: '组合太麻烦，不如直接点套餐', dim: 'B', score: 1 },
+        { label: '挺自由的，可以自己配', dim: 'B', score: 0 }
+      ]
+    },
+    {
+      id: 'Q7',
+      text: '你点了麦旋风，但正餐还没上。',
+      options: [
+        { label: '先吃，反正会化', dim: 'C', score: 1 },
+        { label: '等等，先吃正餐', dim: 'C', score: 0 }
+      ]
+    },
+    {
+      id: 'Q8',
+      text: '甜品柜就在收银台旁边。',
+      options: [
+        { label: '顺手就点了', dim: 'C', score: 1 },
+        { label: '想想还是先不点', dim: 'C', score: 0 }
+      ]
+    },
+    {
+      id: 'Q9',
+      text: '一桌东西上齐了，最想吃的那个也在里面。',
+      options: [
+        { label: '先吃最想吃的', dim: 'C', score: 1 },
+        { label: '留到最后当压轴', dim: 'C', score: 0 }
+      ]
+    }
   ];
 
-  /** 兜底人格（规则表理论上已覆盖全部 400 种组合）。 */
-  var FALLBACK_PERSONA = 'midFriesCoke';
+  /* =====================================================================
+   * 3. 8 种组合 → 6 个类型 + 2 个混合型
+   *
+   *    key 的格式是「A-B-C」，取值：
+   *      calc 算计 / feel 感觉
+   *      combo 整装 / loose 散装
+   *      now  即时 / later 延后
+   *
+   *    每个类型固定一份套餐（items 里是 MENU 的 code + 小票上那一栏的角色），
+   *    价格和热量一律从 MENU 现算，不写死数字。
+   * ===================================================================== */
+  var TYPES = {
+    /* ---- 类型 1：感觉 + 整装 + 延后 ---- */
+    oldstyle: {
+      id: 'oldstyle',
+      name: '老样子',
+      identity: '用重复消除选择的人',
+      isMix: false,
+      items: [['BIGMAC', '主食'], ['FRIES_M', '小食'], ['COKE_M', '饮料']],
+      strength: '你从不踩雷，是所有人里最靠谱的饭搭子。说到就到，绝不临时改主意。',
+      shadow: '别人问你“这家有什么好吃的”，你答不上来。你吃了三年，但你说不出它好在哪。',
+      paradox: '最熟悉的那个东西，恰恰是你最说不出理由的。你能详细解释为什么喜欢一部电影，但解释不了为什么每次都是巨无霸。',
+      mix: [['惯性', 5], ['安全感', 3]],
+      punch: '——吃了三年，还是说不出它好在哪。',
+      kin: { name: '可乐换无糖', reason: '都不冲动，都点固定的东西。区别是他算过，你没算。' },
+      opposite: { name: '中薯换大薯', reason: '你永远一模一样，他永远再加一样。' },
+      clash: { name: '不要主食', reason: '他觉得你被套餐驯化了，你觉得他不好好吃饭。' }
+    },
 
-  var CALORIE_LINES = {
-    heavy: ['这一顿的热量，先记在明天的账上。', '这一顿顶我两天饭。', '热量是快乐的计量单位。'],
-    mid:   ['刚好够撑到下班。', '下午不用偷偷点外卖了。', '碳水给够，效率起飞。'],
-    light: ['勉强算一顿正餐。', '吃到八分饱，礼貌收手。', '不多不少，刚刚好。'],
-    tiny:  ['你居然还留了余地。', '轻量套餐，主打一个克制。', '这点热量，我还能再走两站路。']
+    /* ---- 类型 2：算计 + 整装 + 即时 ---- */
+    upsize: {
+      id: 'upsize',
+      name: '中薯换大薯',
+      identity: '用“更多”对抗“不够”的人',
+      isMix: false,
+      items: [['DUBLECHE', '主食'], ['FRIES_L', '小食'], ['MCFLURRY', '甜品']],
+      strength: '你不亏待自己，活得尽兴。跟你吃饭的人会觉得“这人真会吃”。',
+      shadow: '吃不完，但不会承认吃不完。剩半份薯条放在那，你说“一会儿再吃”，然后没有一会儿。',
+      paradox: '你用“更多”来掩盖“其实不知道自己要什么”。加芝士、换大薯、加甜品——每一次“加”，都是一次“我还没想清楚，先多要点”。',
+      mix: [['贪心', 6], ['嘴硬', 2]],
+      punch: '——你在算人均，我在算还差一样什么。',
+      kin: { name: '先来个甜的', reason: '都要“现在”。区别是他要“甜”，你要“多”。' },
+      opposite: { name: '老样子', reason: '他永远一模一样，你永远再加一样。' },
+      clash: { name: '可乐换无糖', reason: '他在算人均，你在算还差一样什么。他觉得你失控，你觉得他扫兴。' }
+    },
+
+    /* ---- 类型 3：算计 + 整装 + 延后 ---- */
+    zerocoke: {
+      id: 'zerocoke',
+      name: '可乐换无糖',
+      identity: '每个选择都要有理由的人',
+      isMix: false,
+      /* 故意用普通可乐：无糖只在名字和文案里，这是这个类型的矛盾点本身 */
+      items: [['BIGMAC', '主食'], ['COKE_M', '饮料']],
+      strength: '你精明，从不被坑，永远知道自己花了多少钱。',
+      shadow: '省下来的钱没花在更值得的地方，省下来的热量也没让你更健康。你只是获得了一种“我在管理自己”的感觉。',
+      paradox: '一边控制一边放纵，还觉得自己很理性。点了巨无霸、大薯、麦旋风，然后可乐换成无糖——这不是控糖，这是给自己一个继续吃的理由。',
+      mix: [['自欺', 6], ['侥幸', 3]],
+      punch: '——这不是控糖，这是给自己一个继续吃的理由。',
+      kin: { name: '老样子', reason: '都不冲动。区别是他不思考，你思考太多。' },
+      opposite: { name: '先来个甜的', reason: '他先吃再说，你先算后吃。' },
+      clash: { name: '中薯换大薯', reason: '你在算人均，他在加量。你说“够了”，他说“再加个甜品吧”。' }
+    },
+
+    /* ---- 类型 4：感觉 + 散装 + 即时 ---- */
+    sweetfirst: {
+      id: 'sweetfirst',
+      name: '先来个甜的',
+      identity: '把“现在”放在“应该”前面的人',
+      isMix: false,
+      items: [['MCFLURRY', '甜品'], ['PIE_TARO', '甜品'], ['WINGS_2', '小食']],
+      strength: '你不委屈当下。你的快乐是即时的、真实的，不依赖“延迟满足”这类说法。',
+      shadow: '正事总被推后。账单不是不来，是晚点来。',
+      paradox: '你用“甜”来解决“不甜”的事。心情不好来一个，心情好也来一个——甜是万能答案，也说明你只有这一个答案。',
+      mix: [['即时感', 5], ['拖延', 3]],
+      punch: '——甜是万能答案，也说明你只有这一个答案。',
+      kin: { name: '中薯换大薯', reason: '都想要现在。区别是他靠“量”，你靠“甜”。' },
+      opposite: { name: '可乐换无糖', reason: '他先算后吃，你先吃再说。' },
+      clash: { name: '可乐换无糖', reason: '他在等你先吃正餐，你已经把甜品吃完了。' }
+    },
+
+    /* ---- 类型 5：算计 + 散装 + 即时 ---- */
+    gnaw: {
+      id: 'gnaw',
+      name: '这个要啃',
+      identity: '过程本身就是目的的人',
+      isMix: false,
+      items: [['WINGS_2', '小食'], ['NUGGETS_5', '小食'], ['SPRITE_M', '饮料']],
+      strength: '你能从小事里得到满足。你吃一顿麦当劳的快乐，比大多数人都高。',
+      shadow: '一起吃的人要等你。而且你不太在意这件事。',
+      paradox: '你要“仪式感”，又嫌“太麻烦”——但麻烦正是仪式感的来源。如果鸡翅是无骨的，你反而不会点。',
+      mix: [['仪式感', 5], ['耐心', 3]],
+      punch: '——如果鸡翅是无骨的，你反而不会点。',
+      kin: { name: '先来个甜的', reason: '都愿意为“当下”付出。区别是他要甜的，你要过程。' },
+      opposite: { name: '不要主食', reason: '他拼起来就吃，你要慢慢对付。' },
+      clash: { name: '不要主食', reason: '他要快，你要慢。等的人烦，被等的人也烦。' }
+    },
+
+    /* ---- 类型 6：感觉 + 散装 + 延后 ---- */
+    nomain: {
+      id: 'nomain',
+      name: '不要主食',
+      identity: '拒绝被规定的人',
+      isMix: false,
+      items: [['NUGGETS_5', '小食'], ['FRIES_M', '小食'], ['CONE', '甜品']],
+      strength: '你自由，不被“应该怎么吃”绑架。你是那种在所有人都点套餐时敢单点的人。',
+      shadow: '你不是不想吃主食，你是不敢承认自己想要一整份。',
+      paradox: '你拒绝“主体”，是因为“主体”意味着承诺。一份套餐是一个完整的承诺（我就要这一顿），而拼凑的小食可以是“我还没决定”。',
+      mix: [['自由', 5], ['回避', 3]],
+      punch: '——拼凑的小食，可以是“我还没决定”。',
+      kin: { name: '这个要啃', reason: '你们都拒绝标准套餐，都自己组装。区别是他要慢，你要快。' },
+      opposite: { name: '老样子', reason: '他完全依赖菜单规定的结构，你完全拒绝。' },
+      clash: { name: '老样子', reason: '他觉得你不好好吃饭，你觉得他被套餐驯化了。' }
+    },
+
+    /* ---- 混合型 1：感觉 + 整装 + 即时 ---- */
+    feelall: {
+      id: 'feelall',
+      name: '跟着感觉走',
+      identity: '凭当下想吃就点，但一定要点成完整的一套',
+      isMix: true,
+      items: [['DUBLECHE', '主食'], ['FRIES_M', '小食'], ['COKE_M', '饮料']],
+      strength: '你不亏待自己，也不为难自己。想吃什么就点什么，还顺手点成一个齐整的样子。',
+      shadow: '你看起来随性，其实一点都不随便。点的时候很松，落单的时候必须整齐——两样都要，一样不能少。',
+      paradox: '你说“就随便点”，然后点出了一套完整结构。你嘴上拒绝计划，手上执行了计划。',
+      mix: [['随性', 5], ['要面子', 3]],
+      punch: '——嘴上说随便，点出来是一整套。',
+      kin: { name: '中薯换大薯', reason: '都点成完整一套。区别是他算过，你没算。' },
+      opposite: { name: '这个要啃', reason: '他要过程，你要结果齐整。' },
+      clash: { name: '不要主食', reason: '他要拼，你要整。他说“我不需要主食”，你说“那也得有个样子”。' }
+    },
+
+    /* ---- 混合型 2：算计 + 散装 + 延后 ---- */
+    saveup: {
+      id: 'saveup',
+      name: '攒着用',
+      identity: '算过每一分钱，也不着急花',
+      isMix: true,
+      items: [['NUGGETS_5', '小食'], ['FRIES_S', '小食'], ['COKE_ZERO', '饮料']],
+      strength: '你自由，不被“应该怎么吃”绑架。你算得清，也不装阔。',
+      shadow: '省下来的钱一直在账上，没变成任何一次痛快。你不是不想花，是想等一个“值得”的时刻，而那个时刻一直没来。',
+      paradox: '你算得清清楚楚，却迟迟不下单。精打细算的最后一步，永远是“再等等”。',
+      mix: [['精算', 5], ['犹豫', 3]],
+      punch: '——算得清清楚楚，就是不急着花。',
+      kin: { name: '不要主食', reason: '都自己组装。区别是他凭感觉，你靠算。' },
+      opposite: { name: '中薯换大薯', reason: '他先加再说，你先算再说。' },
+      clash: { name: '先来个甜的', reason: '他要现在，你要以后。' }
+    }
+  };
+
+  /** 8 种组合 → 类型 id（见 howto 里的映射表）。 */
+  var TYPE_MAP = {
+    'calc-combo-now': 'upsize',
+    'calc-combo-later': 'zerocoke',
+    'calc-loose-now': 'gnaw',
+    'calc-loose-later': 'saveup',
+    'feel-combo-now': 'feelall',
+    'feel-combo-later': 'oldstyle',
+    'feel-loose-now': 'sweetfirst',
+    'feel-loose-later': 'nomain'
+  };
+
+  /** 兜底类型（映射表已覆盖全部 8 种组合，正常不会触发）。 */
+  var FALLBACK_TYPE = 'oldstyle';
+
+  /** 维度标签，用于"这次的分数"与分享文案。 */
+  var DIM_LABEL = {
+    a: { calc: '算计', feel: '凭感觉' },
+    b: { combo: '整装', loose: '散装' },
+    c: { now: '即时', later: '延后' }
   };
 
   /* =====================================================================
-   * 3. 哈希核心
+   * 4. 哈希核心（保留，只用于小票签名，不参与类型与套餐）
    * ===================================================================== */
 
   /**
@@ -1473,81 +1850,6 @@
   }
 
   /**
-   * 把哈希值映射成一份套餐（纯函数，无随机、无时间因素）。
-   * @param {string} rawName 用户输入的名字
-   * @returns {object|null} 套餐对象；名字为空时返回 null
-   */
-  function buildMeal(rawName) {
-    var display = String(rawName == null ? '' : rawName).trim();
-    if (!display) { return null; }
-
-    var key = display.toLowerCase();
-    var bytes = encodeUtf8(key);
-    var hash = fnv1aBytes(bytes);
-
-    var main = MENU.mains[hash % MENU.mains.length];
-    var side = MENU.sides[(hash >>> 8) % MENU.sides.length];
-    var drink = MENU.drinks[(hash >>> 16) % MENU.drinks.length];
-    var dessert = MENU.desserts[(hash >>> 24) % MENU.desserts.length];
-
-    var items = [
-      { role: '主食', data: main },
-      { role: '小食', data: side },
-      { role: '饮料', data: drink },
-      { role: '甜品', data: dessert }
-    ];
-
-    var totalPrice = 0;
-    var totalKcal = 0;
-    for (var i = 0; i < items.length; i += 1) {
-      totalPrice += items[i].data.price;
-      totalKcal += items[i].data.kcal;
-    }
-    totalPrice = Math.round(totalPrice * 10) / 10;
-
-    var features = {
-      meat: main.meat,
-      spicy: Boolean(main.spicy || side.spicy),
-      dbl: Boolean(main.spicy && side.spicy),
-      coffee: Boolean(drink.coffee),
-      dessertType: dessert.type,
-      side: side.code,
-      drink: drink.kind,
-      fullOpen: Boolean(side.code === 'FRIES_L' && dessert.type === 'flurry'),
-      totalKcal: totalKcal
-    };
-
-    var persona = pickPersona(features);
-
-    return {
-      display: display,
-      key: key,
-      hash: hash,
-      hashHex: toHex8(hash),
-      byteLength: bytes.length,
-      main: main,
-      side: side,
-      drink: drink,
-      dessert: dessert,
-      items: items,
-      totalPrice: totalPrice,
-      totalKcal: totalKcal,
-      /* 常见度：数值越大表示这一档越常见，直接由哈希值映射，与 hash 本身保持一致 */
-      commonness: ((hash >>> 0) % 1000) / 10,
-      persona: persona,
-      mealName: persona.zh,
-      comment: pickComment(features, totalKcal, hash),
-      features: features,
-      indexes: {
-        main: hash % MENU.mains.length,
-        side: (hash >>> 8) % MENU.sides.length,
-        drink: (hash >>> 16) % MENU.drinks.length,
-        dessert: (hash >>> 24) % MENU.desserts.length
-      }
-    };
-  }
-
-  /**
    * 取 8 位小写十六进制指纹。
    * @param {number} hash
    * @returns {string}
@@ -1558,99 +1860,132 @@
     return hex;
   }
 
-  /**
-   * 判定单条人格规则是否命中。
-   * when 里出现的每个字段都必须同时满足；未出现的字段不参与判定。
-   * @param {object} when 规则条件
-   * @param {object} f 套餐特征
-   * @returns {boolean}
-   */
-  function ruleMatches(when, f) {
-    if (when.dbl && !f.dbl) { return false; }
-    if (when.spicy && !f.spicy) { return false; }
-    if (when.fullOpen && !f.fullOpen) { return false; }
-    if (when.meat && when.meat !== f.meat) { return false; }
-    if (when.coffee !== undefined && when.coffee !== f.coffee) { return false; }
-    if (when.dessert && when.dessert !== f.dessertType) { return false; }
-    if (when.drink && when.drink !== f.drink) { return false; }
-    if (when.side && when.side !== f.side) { return false; }
-    if (when.kcalMin !== undefined && f.totalKcal < when.kcalMin) { return false; }
-    if (when.kcalMax !== undefined && f.totalKcal >= when.kcalMax) { return false; }
-    return true;
-  }
+  /* =====================================================================
+   * 5. 计分与类型判定
+   * ===================================================================== */
 
   /**
-   * 依据套餐特征挑一句麦门人格的话（点餐动作 + 人格描述 + 荒诞成分）。
-   * 规则表自上而下匹配，第一条命中的规则里再按总热量选档；
-   * 全程只依赖套餐本身，不含随机成分，同名必得同一个人格。
-   * @param {object} f 套餐特征（buildMeal 里组装）
-   * @returns {{zh: string, desc: string, mix: Array<Array<string|number>>}}
+   * 把 9 个答案折算成三个维度的分数与最终类型。
+   * @param {Array<number|null>} answers 每题选中的选项下标（0 或 1）
+   * @returns {{A: number, B: number, C: number,
+   *            a: string, b: string, c: string, key: string, type: object}}
    */
-  function pickPersona(f) {
-    for (var i = 0; i < PERSONA_RULES.length; i += 1) {
-      var rule = PERSONA_RULES[i];
-      if (!ruleMatches(rule.when, f)) { continue; }
-      for (var j = 0; j < rule.slots.length; j += 1) {
-        if (f.totalKcal < rule.slots[j].max) {
-          var hit = PERSONAS[rule.slots[j].id];
-          if (hit) { return hit; }
-          break;
-        }
-      }
-      break;
+  function scoreAnswers(answers) {
+    var A = 0;
+    var B = 0;
+    var C = 0;
+    for (var i = 0; i < QUESTIONS.length; i += 1) {
+      var picked = answers[i];
+      if (picked !== 0 && picked !== 1) { continue; }
+      var opt = QUESTIONS[i].options[picked];
+      if (!opt) { continue; }
+      if (opt.dim === 'A') { A += opt.score; }
+      else if (opt.dim === 'B') { B += opt.score; }
+      else if (opt.dim === 'C') { C += opt.score; }
     }
-    return PERSONAS[FALLBACK_PERSONA];
+    var a = A >= 2 ? 'calc' : 'feel';
+    var b = B >= 2 ? 'combo' : 'loose';
+    var c = C >= 2 ? 'now' : 'later';
+    var key = a + '-' + b + '-' + c;
+    return { A: A, B: B, C: C, a: a, b: b, c: c, key: key, type: pickType(key) };
   }
 
   /**
-   * 常见度对应的稀有度话术。
-   * @param {number} commonness 0 ~ 99.9 的百分比
+   * 按组合 key 取类型对象；key 非法时回落到兜底类型。
+   * @param {string} key 形如 'calc-combo-now'
+   * @returns {object} TYPES 里的一个类型对象
+   */
+  function pickType(key) {
+    var id = TYPE_MAP[key];
+    if (id && TYPES[id]) { return TYPES[id]; }
+    return TYPES[FALLBACK_TYPE];
+  }
+
+  /**
+   * 组合 key 的中文标签，例如 '算计 · 整装 · 即时'。
+   * @param {{a: string, b: string, c: string}} score
    * @returns {string}
    */
-  function rarityNote(commonness) {
-    if (commonness < 10) { return '恭喜，你测出了全球最稀有的 1% 组合之一。'; }
-    if (commonness < 30) { return '小众口味，你不太随大流。'; }
-    if (commonness < 70) { return '中间地带，安全但不出错。'; }
-    return '大众款。说明你的口味很安全，也说明你不太折腾。';
-  }
-
-  /**
-   * 依据总热量与组合特征生成一句评语（热量句 + 最多一条特征句）。
-   * @param {{meat: string, spicy: boolean, coffee: boolean, dessertType: string}} f
-   * @param {number} totalKcal
-   * @param {number} hash
-   * @returns {string}
-   */
-  function pickComment(f, totalKcal, hash) {
-    var tier;
-    if (totalKcal >= THRESHOLD.HEAVY) {
-      tier = CALORIE_LINES.heavy;
-    } else if (totalKcal >= THRESHOLD.MID) {
-      tier = CALORIE_LINES.mid;
-    } else if (totalKcal >= THRESHOLD.LIGHT) {
-      tier = CALORIE_LINES.light;
-    } else {
-      tier = CALORIE_LINES.tiny;
-    }
-    var calorieLine = tier[(hash >>> 20) % tier.length];
-
-    var extras = [];
-    if (f.coffee) { extras.push('咖啡因是成年人最后的体面。'); }
-    if (f.dessertType === 'flurry' || f.dessertType === 'pie') { extras.push('甜品是另一台胃装的。'); }
-    if (f.dessertType === 'cone') { extras.push('圆筒是这顿的句号。'); }
-    if (f.spicy) { extras.push('辣是一种态度，不是痛觉。'); }
-    if (f.meat === 'fish') { extras.push('吃鱼的人主打一个清爽。'); }
-
-    if (!extras.length) { return calorieLine; }
-    return calorieLine + ' ' + extras[(hash >>> 28) % extras.length];
+  function scoreLabel(score) {
+    return DIM_LABEL.a[score.a] + ' · ' + DIM_LABEL.b[score.b] + ' · ' + DIM_LABEL.c[score.c];
   }
 
   /* =====================================================================
-   * 3.6 成分表：仿食品包装的营养成分表
+   * 6. 套餐组装（价格 / 热量一律从 MENU 现算）
+   * ===================================================================== */
+
+  /**
+   * 按商品 code 在 MENU 的四组里查商品。
+   * @param {string} code 商品 code，例如 'BIGMAC'
+   * @returns {object|null}
+   */
+  function findItem(code) {
+    var groups = [MENU.mains, MENU.sides, MENU.drinks, MENU.desserts];
+    for (var g = 0; g < groups.length; g += 1) {
+      for (var i = 0; i < groups[g].length; i += 1) {
+        if (groups[g][i].code === code) { return groups[g][i]; }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * 归一化名字：折叠空白、去掉首尾空格、截到 16 字。
+   * @param {string} raw 用户输入
+   * @returns {string} 用于显示的名字，空字符串表示没填
+   */
+  function normalizeName(raw) {
+    var text = String(raw == null ? '' : raw).replace(/\s+/g, ' ').replace(/^\s+|\s+$/g, '');
+    if (text.length > 16) { text = text.slice(0, 16); }
+    return text;
+  }
+
+  /**
+   * 组装一份结果：类型 + 套餐明细 + 合计 + 签名。
+   * 名字只影响 display / 签名，完全不影响类型与套餐。
+   * @param {object} type TYPES 里的类型对象
+   * @param {string} rawName 用户输入的名字（可为空）
+   * @returns {object} 结果对象
+   */
+  function buildMeal(type, rawName) {
+    var safeType = type || TYPES[FALLBACK_TYPE];
+    var list = safeType.items || [];
+    var items = [];
+    var totalPrice = 0;
+    var totalKcal = 0;
+    var hasUnverified = false;
+
+    for (var i = 0; i < list.length; i += 1) {
+      var code = list[i][0];
+      var role = list[i][1];
+      var data = findItem(code);
+      if (!data) { continue; }
+      items.push({ role: role, data: data });
+      totalPrice += data.price;
+      totalKcal += data.kcal;
+      if (data.unverified) { hasUnverified = true; }
+    }
+
+    totalPrice = Math.round(totalPrice * 10) / 10;
+
+    return {
+      type: safeType,
+      items: items,
+      totalPrice: totalPrice,
+      totalKcal: totalKcal,
+      hasUnverified: hasUnverified,
+      display: normalizeName(rawName),
+      /* 分数在 finishQuiz 里挂上，供"这次的分数"使用 */
+      score: null
+    };
+  }
+
+  /* =====================================================================
+   * 7. 成分表：仿食品包装的营养成分表
    *     前三项是真的：把套餐里每样东西的碳水 / 蛋白质 / 脂肪克数按
    *     碳水 4 kcal/g、蛋白质 4 kcal/g、脂肪 9 kcal/g 折算成热量占比。
-   *     后两项是娱乐：从人格里挑两个荒诞成分，占 2%~8%，并从这个占比里扣掉，
-   *     所以整张表一定加起来等于 100%。这套东西只有真能拿到营养数据的作品做得出来。
+   *     后两项是娱乐：从类型里挑两个荒诞成分，占 2%~8%，并从这个占比里扣掉，
+   *     所以整张表一定加起来等于 100%。
    * ===================================================================== */
 
   /**
@@ -1688,9 +2023,8 @@
     var fatKcal = macro.fat * 9;
     var macroKcal = carbKcal + proteinKcal + fatKcal;
 
-    var mix = (meal && meal.persona && meal.persona.mix && meal.persona.mix.length)
-      ? meal.persona.mix
-      : FALLBACK_MIX;
+    var type = meal && meal.type ? meal.type : null;
+    var mix = (type && type.mix && type.mix.length) ? type.mix : FALLBACK_MIX;
 
     var play = [];
     var playSum = 0;
@@ -1754,8 +2088,8 @@
   }
 
   /**
-   * 成分表转成一行纯文字（复制文案用），例如
-   * 「碳水 42% / 脂肪 36% / 蛋白质 13% / 嘴硬 7% / 面子 2%」。
+   * 成分表转成一行纯文字，例如
+   * 「碳水 42% / 脂肪 37% / 蛋白质 13% / 贪心 6% / 嘴硬 2%」。
    * @param {object} panel nutritionPanel 的返回值
    * @returns {string}
    */
@@ -1767,22 +2101,8 @@
     return parts.join(' / ');
   }
 
-  /**
-   * 三大营养素折算热量与商品标称热量的相对偏差（保留一位小数，带百分号）。
-   * 这个数字是「数据是真的」的证据：折算必然有 1% 左右的误差，我们没有去凑。
-   * @param {object} panel nutritionPanel 的返回值
-   * @param {number} totalKcal 四件套标称热量合计
-   * @returns {string} 例如 "1.1%"
-   */
-  function panelDeviation(panel, totalKcal) {
-    var base = Number(totalKcal);
-    if (!isFinite(base) || base <= 0) { return '—'; }
-    var diff = Math.abs(panel.macroKcal - base) / base * 100;
-    return diff.toFixed(1) + '%';
-  }
-
   /* =====================================================================
-   * 4. 格式化工具
+   * 8. 格式化工具
    * ===================================================================== */
 
   /**
@@ -1826,7 +2146,6 @@
 
   /**
    * 换算倍率格式化：大数取整并加千分位，小数按量级给 1~3 位。
-   * 真实订单总额往往不大，0.04 平米这种量级也要显示得出来。
    * @param {number} value
    * @returns {string}
    */
@@ -1883,137 +2202,8 @@
     return b - a + 1;
   }
 
-  /* =====================================================================
-   * 5. DOM 与交互
-   * ===================================================================== */
-  var dom = {
-    form: document.getElementById('finderForm'),
-    input: document.getElementById('nameInput'),
-    ticket: document.getElementById('ticket'),
-    owner: document.getElementById('ownerLabel'),
-    mealName: document.getElementById('mealName'),
-    personaDesc: document.getElementById('personaDesc'),
-    panelRows: document.getElementById('panelRows'),
-    items: document.getElementById('items'),
-    totalPrice: document.getElementById('totalPrice'),
-    totalKcal: document.getElementById('totalKcal'),
-    comment: document.getElementById('comment'),
-    commonness: document.getElementById('commonness'),
-    rarityNote: document.getElementById('rarityNote'),
-    priceNote: document.getElementById('priceNote'),
-    hashHex: document.getElementById('hashHex'),
-    actions: document.getElementById('actions'),
-    copyBtn: document.getElementById('copyBtn'),
-    resetBtn: document.getElementById('resetBtn'),
-    budgetCard: document.getElementById('budgetCard'),
-    orderFile: document.getElementById('orderFile'),
-    importHint: document.getElementById('importHint'),
-    importError: document.getElementById('importError'),
-    orderResult: document.getElementById('orderResult'),
-    orderHeadline: document.getElementById('orderHeadline'),
-    orderInsight: document.getElementById('orderInsight'),
-    budgetVerdict: document.getElementById('budgetVerdict'),
-    convertList: document.getElementById('convertList'),
-    howtoLive: document.getElementById('howtoLive'),
-    toast: document.getElementById('toast'),
-    copySheet: document.getElementById('copySheet'),
-    copyArea: document.getElementById('copyArea'),
-    sheetClose: document.getElementById('sheetClose')
-  };
-
-  /** 当前展示的套餐。 */
-  var current = null;
-  /** 已导入的订单统计（null 表示还没导入）。 */
-  var importedStats = null;
-  var toastTimer = null;
-
   /**
-   * 弹出轻提示。
-   * @param {string} text
-   */
-  function toast(text) {
-    dom.toast.textContent = text;
-    dom.toast.classList.add('show');
-    if (toastTimer) { window.clearTimeout(toastTimer); }
-    toastTimer = window.setTimeout(function () {
-      dom.toast.classList.remove('show');
-    }, 2000);
-  }
-
-  /**
-   * 渲染结果凭证卡。
-   * @param {object} meal buildMeal 的返回值
-   */
-  function render(meal) {
-    current = meal;
-
-    dom.owner.textContent = meal.display + '的麦门人格';
-    dom.mealName.textContent = '「' + meal.persona.zh + '」';
-    dom.personaDesc.textContent = meal.persona.desc;
-
-    // 成分表：打印出来像真的营养成分表
-    var panel = nutritionPanel(meal);
-    var panelHtml = '';
-    for (var p = 0; p < panel.rows.length; p += 1) {
-      panelHtml +=
-        '<div class="panel-row' + (panel.rows[p].play ? ' is-play' : '') + '">' +
-          '<span class="panel-label">' + escapeHtml(panel.rows[p].label) + '</span>' +
-          '<span class="panel-lead" aria-hidden="true"></span>' +
-          '<span class="panel-pct">' + panel.rows[p].pct + '%</span>' +
-        '</div>';
-    }
-    dom.panelRows.innerHTML = panelHtml;
-
-    var rows = '';
-    var hasUnverified = false;
-    for (var i = 0; i < meal.items.length; i += 1) {
-      var row = meal.items[i];
-      if (row.data.unverified) { hasUnverified = true; }
-      rows +=
-        '<div class="item">' +
-          '<span class="item-role">' + row.role + '</span>' +
-          '<span class="item-name">' + escapeHtml(row.data.name) + '</span>' +
-          '<span class="item-kcal">' + thousands(row.data.kcal) + ' kcal</span>' +
-          '<span class="item-price">' + money(row.data.price) + (row.data.unverified ? '<sup>*</sup>' : '') + '</span>' +
-        '</div>';
-    }
-    dom.items.innerHTML = rows;
-
-    dom.totalPrice.textContent = (hasUnverified ? '≈ ' : '') + moneyFixed(meal.totalPrice);
-    if (dom.priceNote) { dom.priceNote.classList.toggle('hidden', !hasUnverified); }
-    dom.totalKcal.innerHTML = thousands(meal.totalKcal) + '<small>kcal</small>';
-    dom.comment.textContent = meal.comment;
-    dom.commonness.textContent = meal.commonness.toFixed(1) + '%';
-    dom.rarityNote.textContent = rarityNote(meal.commonness);
-    dom.hashHex.textContent = meal.hashHex;
-
-    dom.ticket.classList.remove('hidden');
-    dom.actions.classList.remove('hidden');
-    // 换算卡属于第二屏：算出套餐后才出现
-    dom.budgetCard.classList.remove('hidden');
-    dom.budgetCard.classList.add('fade-in');
-
-    // 算法说明区的实时中间值
-    dom.howtoLive.innerHTML =
-      '本次计算：<b>' + escapeHtml(meal.display) + '</b> → 归一化 <code>' + escapeHtml(meal.key) + '</code>' +
-      ' → UTF-8 <b>' + meal.byteLength + '</b> 字节 → h = <b>' + meal.hash + '</b>（<code>' + meal.hashHex + '</code>）<br />' +
-      '主食索引 ' + meal.indexes.main + ' · 小食索引 ' + meal.indexes.side +
-      ' · 饮料索引 ' + meal.indexes.drink + ' · 甜品索引 ' + meal.indexes.dessert + '<br />' +
-      '人格判定：' + meal.features.meat + (meal.features.spicy ? ' + 辣' : '') +
-      (meal.features.dbl ? '（双辣）' : '') + (meal.features.coffee ? ' + 咖啡' : '') +
-      ' + ' + meal.features.dessertType + ' · ' + meal.totalKcal + ' kcal' +
-      ' → <b>' + escapeHtml(meal.persona.zh) + '</b>' +
-      '<br />成分表：碳水 ' + panel.macro.carb + ' g × 4 + 脂肪 ' + panel.macro.fat + ' g × 9 + 蛋白质 ' +
-      panel.macro.protein + ' g × 4 = ' + panel.macroKcal + ' kcal（与商品标称合计 ' + meal.totalKcal +
-      ' kcal 差 ' + panelDeviation(panel, meal.totalKcal) + '）的三大营养素热量占比，' +
-      '再按人格扣掉后两项娱乐成分。';
-
-    // 已经导入过订单的话，用新套餐的单价重算一遍（"份你这份套餐" 会变）
-    if (importedStats) { renderOrders(importedStats); }
-  }
-
-  /**
-   * 简单 HTML 转义，防止名字注入。
+   * 简单 HTML 转义，防止注入。
    * @param {string} text
    * @returns {string}
    */
@@ -2026,27 +2216,357 @@
       .replace(/'/g, '&#39;');
   }
 
+  /* =====================================================================
+   * 9. DOM 引用
+   * ===================================================================== */
+  var dom = {
+    /* 三屏 */
+    screenIntro: document.getElementById('screenIntro'),
+    screenQuiz: document.getElementById('screenQuiz'),
+    screenResult: document.getElementById('screenResult'),
+    /* 首屏 */
+    startBtn: document.getElementById('startBtn'),
+    /* 答题 */
+    quizStep: document.getElementById('quizStep'),
+    progressFill: document.getElementById('progressFill'),
+    quizCard: document.getElementById('quizCard'),
+    quizIndex: document.getElementById('quizIndex'),
+    quizQuestion: document.getElementById('quizQuestion'),
+    quizOptions: document.getElementById('quizOptions'),
+    backBtn: document.getElementById('backBtn'),
+    /* 结果：小票 */
+    ownerLabel: document.getElementById('ownerLabel'),
+    typeTitle: document.getElementById('typeTitle'),
+    typeIdentity: document.getElementById('typeIdentity'),
+    items: document.getElementById('items'),
+    totalPrice: document.getElementById('totalPrice'),
+    totalKcal: document.getElementById('totalKcal'),
+    priceNote: document.getElementById('priceNote'),
+    panelRows: document.getElementById('panelRows'),
+    signLine: document.getElementById('signLine'),
+    signHex: document.getElementById('signHex'),
+    /* 结果：解析与关系 */
+    anaStrength: document.getElementById('anaStrength'),
+    anaShadow: document.getElementById('anaShadow'),
+    anaParadox: document.getElementById('anaParadox'),
+    relKin: document.getElementById('relKin'),
+    relOpposite: document.getElementById('relOpposite'),
+    relClash: document.getElementById('relClash'),
+    scoreLive: document.getElementById('scoreLive'),
+    /* 结果：签名与分享 */
+    signInput: document.getElementById('signInput'),
+    copyBtn: document.getElementById('copyBtn'),
+    resetBtn: document.getElementById('resetBtn'),
+    /* 订单导入 */
+    budgetCard: document.getElementById('budgetCard'),
+    orderFile: document.getElementById('orderFile'),
+    importHint: document.getElementById('importHint'),
+    importError: document.getElementById('importError'),
+    orderResult: document.getElementById('orderResult'),
+    orderHeadline: document.getElementById('orderHeadline'),
+    orderInsight: document.getElementById('orderInsight'),
+    budgetVerdict: document.getElementById('budgetVerdict'),
+    convertList: document.getElementById('convertList'),
+    /* 杂项 */
+    toast: document.getElementById('toast'),
+    copySheet: document.getElementById('copySheet'),
+    copyArea: document.getElementById('copyArea'),
+    sheetClose: document.getElementById('sheetClose')
+  };
+
+  /* =====================================================================
+   * 10. 状态与流程：首屏 → 答题 → 结果
+   * ===================================================================== */
+  var state = { step: 'intro', index: 0, answers: [] };
+  /** 当前结果对象（buildMeal 的返回值）。 */
+  var current = null;
+  /** 已导入的订单统计（null 表示还没导入）。 */
+  var importedStats = null;
+  var toastTimer = null;
+
+  /** 把作答数组重置成全 null。 */
+  function resetAnswers() {
+    state.answers = [];
+    for (var i = 0; i < QUESTIONS.length; i += 1) { state.answers.push(null); }
+  }
+
   /**
-   * 生成可分享的纯文本文案。
-   * 只留人格名、成分表、套餐、合计、指纹——短一点，才有人愿意贴出去。
-   * @param {object} meal
+   * 切换屏幕。
+   * @param {string} name 'intro' | 'quiz' | 'result'
+   */
+  function showScreen(name) {
+    state.step = name;
+    dom.screenIntro.classList.toggle('hidden', name !== 'intro');
+    dom.screenQuiz.classList.toggle('hidden', name !== 'quiz');
+    dom.screenResult.classList.toggle('hidden', name !== 'result');
+  }
+
+  /** 回到页面顶部。 */
+  function scrollTop() {
+    try {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      window.scrollTo(0, 0);
+    }
+  }
+
+  /** 开始测试：重置作答并从第一题开始。 */
+  function startQuiz() {
+    resetAnswers();
+    state.index = 0;
+    showScreen('quiz');
+    renderQuestion();
+    scrollTop();
+  }
+
+  /** 渲染当前这一题（一题一屏）。 */
+  function renderQuestion() {
+    var total = QUESTIONS.length;
+    var q = QUESTIONS[state.index];
+    var picked = state.answers[state.index];
+
+    dom.quizStep.textContent = (state.index + 1) + '/' + total;
+    dom.progressFill.style.width = (state.index / total * 100) + '%';
+
+    var bar = dom.progressFill.parentNode;
+    if (bar && bar.setAttribute) {
+      bar.setAttribute('aria-valuenow', String(state.index + 1));
+      bar.setAttribute('aria-valuemax', String(total));
+    }
+
+    dom.quizIndex.textContent = q.id;
+    dom.quizQuestion.textContent = q.text;
+
+    var html = '';
+    for (var i = 0; i < q.options.length; i += 1) {
+      var isPicked = picked === i;
+      html +=
+        '<button type="button" class="opt' + (isPicked ? ' is-picked' : '') + '" data-opt="' + i + '">' +
+          '<span class="opt-key">' + (i === 0 ? 'A' : 'B') + '</span>' +
+          '<span class="opt-text">' + escapeHtml(q.options[i].label) + '</span>' +
+        '</button>';
+    }
+    dom.quizOptions.innerHTML = html;
+
+    dom.backBtn.disabled = state.index === 0;
+
+    // 每换一题重放一次进场动画
+    dom.quizCard.classList.remove('fade-in');
+    void dom.quizCard.offsetWidth;
+    dom.quizCard.classList.add('fade-in');
+  }
+
+  /**
+   * 选中某个选项：记下分数并自动进入下一题。
+   * @param {number} optIndex 0 或 1
+   */
+  function selectOption(optIndex) {
+    if (optIndex !== 0 && optIndex !== 1) { return; }
+    // 直接覆盖：返回上一题改答案时，旧分数自然被撤销
+    state.answers[state.index] = optIndex;
+
+    if (state.index < QUESTIONS.length - 1) {
+      state.index += 1;
+      renderQuestion();
+      return;
+    }
+    finishQuiz();
+  }
+
+  /** 返回上一题（分数由 answers 派生，所以回去改选就自动撤销旧分）。 */
+  function goBack() {
+    if (state.index <= 0) { return; }
+    state.index -= 1;
+    renderQuestion();
+  }
+
+  /** 9 题答完：算分 → 出结果。 */
+  function finishQuiz() {
+    var score = scoreAnswers(state.answers);
+    current = buildMeal(score.type, '');
+    current.score = score;
+    dom.signInput.value = '';
+    renderResult();
+    showScreen('result');
+    scrollTop();
+  }
+
+  /** 再测一次：清空结果与订单数据，回到首屏。 */
+  function restartTest() {
+    resetAnswers();
+    state.index = 0;
+    current = null;
+    dom.signInput.value = '';
+    resetOrderImport();
+    dom.budgetCard.classList.add('hidden');
+    dom.budgetCard.classList.remove('fade-in');
+    showScreen('intro');
+    scrollTop();
+  }
+
+  /* =====================================================================
+   * 11. 结果渲染
+   * ===================================================================== */
+
+  /** 渲染小票头部：标题 + 身份（名字只改标题）。 */
+  function updateTicketHead() {
+    if (!current) { return; }
+    var type = current.type;
+    var badge = type.isMix ? '<span class="type-badge">混合型</span>' : '';
+
+    if (current.display) {
+      dom.typeTitle.textContent = current.display + '的麦门人格';
+      dom.typeIdentity.innerHTML =
+        '<span class="type-name">「' + escapeHtml(type.name) + '」</span>' + badge +
+        escapeHtml(type.identity);
+    } else {
+      dom.typeTitle.textContent = '「' + type.name + '」';
+      dom.typeIdentity.innerHTML = badge + escapeHtml(type.identity);
+    }
+  }
+
+  /** 渲染小票签名（FNV-1a，纯粹装饰，不影响类型与套餐）。 */
+  function updateSign() {
+    if (!current || !current.display) {
+      dom.signHex.textContent = '';
+      dom.signLine.classList.add('hidden');
+      return;
+    }
+    var hash = fnv1a(current.display.toLowerCase());
+    dom.signHex.textContent = '#' + toHex8(hash);
+    dom.signLine.classList.remove('hidden');
+  }
+
+  /**
+   * 渲染关系区的一行。
+   * @param {HTMLElement} el 目标 li
+   * @param {string} tag 标签（像 / 相反 / 合不来）
+   * @param {{name: string, reason: string}} rel 关系数据
+   */
+  function renderRel(el, tag, rel) {
+    if (!el) { return; }
+    var safe = rel || { name: '—', reason: '暂无数据。' };
+    el.innerHTML =
+      '<span class="rel-tag">' + escapeHtml(tag) + '</span>' +
+      '<b>「' + escapeHtml(safe.name) + '」</b>' +
+      escapeHtml(safe.reason);
+  }
+
+  /** 整页渲染结果（类型卡 + 成分表 + 解析 + 关系 + 分数）。 */
+  function renderResult() {
+    if (!current) { return; }
+    var type = current.type;
+
+    updateTicketHead();
+
+    /* 套餐明细 + 合计 */
+    var rows = '';
+    for (var i = 0; i < current.items.length; i += 1) {
+      var item = current.items[i];
+      rows +=
+        '<div class="item">' +
+          '<span class="item-role">' + escapeHtml(item.role) + '</span>' +
+          '<span class="item-name">' + escapeHtml(item.data.name) + '</span>' +
+          '<span class="item-kcal">' + thousands(item.data.kcal) + ' kcal</span>' +
+          '<span class="item-price">' + money(item.data.price) +
+            (item.data.unverified ? '<sup>*</sup>' : '') + '</span>' +
+        '</div>';
+    }
+    dom.items.innerHTML = rows;
+
+    dom.totalPrice.textContent = (current.hasUnverified ? '≈ ' : '') + moneyFixed(current.totalPrice);
+    dom.priceNote.classList.toggle('hidden', !current.hasUnverified);
+    dom.totalKcal.innerHTML = thousands(current.totalKcal) + '<small>kcal</small>';
+
+    /* 成分表 */
+    var panel = nutritionPanel(current);
+    var panelHtml = '';
+    for (var p = 0; p < panel.rows.length; p += 1) {
+      panelHtml +=
+        '<div class="panel-row' + (panel.rows[p].play ? ' is-play' : '') + '">' +
+          '<span class="panel-label">' + escapeHtml(panel.rows[p].label) + '</span>' +
+          '<span class="panel-lead" aria-hidden="true"></span>' +
+          '<span class="panel-pct">' + panel.rows[p].pct + '%</span>' +
+        '</div>';
+    }
+    dom.panelRows.innerHTML = panelHtml;
+
+    /* 签名 */
+    updateSign();
+
+    /* 三段解析 */
+    dom.anaStrength.textContent = type.strength;
+    dom.anaShadow.textContent = type.shadow;
+    dom.anaParadox.textContent = type.paradox;
+
+    /* 关系区 */
+    renderRel(dom.relKin, '像', type.kin);
+    renderRel(dom.relOpposite, '相反', type.opposite);
+    renderRel(dom.relClash, '合不来', type.clash);
+
+    /* 分数明细 */
+    var s = current.score;
+    if (s) {
+      dom.scoreLive.innerHTML =
+        'A 怎么下决定：Q1 + Q2 + Q3 = <b>' + s.A + '</b> 分 → ' + thLine(s.A, '算计', '凭感觉') + '<br />' +
+        'B 要不要结构：Q4 + Q5 + Q6 = <b>' + s.B + '</b> 分 → ' + thLine(s.B, '整装', '散装') + '<br />' +
+        'C 现在还是要等：Q7 + Q8 + Q9 = <b>' + s.C + '</b> 分 → ' + thLine(s.C, '即时', '延后') + '<br />' +
+        '组合：<b>' + escapeHtml(scoreLabel(s)) + '</b> → <b>「' + escapeHtml(type.name) + '」</b>';
+    } else {
+      dom.scoreLive.textContent = '';
+    }
+
+    /* 订单换算卡随结果一起出现 */
+    dom.budgetCard.classList.remove('hidden');
+    dom.budgetCard.classList.add('fade-in');
+    if (importedStats) { renderOrders(importedStats); }
+  }
+
+  /**
+   * 维度阈值说明一小段，例如 "≥2 → 算计"。
+   * @param {number} value 该维度得分
+   * @param {string} high 高分标签
+   * @param {string} low 低分标签
+   * @returns {string} 含 HTML 的片段
+   */
+  function thLine(value, high, low) {
+    if (value >= 2) { return '≥2 → <b>' + escapeHtml(high) + '</b>'; }
+    return '&lt;2 → <b>' + escapeHtml(low) + '</b>';
+  }
+
+  /**
+   * 名字输入后只更新标题与签名，不重算类型、不重渲染套餐。
+   * @param {string} raw 输入框的原始值
+   */
+  function applyName(raw) {
+    if (!current) { return; }
+    current.display = normalizeName(raw);
+    updateTicketHead();
+    updateSign();
+  }
+
+  /* =====================================================================
+   * 12. 分享文案与复制
+   * ===================================================================== */
+
+  /**
+   * 生成可分享的纯文本文案（格式固定五行）。
+   * @param {object} meal 当前的 buildMeal 结果
    * @returns {string}
    */
   function buildCopyText(meal) {
-    var parts = [];
+    if (!meal || !meal.type) { return ''; }
+    var names = [];
     for (var i = 0; i < meal.items.length; i += 1) {
-      parts.push(meal.items[i].data.name);
+      names.push(meal.items[i].data.name);
     }
-    var panel = nutritionPanel(meal);
+    var priceText = (meal.hasUnverified ? '≈' : '') + moneyFixed(meal.totalPrice);
     return [
-      '我测出来是「' + meal.persona.zh + '」。',
-      '',
-      '成分表：' + panelLine(panel),
-      '套餐：' + parts.join(' + '),
-      '合计 ' + moneyFixed(meal.totalPrice) + ' / ' + thousands(meal.totalKcal) + ' kcal · 常见度 ' + meal.commonness.toFixed(1) + '%',
-      '指纹 ' + meal.hashHex,
-      '',
-      '你的名字测出来是什么？'
+      '我的麦门人格是「' + meal.type.name + '」',
+      meal.type.identity,
+      '套餐：' + names.join(' + ') + ' · ' + priceText + ' / ' + thousands(meal.totalKcal) + ' kcal',
+      meal.type.punch,
+      '来测测你是哪种：https://yuunyaj921-ui.github.io/mcd-name-meal/'
     ].join('\n');
   }
 
@@ -2109,8 +2629,21 @@
     }, 30);
   }
 
+  /**
+   * 弹出轻提示。
+   * @param {string} text
+   */
+  function toast(text) {
+    dom.toast.textContent = text;
+    dom.toast.classList.add('show');
+    if (toastTimer) { window.clearTimeout(toastTimer); }
+    toastTimer = window.setTimeout(function () {
+      dom.toast.classList.remove('show');
+    }, 2000);
+  }
+
   /* =====================================================================
-   * 5.5 真实订单导入：读取 → 校验 → 统计 → 渲染
+   * 13. 真实订单导入：读取 → 校验 → 统计 → 渲染
    *     数据全程留在浏览器里，不发任何网络请求。
    * ===================================================================== */
 
@@ -2121,6 +2654,15 @@
     shape: '这个文件不是 export_orders.py 导出的订单文件。',
     empty: '这份订单文件是空的。'
   };
+
+  /**
+   * Array.isArray 的兜底（极老旧浏览器）。
+   * @param {*} value
+   * @returns {boolean}
+   */
+  function isArray(value) {
+    return Object.prototype.toString.call(value) === '[object Array]';
+  }
 
   /**
    * 校验订单文件结构。
@@ -2148,19 +2690,9 @@
   }
 
   /**
-   * Array.isArray 的兜底（极老旧浏览器）。
-   * @param {*} value
-   * @returns {boolean}
-   */
-  function isArray(value) {
-    return Object.prototype.toString.call(value) === '[object Array]';
-  }
-
-  /**
    * 从订单数组里统计出现次数最多的餐品。
    * 口径：把每单的 items[].name 与 items[].combo[] 名称摊平，同一单内同名只算一次，
-   * 所以 "N 次" 表示它出现在 N 单里。只统计 items[].name 会因为单品名几乎不重复
-   * 而全是 1 次并列，得不出有效洞察。
+   * 所以 "N 次" 表示它出现在 N 单里。
    * @param {Array} orders
    * @returns {{name: string, count: number}|null} 没有重复餐品时返回 null
    */
@@ -2341,7 +2873,7 @@
     dom.budgetVerdict.classList.add('hidden');
   }
 
-  /** 彻底重置导入状态（"再测一个"时调用，避免下次显示旧数字）。 */
+  /** 彻底重置导入状态（"再测一次"时调用，避免下次显示旧数字）。 */
   function resetOrderImport() {
     clearOrderResult();
     clearImportError();
@@ -2414,21 +2946,32 @@
   }
 
   /* =====================================================================
-   * 6. 事件绑定
+   * 14. 事件绑定
    * ===================================================================== */
 
-  dom.form.addEventListener('submit', function (event) {
-    event.preventDefault();
-    var value = dom.input.value.trim();
-    if (!value) {
-      dom.input.classList.add('shake');
-      window.setTimeout(function () { dom.input.classList.remove('shake'); }, 320);
-      toast('先输入一个名字吧');
-      dom.input.focus();
-      return;
+  dom.startBtn.addEventListener('click', function () {
+    startQuiz();
+  });
+
+  /* 选项用事件委托，避免每次渲染都重新绑一遍 */
+  dom.quizOptions.addEventListener('click', function (event) {
+    var node = event.target;
+    while (node && node !== dom.quizOptions) {
+      if (node.classList && node.classList.contains('opt')) {
+        var raw = node.getAttribute('data-opt');
+        selectOption(raw === '1' ? 1 : 0);
+        return;
+      }
+      node = node.parentNode;
     }
-    render(buildMeal(value));
-    dom.ticket.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  dom.backBtn.addEventListener('click', function () {
+    goBack();
+  });
+
+  dom.signInput.addEventListener('input', function () {
+    applyName(dom.signInput.value);
   });
 
   dom.copyBtn.addEventListener('click', function () {
@@ -2437,18 +2980,7 @@
   });
 
   dom.resetBtn.addEventListener('click', function () {
-    dom.input.value = '';
-    dom.ticket.classList.add('hidden');
-    dom.actions.classList.add('hidden');
-    // 换算卡也退回第二屏：没算套餐就不该出现
-    dom.budgetCard.classList.add('hidden');
-    dom.budgetCard.classList.remove('fade-in');
-    // 已导入的订单数据一并清空，避免下次显示上一轮的旧数字
-    resetOrderImport();
-    dom.howtoLive.textContent = '先在上面输入一个名字，这里会显示本次的中间值。';
-    current = null;
-    dom.input.focus();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    restartTest();
   });
 
   dom.orderFile.addEventListener('change', function () {
@@ -2479,34 +3011,47 @@
     }
   });
 
+  /* =====================================================================
+   * 15. 初始化
+   * ===================================================================== */
+  resetAnswers();
+  showScreen('intro');
+
   /* 便于自测与第三方验证：在控制台可直接调用 */
-  window.MealHash = {
-    fnv1a: fnv1a,
-    fnv1aBytes: fnv1aBytes,
-    encodeUtf8: encodeUtf8,
+  window.MealPersona = {
+    /* 题目与计分：可以自己把 answers 传进去核对 */
+    questions: QUESTIONS,
+    scoreAnswers: scoreAnswers,
+    scoreLabel: scoreLabel,
+    /* 类型与组合映射 */
+    types: TYPES,
+    typeMap: TYPE_MAP,
+    pickType: pickType,
+    /* 套餐组装 */
     buildMeal: buildMeal,
+    findItem: findItem,
     menu: MENU,
-    comboCount: MENU.mains.length * MENU.sides.length * MENU.drinks.length * MENU.desserts.length,
-    /* 人格命名：可自行遍历 400 种组合核对名字分布 */
-    personas: PERSONAS,
-    personaRules: PERSONA_RULES,
-    pickPersona: pickPersona,
-    rarityNote: rarityNote,
-    personaCount: Object.keys(PERSONAS).length,
     /* 成分表：真实营养占比可以自己按克数复算 */
     nutri: NUTRI,
     macroOf: macroOf,
     nutritionPanel: nutritionPanel,
     panelLine: panelLine,
-    panelDeviation: panelDeviation,
+    /* 哈希：只服务于小票签名 */
+    fnv1a: fnv1a,
+    fnv1aBytes: fnv1aBytes,
+    encodeUtf8: encodeUtf8,
+    toHex8: toHex8,
     buildCopyText: buildCopyText,
     /* 订单换算相关：可直接用文本验证导入链路，例如
-       MealHash.handleOrderText(JSON.stringify({orders:[...], summary:{...}})) */
+       MealPersona.handleOrderText(JSON.stringify({orders:[...], summary:{...}})) */
     handleOrderText: handleOrderText,
     buildOrderStats: buildOrderStats,
     validateOrderFile: validateOrderFile,
     topItemOf: topItemOf,
-    ratioText: ratioText
+    ratioText: ratioText,
+    /* 当前状态（调试用） */
+    state: state,
+    current: function () { return current; }
   };
 })();
 </script>
