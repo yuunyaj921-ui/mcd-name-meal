@@ -1,3 +1,5 @@
+// ⚠️ 旧价格快照，页面不读取 —— index.html 内嵌的 MENU 才是实际使用的数据。
+// 本文件由 refresh_data.py 生成，仅作为数据刷新产物保留，价格未经门店核实。
 var MENU = {
   "burger": [
     {
