@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>你是哪一种麦门人格 · 9 题点餐人格测试</title>
-<meta name="description" content="9 个点餐场景，测出你是哪种麦门人格：6 个类型 + 2 个混合型，每个类型配一份真套餐、一张基于真实营养数据的成分表、三段解析。零依赖、单文件、断网可用。" />
+<title>你是哪一种麦门人格 · 12 题六倾向测试</title>
+<meta name="description" content="12 个点餐场景，测出你在习惯依赖、数量补偿、结构拆解、交易控制、过程体验、即时满足这 6 个倾向上各有多强：最高的当主类型，真正接近的才有次要倾向。每个类型配一份真套餐、一张基于真实营养数据的成分表、三段解析。零依赖、单文件、断网可用。" />
 <style>
   /* ============ 设计令牌 ============ */
   :root {
@@ -398,7 +398,7 @@
     word-break: break-word;
   }
 
-  /* 身份行用块级流式排版：长句能正常折行，混合型徽标内联跟在类型名后面 */
+  /* 身份行用块级流式排版：长句能正常折行，行内的类型名用 .type-name 标记 */
   .type-identity {
     display: block;
     font-size: 13.5px;
@@ -411,18 +411,6 @@
     color: var(--ink);
     font-weight: 700;
     margin-right: 2px;
-  }
-
-  .type-badge {
-    display: inline-block;
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    color: var(--mcd-red);
-    border: 1px solid rgba(218, 41, 28, 0.36);
-    border-radius: 999px;
-    padding: 1px 7px;
-    margin-right: 6px;
-    vertical-align: 1px;
   }
 
   /* ============ 成分表：仿食品包装的营养成分表 ============ */
@@ -1144,6 +1132,161 @@
     margin-top: 12px;
   }
 
+  /* ============ 六倾向横条（375px 下不溢出） ============ */
+  .tend-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  /* 名字定宽 + 中间弹性 + 百分比定宽：三段都在容器内，长名字省略不撑破 */
+  .tend-row {
+    display: grid;
+    grid-template-columns: 4.8em minmax(0, 1fr) 2.9em;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .tend-name {
+    color: var(--ink-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tend-track {
+    display: block;
+    height: 9px;
+    border-radius: 999px;
+    background: #F1E7DA;
+    overflow: hidden;
+  }
+
+  .tend-fill {
+    display: block;
+    height: 100%;
+    min-width: 3px;
+    border-radius: 999px;
+    background: #D9CABA;
+    transition: width 0.4s ease;
+  }
+
+  .tend-pct {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    color: var(--ink-faint);
+    white-space: nowrap;
+  }
+
+  .tend-row.is-primary .tend-name,
+  .tend-row.is-primary .tend-pct { color: var(--mcd-red); }
+
+  .tend-row.is-primary .tend-fill { background: var(--mcd-red); }
+
+  .tend-row.is-second .tend-name,
+  .tend-row.is-second .tend-pct { color: var(--mcd-red-dark); }
+
+  .tend-row.is-second .tend-fill { background: #F2A199; }
+
+  .tend-note {
+    margin: 13px 0 0;
+    font-size: 10.5px;
+    line-height: 1.75;
+    color: var(--ink-faint);
+    word-break: break-word;
+  }
+
+  .tie-note {
+    margin: 9px 0 0;
+    font-size: 11.5px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+  }
+
+  /* 次要倾向：一行，带它的身份描述 */
+  .second-line {
+    margin: 13px 0 0;
+    padding-top: 12px;
+    border-top: 1px dashed var(--line);
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+  }
+
+  .second-line b {
+    color: var(--mcd-red);
+    font-weight: 700;
+  }
+
+  /* ============ 为什么是这个 ============ */
+  .why-lead {
+    margin: 0 0 11px;
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--ink);
+  }
+
+  .why-lead b {
+    color: var(--mcd-red);
+    font-weight: 700;
+  }
+
+  .why-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .why-list li {
+    display: flex;
+    gap: 8px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    background: #FCF8F2;
+    border-radius: 9px;
+    padding: 8px 11px;
+  }
+
+  .why-q {
+    flex: 0 0 auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    font-weight: 800;
+    color: var(--mcd-red);
+    letter-spacing: 0.04em;
+    padding-top: 1px;
+  }
+
+  .why-text {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* 小票里的一段补充说明（只有「我在交易」有） */
+  .type-note {
+    margin: 14px 0 0;
+    font-size: 11.5px;
+    line-height: 1.75;
+    color: var(--ink-faint);
+    background: #FCF8F2;
+    border-radius: 10px;
+    padding: 9px 12px;
+  }
+
+  /* 「怎么算的」里自动生成的表格：题目行用底色区分 */
+  .map-table tr.q-row td {
+    background: #FBF4EA;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
   /* ============ 响应式 ============ */
   @media (max-width: 400px) {
     body { padding: 22px 12px 40px; }
@@ -1177,67 +1320,48 @@
        ============================================================ -->
   <section id="screenIntro">
     <h1>你是哪一种<br /><span class="hl">麦门人格</span></h1>
-    <p class="lede">9 个点餐场景，测出你是哪种麦门人格</p>
+    <p class="lede">12 个点餐场景，测出你在 6 个倾向上各有多强</p>
 
     <button class="btn btn-primary hero-cta" type="button" id="startBtn">开始测试</button>
-    <p class="hero-note">9 题 · 约 40 秒 · 没有对错，只有习惯</p>
+    <p class="hero-note">12 题 · 约 1 分钟 · 没有对错，只有习惯</p>
 
     <ul class="hero-points">
-      <li class="hero-point">9 道题只测三件事：你怎么下决定、要不要一个完整的结构、现在就要还是可以等。</li>
-      <li class="hero-point">8 种组合对应 6 个类型 + 2 个混合型，每个类型固定一份真套餐。</li>
-      <li class="hero-point">成分表用的是官方营养数据，前三项是真占比，两项娱乐成分，整张表恒等 100%。</li>
+      <li class="hero-point">这 6 个倾向不在同一个层级上：有人用「以前的选择」省掉决策，有人用「更多份量」消除不安，有人只是把甜品提前。同一个人完全可以同时符合好几个。</li>
+      <li class="hero-point">所以这里不做互斥分类，只给每个倾向单独打分：最高的当主类型，第二高而且真的接近的，才作为次要倾向露一面。</li>
+      <li class="hero-point">每个类型固定一份真套餐，成分表用官方营养数据，前三项是真占比，整张表恒等 100%。</li>
     </ul>
 
     <!-- ============ 算法说明（可自行验证） ============ -->
     <details class="howto">
       <summary>怎么算的（可以自己验证）</summary>
       <div class="howto-body">
-        <p><b>9 道题只测 3 个维度，每题只值 1 分，没有加权、没有随机数，所以你自己就能核对。</b></p>
+        <p><b>12 道题测 6 个倾向。每题选一个选项，这个选项的分数加给某一个倾向，倾向之间互不排斥——所以你完全可能在两三个倾向上同时高分。</b></p>
+
+        <p><b>六个倾向</b></p>
+        <div id="howtoTend"></div>
+
+        <p><b>每题测什么</b>（右边写着这个选项加给哪个倾向；这部分只在说明里出现，答题页不显示）</p>
+        <div id="howtoQuestions"></div>
+
+        <p><b>第一步 · 归一化</b></p>
+        <p>六个倾向的满分并不一样——覆盖它的题有多少不同。直接拿原始分比大小是不公平的，所以先各自除以自己的满分：</p>
+        <p><code>rate[key] = score[key] / maxScore[key]</code></p>
+        <div class="howto-live" id="howtoMax"></div>
+        <p>举个例子：「交易控制」最多能拿 9 分，「数量补偿」最多只有 5 分。如果直接比原始分，覆盖题多的倾向几乎总占便宜——数量补偿得把 5 分全拿满，才勉强追得上交易控制拿 5 分。归一化之后每个倾向都落在 0–100%，才有可比性。</p>
+
+        <p><b>第二步 · 定主次</b></p>
         <ol>
-          <li><b>A 维度 · 你怎么下决定</b>：Q1 + Q2 + Q3，选第一个选项得 1 分，选第二个得 0 分，满分 3。
-            <b>≥2 记「算计」，否则「凭感觉」</b>。</li>
-          <li><b>B 维度 · 你要不要结构</b>：Q4 + Q5 + Q6，同一套算法，满分 3。
-            <b>≥2 记「整装」，否则「散装」</b>。</li>
-          <li><b>C 维度 · 现在还是要等</b>：Q7 + Q8 + Q9，同一套算法，满分 3。
-            <b>≥2 记「即时」，否则「延后」</b>。</li>
-          <li>三个维度各 2 种取值，一共 8 种组合，全部有对应类型：</li>
+          <li>rate 最高的那个是<b>主类型</b>：套餐、三段解析、关系区全部按它出。</li>
+          <li>次要倾向要<b>三个条件同时满足</b>才展示：① rate 排第二；② rate ≥ 主类型 rate × 0.8；③ 绝对分 ≥ 2 分。只看「第二高」会强行给人贴标签，这三条一起卡住，才说明它是真的接近，而不是蒙对了一题。</li>
+          <li>主类型与次要倾向的 rate 相差 <b>&lt; 0.03</b>、且主类型本身 <b>≥ 50%</b> 时，才算平局，标题写成「A × B」双主型。两个都很低的"平局"不算——那不是双子星，是都没测出来。</li>
+          <li>最多只展示 <b>1</b> 个次要倾向，第三个不展示——多给几个，它就成了星座。</li>
         </ol>
 
-        <table class="map-table">
-          <thead>
-            <tr><th>A 怎么决定</th><th>B 结构</th><th>C 时间</th><th>结果</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>算计</td><td>整装</td><td>即时</td><td>中薯换大薯</td></tr>
-            <tr><td>算计</td><td>整装</td><td>延后</td><td>可乐换无糖</td></tr>
-            <tr><td>算计</td><td>散装</td><td>即时</td><td>这个要啃</td></tr>
-            <tr><td>算计</td><td>散装</td><td>延后</td><td>攒着用（混合型）</td></tr>
-            <tr><td>感觉</td><td>整装</td><td>即时</td><td>跟着感觉走（混合型）</td></tr>
-            <tr><td>感觉</td><td>整装</td><td>延后</td><td>老样子</td></tr>
-            <tr><td>感觉</td><td>散装</td><td>即时</td><td>先来个甜的</td></tr>
-            <tr><td>感觉</td><td>散装</td><td>延后</td><td>不要主食</td></tr>
-          </tbody>
-        </table>
+        <p><b>不参与计分的东西：名字。</b>名字只用来算小票底部的签名——把名字 <code>name.trim().toLowerCase()</code> 编码成 UTF-8 字节，逐个跑 FNV-1a 32 位（<code>h = 2166136261</code>，每个字节先 <code>h ^= byte</code>，再 <code>h = Math.imul(h, 16777619) mod 2³²</code>），取 8 位小写十六进制。名字不一样，只是签名不一样。</p>
 
-        <ol start="5">
-          <li>每个类型对应一份<b>固定</b>套餐，不随名字变化，也不随答题细节变化：
-            同一个类型永远是同一份，所以结果可以复现。</li>
-          <li>名字只用来算一个<b>签名</b>，不影响类型和套餐：把名字 <code>name.trim().toLowerCase()</code>
-            编码成 UTF-8 字节，逐个跑 FNV-1a 32 位（<code>h = 2166136261</code>，
-            每个字节先 <code>h ^= byte</code>，再 <code>h = Math.imul(h, 16777619) mod 2³²</code>），
-            取 8 位小写十六进制印在小票底部。名字不一样，只是签名不一样。</li>
-          <li>成分表前三项是真的：营养数据来自<b>麦当劳官方 list-nutrition-foods 接口</b>
-            （160 条商品营养记录，本项目取其中 18 项）。把套餐里每样东西的碳水 × 4、脂肪 × 9、
-            蛋白质 × 4 折成热量，算出碳水 / 脂肪 / 蛋白质各自占这三大营养素热量的百分比，
-            四舍五入取整，零头归到「其他」。</li>
-          <li>后两项是娱乐成分，各占 2%~8%，从前面三项里按比例扣掉，所以整张表恒等于 100%。
-            前三项之外剩下的零头会给「其他」，永远不会凑不满。</li>
-          <li>为什么折算热量和商品标称热量会差一两个百分点：营养素折算必然有误差。
-            我们没有去凑这个数——成分表用营养素折算值，热量合计用官方标称值。</li>
-        </ol>
-        <div class="howto-live">
-          结果页会列出你这次的 A / B / C 三个分数，你可以拿它直接对上面那张映射表。
-        </div>
+        <p><b>成分表</b>前三项是真的：营养数据来自<b>麦当劳官方 list-nutrition-foods 接口</b>（160 条商品营养记录，本项目取其中 18 项）。把套餐里每样东西的碳水 × 4、脂肪 × 9、蛋白质 × 4 折成热量，算出碳水 / 脂肪 / 蛋白质各自占这三大营养素热量的百分比，四舍五入取整，零头归到「其他」。后两项是娱乐成分，各占 2%~8%，从前面三项里按比例扣掉，所以整张表恒等于 100%。</p>
+
+        <div class="howto-live">结果页会列出你这次六个倾向的原始分、满分和百分比，你可以拿它直接对上面这套规则。</div>
       </div>
     </details>
   </section>
@@ -1247,8 +1371,8 @@
        ============================================================ -->
   <section id="screenQuiz" class="hidden">
     <div class="quiz-head">
-      <span class="quiz-step" id="quizStep">1/9</span>
-      <div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="9"
+      <span class="quiz-step" id="quizStep">1/12</span>
+      <div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="12"
            aria-valuenow="1" aria-label="答题进度">
         <div class="progress-fill" id="progressFill"></div>
       </div>
@@ -1274,7 +1398,7 @@
     <!-- 1. 类型卡（小票风格） + 2. 成分表 -->
     <section class="ticket" id="ticket" aria-live="polite">
       <div class="ticket-top">
-        <span class="ticket-owner" id="ownerLabel">麦门人格测试 · 9 题</span>
+        <span class="ticket-owner" id="ownerLabel">麦门人格测试 · 12 题</span>
         <span class="ticket-stamp">MEAL TICKET</span>
       </div>
 
@@ -1308,22 +1432,37 @@
         <p class="panel-note">前三项为真实营养占比，后两项为娱乐。</p>
       </div>
 
+      <!-- 只有「我在交易」会显示：解释小票上为什么是这几样 -->
+      <p class="type-note hidden" id="typeNote"></p>
+
       <p class="sign-line hidden" id="signLine">你的小票签名 <code id="signHex"></code></p>
 
       <p class="disclaimer">纯属娱乐，不构成任何营养或心理建议。</p>
     </section>
 
-    <!-- 得分明细（可自行核对） -->
-    <details class="howto" id="scoreDetails">
-      <summary>这次的分数（可以自己核对）</summary>
-      <div class="howto-body">
-        <div class="howto-live" id="scoreLive"></div>
-        <p>每题只有一个选项得 1 分：Q1–Q3 计入 A 维度，Q4–Q6 计入 B 维度，Q7–Q9 计入 C 维度。
-          <b>≥2 取前一个标签，&lt;2 取后一个标签</b>，三个标签查表即可得到上面的类型。</p>
+    <!-- 3. 你的倾向：六条横条，从高到低 -->
+    <section class="card">
+      <div class="card-head">
+        <h2>你的倾向</h2>
+        <span class="tag">六个独立打分，不互斥</span>
       </div>
-    </details>
+      <div class="tend-list" id="tendList"></div>
+      <p class="tend-note" id="tendNote"></p>
+      <p class="tie-note hidden" id="tieNote"></p>
+      <p class="second-line hidden" id="secondLine"></p>
+    </section>
 
-    <!-- 3. 三段解析 -->
+    <!-- 4. 为什么是这个 -->
+    <section class="card">
+      <div class="card-head">
+        <h2>为什么是这个</h2>
+        <span class="tag">对回你自己选的那几句</span>
+      </div>
+      <p class="why-lead" id="whyLead"></p>
+      <ul class="why-list" id="whyList"></ul>
+    </section>
+
+    <!-- 5. 三段解析 -->
     <section class="card">
       <div class="card-head">
         <h2>三段解析</h2>
@@ -1343,11 +1482,11 @@
       </div>
     </section>
 
-    <!-- 4. 关系区 -->
+    <!-- 6. 关系区 -->
     <section class="card">
       <div class="card-head">
         <h2>你和别人</h2>
-        <span class="tag">6 个类型 + 2 个混合型互相评价</span>
+        <span class="tag">6 个倾向各有一个类型，互相评价</span>
       </div>
       <ul class="rel">
         <li id="relKin"></li>
@@ -1356,13 +1495,13 @@
       </ul>
     </section>
 
-    <!-- 5. 名字个性化（可选，不影响类型和套餐） -->
+    <!-- 7. 名字个性化（可选，不影响倾向、类型和套餐） -->
     <section class="card">
       <div class="card-head">
         <h2>给你的小票签个名</h2>
         <span class="tag">可选</span>
       </div>
-      <p class="card-sub">名字只印在小票上，不会改变你的类型、套餐和分数。</p>
+      <p class="card-sub">名字只印在小票抬头和底部签名上，不会改变你的倾向、类型和套餐。</p>
       <input
         class="text-input"
         id="signInput"
@@ -1376,7 +1515,7 @@
       />
     </section>
 
-    <!-- 6. 分享 -->
+    <!-- 8. 分享 -->
     <div class="actions">
       <button class="btn btn-primary" type="button" id="copyBtn">复制文案</button>
       <button class="btn btn-ghost" type="button" id="resetBtn">再测一次</button>
@@ -1529,120 +1668,202 @@
   var FALLBACK_MIX = [['嘴硬', 5], ['侥幸', 3]];
 
   /* =====================================================================
-   * 2. 9 道题
-   *    每题两个选项，每个选项只标记一个维度（A / B / C）和 1 分或 0 分。
-   *    维度名与计分标记都不显示给用户，用户不该知道自己在被测什么。
+   * 2. 12 道题
+   *    每题只选一个选项，这个选项把分数加给某一个（或几个）倾向。
+   *    scores 是本轮唯一的计分依据，永远不显示给用户——用户不该知道
+   *    自己正在被测什么。题量与分值调整后，满分由 computeMaxScore()
+   *    自动统计，不做手写常量，避免题库改了常量忘了改。
    * ===================================================================== */
   var QUESTIONS = [
     {
       id: 'Q1',
-      text: '你走进一家没去过的麦当劳，柜台前在排队。',
+      text: '预算 40 元，你走进麦当劳，怎么点。',
       options: [
-        { label: '先扫一眼今天有什么活动、有没有券', dim: 'A', score: 1 },
-        { label: '哪张图顺眼就点哪个', dim: 'A', score: 0 }
+        { label: '点一直点的那个套餐', scores: { habit: 1 } },
+        { label: '挑最划算的组合', scores: { calc: 1 } },
+        { label: '想吃的都点上，超一点没关系', scores: { more: 1 } },
+        { label: '只点一两样最想吃的', scores: { split: 1 } }
       ]
     },
     {
       id: 'Q2',
-      text: '朋友问你“你怎么总点这个”。',
+      text: '中薯可以加 1 元换大薯。',
       options: [
-        { label: '我能说出具体理由：价格、热量、还是口味', dim: 'A', score: 1 },
-        { label: '说不上来，就是习惯了', dim: 'A', score: 0 }
+        { label: '换，大份才够', scores: { more: 1 } },
+        { label: '不换，中薯正好', scores: { calc: 1 } },
+        { label: '看今天饿不饿', scores: { now: 1 } }
       ]
     },
     {
       id: 'Q3',
-      text: '菜单上出现了没吃过的新品。',
+      text: '新品上市，你会。',
       options: [
-        { label: '先看它的热量和价格，再决定试不试', dim: 'A', score: 1 },
-        { label: '看着有意思就点一个', dim: 'A', score: 0 }
+        { label: '还是点老样子', scores: { habit: 1 } },
+        { label: '先看热量和价格再决定', scores: { calc: 1 } },
+        { label: '直接点一个试试', scores: { now: 1 } },
+        { label: '等别人试过再说', scores: { habit: 1 } }
       ]
     },
     {
       id: 'Q4',
       text: '一个人吃饭，你怎么点。',
       options: [
-        { label: '点个套餐，省事', dim: 'B', score: 1 },
-        { label: '单点几样自己喜欢的', dim: 'B', score: 0 }
+        { label: '点一份套餐，主食小食饮料都有', scores: { habit: 1 } },
+        { label: '单点两样，不要套餐', scores: { split: 1 } },
+        { label: '只点甜品或小食，不算“正餐”', scores: { now: 1 } }
       ]
     },
     {
       id: 'Q5',
-      text: '下面哪种情况你更受不了。',
+      text: '甜品柜就在收银台旁边。',
       options: [
-        { label: '一顿饭没有主食，总觉得没吃', dim: 'B', score: 1 },
-        { label: '一顿饭全是主食，太单调', dim: 'B', score: 0 }
+        { label: '顺手点一个', scores: { now: 1 } },
+        { label: '想想要不要，先不点', scores: { calc: 1 } },
+        { label: '留着待会儿当加餐', scores: { more: 1 } }
       ]
     },
     {
       id: 'Q6',
-      text: '看到「随心配 1+1」。',
+      text: '你点了带骨的麦辣鸡翅。',
       options: [
-        { label: '组合太麻烦，不如直接点套餐', dim: 'B', score: 1 },
-        { label: '挺自由的，可以自己配', dim: 'B', score: 0 }
+        { label: '慢慢啃，这个过程挺爽', scores: { process: 2 } },
+        { label: '有点麻烦，但味道值', scores: { process: 1 } },
+        { label: '下次还是点无骨的', scores: { split: 1 } }
       ]
     },
     {
       id: 'Q7',
-      text: '你点了麦旋风，但正餐还没上。',
+      text: '优惠券和你想吃的东西冲突。',
       options: [
-        { label: '先吃，反正会化', dim: 'C', score: 1 },
-        { label: '等等，先吃正餐', dim: 'C', score: 0 }
+        { label: '用券，点券上的', scores: { calc: 1 } },
+        { label: '还是点想吃的，券算了', scores: { now: 1 } },
+        { label: '两个都点，用券的给别人', scores: { more: 1 } }
       ]
     },
     {
       id: 'Q8',
-      text: '甜品柜就在收银台旁边。',
+      text: '队伍很长，你还没想好吃什么。',
       options: [
-        { label: '顺手就点了', dim: 'C', score: 1 },
-        { label: '想想还是先不点', dim: 'C', score: 0 }
+        { label: '不看了，直接点老样子', scores: { habit: 1 } },
+        { label: '趁排队想清楚，到了就点', scores: { calc: 1 } },
+        { label: '边排边看，看到什么想吃什么', scores: { now: 1 } }
       ]
     },
     {
       id: 'Q9',
-      text: '一桌东西上齐了，最想吃的那个也在里面。',
+      text: '朋友问“你怎么总点这个”。',
       options: [
-        { label: '先吃最想吃的', dim: 'C', score: 1 },
-        { label: '留到最后当压轴', dim: 'C', score: 0 }
+        { label: '我能说出具体理由', scores: { calc: 1 } },
+        { label: '习惯了，没想过', scores: { habit: 1 } },
+        { label: '其实也想换，就是懒得想', scores: { split: 1 } }
+      ]
+    },
+    {
+      id: 'Q10',
+      text: '一桌东西上齐了。',
+      options: [
+        { label: '先吃最想吃的', scores: { now: 1 } },
+        { label: '留到最后当压轴', scores: { calc: 1 } },
+        { label: '按顺序，主食先', scores: { habit: 1 } }
+      ]
+    },
+    {
+      id: 'Q11',
+      text: '点单时你更在意哪一点。',
+      options: [
+        { label: '吃起来有没有意思，层次多不多', scores: { process: 2 } },
+        { label: '快不快，能不能边走边吃', scores: { split: 1 } },
+        { label: '够不够饱', scores: { more: 1 } }
+      ]
+    },
+    {
+      id: 'Q12',
+      text: '香芋派刚出炉，很烫。',
+      options: [
+        { label: '现在就咬，烫也值', scores: { process: 2 } },
+        { label: '等凉一点再吃', scores: { calc: 1 } },
+        { label: '算了，换别的', scores: { split: 1 } }
       ]
     }
   ];
 
   /* =====================================================================
-   * 3. 8 种组合 → 6 个类型 + 2 个混合型
+   * 3. 六个倾向 → 六个人格类型
    *
-   *    key 的格式是「A-B-C」，取值：
-   *      calc 算计 / feel 感觉
-   *      combo 整装 / loose 散装
-   *      now  即时 / later 延后
+   *    重点：这六个倾向不在同一个分类层级上——有的是决策策略（习惯依赖），
+   *    有的是数量偏好（数量补偿），有的是饮食结构（结构拆解）、权衡方式
+   *    （交易控制）、体验偏好（过程体验）、满足顺序（即时满足）。
+   *    一个人完全可以同时符合好几个，所以这里不做互斥分类：
+   *    每个倾向独立打分，最高的那个才拿来当「类型」的名称和套餐。
    *
    *    每个类型固定一份套餐（items 里是 MENU 的 code + 小票上那一栏的角色），
    *    价格和热量一律从 MENU 现算，不写死数字。
    * ===================================================================== */
+
+  /** 倾向的固定顺序：不仅用于遍历，也用于完全平分时的稳定排序依据。 */
+  var TENDENCIES = ['habit', 'more', 'split', 'calc', 'process', 'now'];
+
+  /**
+   * 六个倾向的展示信息：label 是倾向名（横条、分享文案用），
+   * definition 是它的一句话定义，signal 是能观察到的具体行为。
+   */
+  var TENDENCY_META = {
+    habit: {
+      label: '习惯依赖',
+      definition: '用「以前的选择」替代「重新决策」',
+      signal: '不看菜单、直接老样子、不试新品'
+    },
+    more: {
+      label: '数量补偿',
+      definition: '用「增加份量」消除「不够」的焦虑',
+      signal: '换大份、加点、怕点少'
+    },
+    split: {
+      label: '结构拆解',
+      definition: '拒绝「完整套餐」的预设结构，自己拼',
+      signal: '不点主食、单点几样'
+    },
+    calc: {
+      label: '交易控制',
+      definition: '用一个让步换另一个放纵，并相信自己是理性的',
+      signal: '无糖可乐配巨无霸、用券、算单价'
+    },
+    process: {
+      label: '过程体验',
+      definition: '为了「过程本身」接受额外麻烦',
+      signal: '点带骨的、慢慢啃、不介意弄脏手'
+    },
+    now: {
+      label: '即时满足',
+      definition: '把「现在想要」排在「应该先」之前',
+      signal: '先吃甜品、甜品当饭、不等'
+    }
+  };
+
   var TYPES = {
-    /* ---- 类型 1：感觉 + 整装 + 延后 ---- */
-    oldstyle: {
-      id: 'oldstyle',
+    /* ---- habit 习惯依赖 ---- */
+    habit: {
+      id: 'habit',
+      key: 'habit',
       name: '老样子',
       identity: '用重复消除选择的人',
-      isMix: false,
       items: [['BIGMAC', '主食'], ['FRIES_M', '小食'], ['COKE_M', '饮料']],
       strength: '你从不踩雷，是所有人里最靠谱的饭搭子。说到就到，绝不临时改主意。',
       shadow: '别人问你“这家有什么好吃的”，你答不上来。你吃了三年，但你说不出它好在哪。',
       paradox: '最熟悉的那个东西，恰恰是你最说不出理由的。你能详细解释为什么喜欢一部电影，但解释不了为什么每次都是巨无霸。',
       mix: [['惯性', 5], ['安全感', 3]],
       punch: '——吃了三年，还是说不出它好在哪。',
-      kin: { name: '可乐换无糖', reason: '都不冲动，都点固定的东西。区别是他算过，你没算。' },
+      kin: { name: '我在交易', reason: '都不冲动，都点固定的东西。区别是他算过，你没算。' },
       opposite: { name: '中薯换大薯', reason: '你永远一模一样，他永远再加一样。' },
       clash: { name: '不要主食', reason: '他觉得你被套餐驯化了，你觉得他不好好吃饭。' }
     },
 
-    /* ---- 类型 2：算计 + 整装 + 即时 ---- */
-    upsize: {
-      id: 'upsize',
+    /* ---- more 数量补偿 ---- */
+    more: {
+      id: 'more',
+      key: 'more',
       name: '中薯换大薯',
       identity: '用“更多”对抗“不够”的人',
-      isMix: false,
       items: [['DUBLECHE', '主食'], ['FRIES_L', '小食'], ['MCFLURRY', '甜品']],
       strength: '你不亏待自己，活得尽兴。跟你吃饭的人会觉得“这人真会吃”。',
       shadow: '吃不完，但不会承认吃不完。剩半份薯条放在那，你说“一会儿再吃”，然后没有一会儿。',
@@ -1651,67 +1872,15 @@
       punch: '——你在算人均，我在算还差一样什么。',
       kin: { name: '先来个甜的', reason: '都要“现在”。区别是他要“甜”，你要“多”。' },
       opposite: { name: '老样子', reason: '他永远一模一样，你永远再加一样。' },
-      clash: { name: '可乐换无糖', reason: '他在算人均，你在算还差一样什么。他觉得你失控，你觉得他扫兴。' }
+      clash: { name: '我在交易', reason: '他在算人均，你在算还差一样什么。他觉得你失控，你觉得他扫兴。' }
     },
 
-    /* ---- 类型 3：算计 + 整装 + 延后 ---- */
-    zerocoke: {
-      id: 'zerocoke',
-      name: '可乐换无糖',
-      identity: '每个选择都要有理由的人',
-      isMix: false,
-      /* 故意用普通可乐：无糖只在名字和文案里，这是这个类型的矛盾点本身 */
-      items: [['BIGMAC', '主食'], ['COKE_M', '饮料']],
-      strength: '你精明，从不被坑，永远知道自己花了多少钱。',
-      shadow: '省下来的钱没花在更值得的地方，省下来的热量也没让你更健康。你只是获得了一种“我在管理自己”的感觉。',
-      paradox: '一边控制一边放纵，还觉得自己很理性。点了巨无霸、大薯、麦旋风，然后可乐换成无糖——这不是控糖，这是给自己一个继续吃的理由。',
-      mix: [['自欺', 6], ['侥幸', 3]],
-      punch: '——这不是控糖，这是给自己一个继续吃的理由。',
-      kin: { name: '老样子', reason: '都不冲动。区别是他不思考，你思考太多。' },
-      opposite: { name: '先来个甜的', reason: '他先吃再说，你先算后吃。' },
-      clash: { name: '中薯换大薯', reason: '你在算人均，他在加量。你说“够了”，他说“再加个甜品吧”。' }
-    },
-
-    /* ---- 类型 4：感觉 + 散装 + 即时 ---- */
-    sweetfirst: {
-      id: 'sweetfirst',
-      name: '先来个甜的',
-      identity: '把“现在”放在“应该”前面的人',
-      isMix: false,
-      items: [['MCFLURRY', '甜品'], ['PIE_TARO', '甜品'], ['WINGS_2', '小食']],
-      strength: '你不委屈当下。你的快乐是即时的、真实的，不依赖“延迟满足”这类说法。',
-      shadow: '正事总被推后。账单不是不来，是晚点来。',
-      paradox: '你用“甜”来解决“不甜”的事。心情不好来一个，心情好也来一个——甜是万能答案，也说明你只有这一个答案。',
-      mix: [['即时感', 5], ['拖延', 3]],
-      punch: '——甜是万能答案，也说明你只有这一个答案。',
-      kin: { name: '中薯换大薯', reason: '都想要现在。区别是他靠“量”，你靠“甜”。' },
-      opposite: { name: '可乐换无糖', reason: '他先算后吃，你先吃再说。' },
-      clash: { name: '可乐换无糖', reason: '他在等你先吃正餐，你已经把甜品吃完了。' }
-    },
-
-    /* ---- 类型 5：算计 + 散装 + 即时 ---- */
-    gnaw: {
-      id: 'gnaw',
-      name: '这个要啃',
-      identity: '过程本身就是目的的人',
-      isMix: false,
-      items: [['WINGS_2', '小食'], ['NUGGETS_5', '小食'], ['SPRITE_M', '饮料']],
-      strength: '你能从小事里得到满足。你吃一顿麦当劳的快乐，比大多数人都高。',
-      shadow: '一起吃的人要等你。而且你不太在意这件事。',
-      paradox: '你要“仪式感”，又嫌“太麻烦”——但麻烦正是仪式感的来源。如果鸡翅是无骨的，你反而不会点。',
-      mix: [['仪式感', 5], ['耐心', 3]],
-      punch: '——如果鸡翅是无骨的，你反而不会点。',
-      kin: { name: '先来个甜的', reason: '都愿意为“当下”付出。区别是他要甜的，你要过程。' },
-      opposite: { name: '不要主食', reason: '他拼起来就吃，你要慢慢对付。' },
-      clash: { name: '不要主食', reason: '他要快，你要慢。等的人烦，被等的人也烦。' }
-    },
-
-    /* ---- 类型 6：感觉 + 散装 + 延后 ---- */
-    nomain: {
-      id: 'nomain',
+    /* ---- split 结构拆解 ---- */
+    split: {
+      id: 'split',
+      key: 'split',
       name: '不要主食',
       identity: '拒绝被规定的人',
-      isMix: false,
       items: [['NUGGETS_5', '小食'], ['FRIES_M', '小食'], ['CONE', '甜品']],
       strength: '你自由，不被“应该怎么吃”绑架。你是那种在所有人都点套餐时敢单点的人。',
       shadow: '你不是不想吃主食，你是不敢承认自己想要一整份。',
@@ -1723,62 +1892,62 @@
       clash: { name: '老样子', reason: '他觉得你不好好吃饭，你觉得他被套餐驯化了。' }
     },
 
-    /* ---- 混合型 1：感觉 + 整装 + 即时 ---- */
-    feelall: {
-      id: 'feelall',
-      name: '跟着感觉走',
-      identity: '凭当下想吃就点，但一定要点成完整的一套',
-      isMix: true,
-      items: [['DUBLECHE', '主食'], ['FRIES_M', '小食'], ['COKE_M', '饮料']],
-      strength: '你不亏待自己，也不为难自己。想吃什么就点什么，还顺手点成一个齐整的样子。',
-      shadow: '你看起来随性，其实一点都不随便。点的时候很松，落单的时候必须整齐——两样都要，一样不能少。',
-      paradox: '你说“就随便点”，然后点出了一套完整结构。你嘴上拒绝计划，手上执行了计划。',
-      mix: [['随性', 5], ['要面子', 3]],
-      punch: '——嘴上说随便，点出来是一整套。',
-      kin: { name: '中薯换大薯', reason: '都点成完整一套。区别是他算过，你没算。' },
-      opposite: { name: '这个要啃', reason: '他要过程，你要结果齐整。' },
-      clash: { name: '不要主食', reason: '他要拼，你要整。他说“我不需要主食”，你说“那也得有个样子”。' }
+    /* ---- calc 交易控制 ---- */
+    calc: {
+      id: 'calc',
+      key: 'calc',
+      name: '我在交易',
+      identity: '用一个让步换另一个放纵的人',
+      /* 故意用普通可乐呈现：换无糖这个动作在文案里，不在小票上 */
+      items: [['BIGMAC', '主食'], ['COKE_M', '饮料']],
+      strength: '你很少失控。你总能给每一个放纵找到一个说得过去的理由，而且这个理由通常真的成立。',
+      shadow: '你交易的对象一直是你自己。省下的那点热量，从来没真正抵消过什么，但它让你吃得心安理得——这才是它真正的功能。',
+      paradox: '你不是不自律，你是太需要“我很理性”这个感觉。无糖可乐配巨无霸不是笑话，是你每天跟自己签的合同。',
+      mix: [['自欺', 6], ['侥幸', 3]],
+      punch: '——无糖可乐配巨无霸不是笑话，是你每天跟自己签的合同。',
+      note: '为什么小票上是“巨无霸 + 可口可乐中杯”：上一版这个位置是“无糖可乐 + 麦香鱼”，表达的是“整体克制”，但那个动机已经被“不要主食”占了。这一版换成“一笔交易”——用一杯没糖的可乐，换一个不用内疚的巨无霸，核心动机从“我在控制自己”变成“我在跟自己谈条件”。换无糖这个动作写在文案里、不印在小票上，所以小票照实显示普通可乐。',
+      kin: { name: '老样子', reason: '都不冲动。区别是他不思考，你思考太多。' },
+      opposite: { name: '先来个甜的', reason: '他先吃再说，你先算后吃。' },
+      clash: { name: '中薯换大薯', reason: '你在算人均，他在加量。你说“够了”，他说“再加个甜品吧”。' }
     },
 
-    /* ---- 混合型 2：算计 + 散装 + 延后 ---- */
-    saveup: {
-      id: 'saveup',
-      name: '攒着用',
-      identity: '算过每一分钱，也不着急花',
-      isMix: true,
-      items: [['NUGGETS_5', '小食'], ['FRIES_S', '小食'], ['COKE_ZERO', '饮料']],
-      strength: '你自由，不被“应该怎么吃”绑架。你算得清，也不装阔。',
-      shadow: '省下来的钱一直在账上，没变成任何一次痛快。你不是不想花，是想等一个“值得”的时刻，而那个时刻一直没来。',
-      paradox: '你算得清清楚楚，却迟迟不下单。精打细算的最后一步，永远是“再等等”。',
-      mix: [['精算', 5], ['犹豫', 3]],
-      punch: '——算得清清楚楚，就是不急着花。',
-      kin: { name: '不要主食', reason: '都自己组装。区别是他凭感觉，你靠算。' },
-      opposite: { name: '中薯换大薯', reason: '他先加再说，你先算再说。' },
-      clash: { name: '先来个甜的', reason: '他要现在，你要以后。' }
+    /* ---- process 过程体验 ---- */
+    process: {
+      id: 'process',
+      key: 'process',
+      name: '这个要啃',
+      identity: '过程本身就是目的的人',
+      items: [['WINGS_2', '小食'], ['NUGGETS_5', '小食'], ['SPRITE_M', '饮料']],
+      strength: '你能从小事里得到满足。你吃一顿麦当劳的快乐，比大多数人都高。',
+      shadow: '一起吃的人要等你。而且你不太在意这件事。',
+      paradox: '你要“仪式感”，又嫌“太麻烦”——但麻烦正是仪式感的来源。如果鸡翅是无骨的，你反而不会点。',
+      mix: [['仪式感', 5], ['耐心', 3]],
+      punch: '——如果鸡翅是无骨的，你反而不会点。',
+      kin: { name: '先来个甜的', reason: '都愿意为“当下”付出。区别是他要甜的，你要过程。' },
+      opposite: { name: '不要主食', reason: '他拼起来就吃，你要慢慢对付。' },
+      clash: { name: '不要主食', reason: '他要快，你要慢。等的人烦，被等的人也烦。' }
+    },
+
+    /* ---- now 即时满足 ---- */
+    now: {
+      id: 'now',
+      key: 'now',
+      name: '先来个甜的',
+      identity: '把“现在”放在“应该”前面的人',
+      items: [['MCFLURRY', '甜品'], ['PIE_TARO', '甜品'], ['WINGS_2', '小食']],
+      strength: '你不委屈当下。你的快乐是即时的、真实的，不依赖“延迟满足”这类说法。',
+      shadow: '正事总被推后。账单不是不来，是晚点来。',
+      paradox: '你用“甜”来解决“不甜”的事。心情不好来一个，心情好也来一个——甜是万能答案，也说明你只有这一个答案。',
+      mix: [['即时感', 5], ['拖延', 3]],
+      punch: '——甜是万能答案，也说明你只有这一个答案。',
+      kin: { name: '中薯换大薯', reason: '都想要现在。区别是他靠“量”，你靠“甜”。' },
+      opposite: { name: '我在交易', reason: '他先算后吃，你先吃再说。' },
+      clash: { name: '我在交易', reason: '他在等你先吃正餐，你已经把甜品吃完了。' }
     }
   };
 
-  /** 8 种组合 → 类型 id（见 howto 里的映射表）。 */
-  var TYPE_MAP = {
-    'calc-combo-now': 'upsize',
-    'calc-combo-later': 'zerocoke',
-    'calc-loose-now': 'gnaw',
-    'calc-loose-later': 'saveup',
-    'feel-combo-now': 'feelall',
-    'feel-combo-later': 'oldstyle',
-    'feel-loose-now': 'sweetfirst',
-    'feel-loose-later': 'nomain'
-  };
-
-  /** 兜底类型（映射表已覆盖全部 8 种组合，正常不会触发）。 */
-  var FALLBACK_TYPE = 'oldstyle';
-
-  /** 维度标签，用于"这次的分数"与分享文案。 */
-  var DIM_LABEL = {
-    a: { calc: '算计', feel: '凭感觉' },
-    b: { combo: '整装', loose: '散装' },
-    c: { now: '即时', later: '延后' }
-  };
+  /** 兜底类型：倾向 key 非法时回落（六个 key 都有对应类型，正常不会触发）。 */
+  var FALLBACK_TYPE = 'habit';
 
   /* =====================================================================
    * 4. 哈希核心（保留，只用于小票签名，不参与类型与套餐）
@@ -1861,53 +2030,178 @@
   }
 
   /* =====================================================================
-   * 5. 计分与类型判定
+   * 5. 计分与主次判定
+   *
+   *    规则（与首屏「怎么算的」里的说明逐条对应）：
+   *      1. 每题选一个选项，把它的标注全部加到对应倾向
+   *      2. 归一化：rate[key] = score[key] / maxScore[key]
+   *      3. rate 最高的是主类型
+   *      4. 次要倾向要三条同时满足：排第二 / rate ≥ 主 × 0.8 / 绝对分 ≥ 2
+   *      5. |主 rate − 次 rate| < 0.03 且主 rate ≥ 0.5 视为平局，出双主型
+   *      6. 最多只展示 1 个次要倾向
    * ===================================================================== */
 
+  /** 平局阈值：主次归一化比例相差小于它就算平局。 */
+  var TIE_GAP = 0.03;
+  /** 双主型的绝对门槛：主类型 rate 至少要过半，否则「两个都很低」不配叫双主型。 */
+  var TIE_MIN_RATE = 0.5;
+  /** 次要倾向的接近度下限：rate ≥ 主类型 rate 的八成。 */
+  var SECOND_RATIO = 0.8;
+  /** 次要倾向的绝对分下限：至少真的拿到 2 分，避免只蒙对一题。 */
+  var SECOND_MIN_SCORE = 2;
+  /** 「为什么是这个」里最多列几条用户的选项。 */
+  var WHY_MAX_PICKS = 3;
+
   /**
-   * 把 9 个答案折算成三个维度的分数与最终类型。
-   * @param {Array<number|null>} answers 每题选中的选项下标（0 或 1）
-   * @returns {{A: number, B: number, C: number,
-   *            a: string, b: string, c: string, key: string, type: object}}
+   * 自动统计每个倾向的理论满分：遍历题库，把所有选项的标注逐个累加。
+   * 之所以不写死常量：题量和分值随时会调，手写常量迟早和题库对不上，
+   * 一改题就静默算错。这个函数永远和 QUESTIONS 保持一致。
+   * @returns {Object<string, number>} 例如 {habit: 7, more: 5, split: 6, ...}
    */
-  function scoreAnswers(answers) {
-    var A = 0;
-    var B = 0;
-    var C = 0;
-    for (var i = 0; i < QUESTIONS.length; i += 1) {
-      var picked = answers[i];
-      if (picked !== 0 && picked !== 1) { continue; }
-      var opt = QUESTIONS[i].options[picked];
-      if (!opt) { continue; }
-      if (opt.dim === 'A') { A += opt.score; }
-      else if (opt.dim === 'B') { B += opt.score; }
-      else if (opt.dim === 'C') { C += opt.score; }
+  function computeMaxScore() {
+    var max = {};
+    var i;
+    for (i = 0; i < TENDENCIES.length; i += 1) { max[TENDENCIES[i]] = 0; }
+
+    for (i = 0; i < QUESTIONS.length; i += 1) {
+      var options = QUESTIONS[i].options || [];
+      for (var j = 0; j < options.length; j += 1) {
+        var scores = options[j].scores || {};
+        for (var key in scores) {
+          if (!Object.prototype.hasOwnProperty.call(scores, key)) { continue; }
+          if (typeof max[key] !== 'number') { max[key] = 0; }
+          max[key] += toNumber(scores[key], 0);
+        }
+      }
     }
-    var a = A >= 2 ? 'calc' : 'feel';
-    var b = B >= 2 ? 'combo' : 'loose';
-    var c = C >= 2 ? 'now' : 'later';
-    var key = a + '-' + b + '-' + c;
-    return { A: A, B: B, C: C, a: a, b: b, c: c, key: key, type: pickType(key) };
+    return max;
+  }
+
+  /** 六个倾向的理论满分，由题库自动算出（改了题，这里自动跟着变）。 */
+  var MAX_SCORE = computeMaxScore();
+
+  /**
+   * 六个倾向的展示名；key 不认识时原样返回，避免出现 undefined。
+   * @param {string} key 倾向 key
+   * @returns {string}
+   */
+  function tendencyLabel(key) {
+    var meta = TENDENCY_META[key];
+    return meta && meta.label ? meta.label : String(key);
   }
 
   /**
-   * 按组合 key 取类型对象；key 非法时回落到兜底类型。
-   * @param {string} key 形如 'calc-combo-now'
+   * 把 12 个答案折算成六倾向得分、归一化比例与主 / 次判定。
+   * @param {Array<number|null>} answers 每题选中的选项下标（未答为 null）
+   * @returns {{score: Object<string, number>, rate: Object<string, number>,
+   *            pct: Object<string, number>, ranked: Array<string>,
+   *            primary: string, second: string,
+   *            isTie: boolean, showSecond: boolean,
+   *            picks: Array<{id: string, label: string, marks: Object}>,
+   *            gap: number}}
+   */
+  function scoreAnswers(answers) {
+    var score = {};
+    var rate = {};
+    var pct = {};
+    var picks = [];
+    var i;
+
+    for (i = 0; i < TENDENCIES.length; i += 1) { score[TENDENCIES[i]] = 0; }
+
+    for (i = 0; i < QUESTIONS.length; i += 1) {
+      var q = QUESTIONS[i];
+      var picked = answers ? answers[i] : null;
+      if (typeof picked !== 'number' || picked < 0 || picked >= q.options.length) { continue; }
+      var opt = q.options[picked];
+      if (!opt) { continue; }
+
+      var marks = opt.scores || {};
+      for (var key in marks) {
+        if (!Object.prototype.hasOwnProperty.call(marks, key)) { continue; }
+        if (typeof score[key] !== 'number') { score[key] = 0; }
+        score[key] += toNumber(marks[key], 0);
+      }
+      picks.push({ id: q.id, label: opt.label, marks: marks });
+    }
+
+    /* 归一化：满分不同的倾向不能用原始分直接比 */
+    for (i = 0; i < TENDENCIES.length; i += 1) {
+      var k = TENDENCIES[i];
+      var max = MAX_SCORE[k] > 0 ? MAX_SCORE[k] : 0;
+      rate[k] = max > 0 ? score[k] / max : 0;
+      pct[k] = Math.round(rate[k] * 100);
+    }
+
+    /* 排序：比例优先，其次原始分，最后按固定顺序，保证结果可复现 */
+    var ranked = TENDENCIES.slice();
+    ranked.sort(function (a, b) {
+      if (rate[b] !== rate[a]) { return rate[b] - rate[a]; }
+      if (score[b] !== score[a]) { return score[b] - score[a]; }
+      return TENDENCIES.indexOf(a) - TENDENCIES.indexOf(b);
+    });
+
+    var primary = ranked[0];
+    var second = ranked.length > 1 ? ranked[1] : ranked[0];
+    var gap = rate[primary] - rate[second];
+    var isTie = score[primary] > 0 && gap < TIE_GAP && rate[primary] >= TIE_MIN_RATE;
+    var showSecond = !isTie &&
+                     score[second] > 0 &&
+                     rate[second] >= rate[primary] * SECOND_RATIO &&
+                     score[second] >= SECOND_MIN_SCORE;
+
+    return {
+      score: score,
+      rate: rate,
+      pct: pct,
+      ranked: ranked,
+      primary: primary,
+      second: second,
+      gap: gap,
+      isTie: isTie,
+      showSecond: showSecond,
+      picks: picks
+    };
+  }
+
+  /**
+   * 按倾向 key 取类型对象；key 非法时回落到兜底类型。
+   * @param {string} key 倾向 key，例如 'calc'
    * @returns {object} TYPES 里的一个类型对象
    */
   function pickType(key) {
-    var id = TYPE_MAP[key];
-    if (id && TYPES[id]) { return TYPES[id]; }
+    if (TYPES[key]) { return TYPES[key]; }
     return TYPES[FALLBACK_TYPE];
   }
 
   /**
-   * 组合 key 的中文标签，例如 '算计 · 整装 · 即时'。
-   * @param {{a: string, b: string, c: string}} score
+   * 分享用的倾向摘要，例如「交易控制 78% · 习惯依赖 57% · 即时满足 43%」。
+   * @param {object} result scoreAnswers 的返回值
+   * @param {number} count 取前几名
    * @returns {string}
    */
-  function scoreLabel(score) {
-    return DIM_LABEL.a[score.a] + ' · ' + DIM_LABEL.b[score.b] + ' · ' + DIM_LABEL.c[score.c];
+  function tendencySummary(result, count) {
+    if (!result) { return ''; }
+    var parts = [];
+    var limit = Math.min(count, result.ranked.length);
+    for (var i = 0; i < limit; i += 1) {
+      var key = result.ranked[i];
+      parts.push(tendencyLabel(key) + ' ' + result.pct[key] + '%');
+    }
+    return parts.join(' · ');
+  }
+
+  /**
+   * 平局说明里那句「只差 N 个百分点」。
+   * @param {object} result scoreAnswers 的返回值
+   * @returns {string} 例如 "1.6 个百分点" / "不到 0.1 个百分点"
+   */
+  function gapText(result) {
+    if (!result) { return '不到 0.1 个百分点'; }
+    var gap = Math.abs(result.gap);
+    var tenth = Math.round(gap * 1000) / 10;
+    if (tenth <= 0) { return '不到 0.1 个百分点'; }
+    return tenth.toFixed(1) + ' 个百分点';
   }
 
   /* =====================================================================
@@ -1975,8 +2269,8 @@
       totalKcal: totalKcal,
       hasUnverified: hasUnverified,
       display: normalizeName(rawName),
-      /* 分数在 finishQuiz 里挂上，供"这次的分数"使用 */
-      score: null
+      /* 六倾向计分结果由 finishQuiz 挂上，供横条与「为什么是这个」使用 */
+      result: null
     };
   }
 
@@ -2243,8 +2537,20 @@
     totalKcal: document.getElementById('totalKcal'),
     priceNote: document.getElementById('priceNote'),
     panelRows: document.getElementById('panelRows'),
+    typeNote: document.getElementById('typeNote'),
     signLine: document.getElementById('signLine'),
     signHex: document.getElementById('signHex'),
+    /* 结果：六倾向与「为什么是这个」 */
+    tendList: document.getElementById('tendList'),
+    tendNote: document.getElementById('tendNote'),
+    tieNote: document.getElementById('tieNote'),
+    secondLine: document.getElementById('secondLine'),
+    whyLead: document.getElementById('whyLead'),
+    whyList: document.getElementById('whyList'),
+    /* 首屏「怎么算的」里自动生成的表格 */
+    howtoTend: document.getElementById('howtoTend'),
+    howtoQuestions: document.getElementById('howtoQuestions'),
+    howtoMax: document.getElementById('howtoMax'),
     /* 结果：解析与关系 */
     anaStrength: document.getElementById('anaStrength'),
     anaShadow: document.getElementById('anaShadow'),
@@ -2252,7 +2558,6 @@
     relKin: document.getElementById('relKin'),
     relOpposite: document.getElementById('relOpposite'),
     relClash: document.getElementById('relClash'),
-    scoreLive: document.getElementById('scoreLive'),
     /* 结果：签名与分享 */
     signInput: document.getElementById('signInput'),
     copyBtn: document.getElementById('copyBtn'),
@@ -2283,6 +2588,8 @@
   /** 已导入的订单统计（null 表示还没导入）。 */
   var importedStats = null;
   var toastTimer = null;
+  /** 选项字母：选项数最多 4 个（A~D），渲染与说明表共用。 */
+  var LETTERS = ['A', 'B', 'C', 'D'];
 
   /** 把作答数组重置成全 null。 */
   function resetAnswers() {
@@ -2342,7 +2649,7 @@
       var isPicked = picked === i;
       html +=
         '<button type="button" class="opt' + (isPicked ? ' is-picked' : '') + '" data-opt="' + i + '">' +
-          '<span class="opt-key">' + (i === 0 ? 'A' : 'B') + '</span>' +
+          '<span class="opt-key">' + (LETTERS[i] || String(i + 1)) + '</span>' +
           '<span class="opt-text">' + escapeHtml(q.options[i].label) + '</span>' +
         '</button>';
     }
@@ -2357,12 +2664,15 @@
   }
 
   /**
-   * 选中某个选项：记下分数并自动进入下一题。
-   * @param {number} optIndex 0 或 1
+   * 选中某个选项：记下选择并自动进入下一题。
+   * 分数不在这里加，全部由 answers 派生——所以返回上一题改选，
+   * 旧分数会自动撤销，不需要手工扣分。
+   * @param {number} optIndex 选项下标（0 起，题目选项数决定了上限）
    */
   function selectOption(optIndex) {
-    if (optIndex !== 0 && optIndex !== 1) { return; }
-    // 直接覆盖：返回上一题改答案时，旧分数自然被撤销
+    var q = QUESTIONS[state.index];
+    if (!q || typeof optIndex !== 'number') { return; }
+    if (optIndex < 0 || optIndex >= q.options.length) { return; }
     state.answers[state.index] = optIndex;
 
     if (state.index < QUESTIONS.length - 1) {
@@ -2380,11 +2690,11 @@
     renderQuestion();
   }
 
-  /** 9 题答完：算分 → 出结果。 */
+  /** 12 题答完：算六个倾向 → 取最高当类型 → 出结果。 */
   function finishQuiz() {
-    var score = scoreAnswers(state.answers);
-    current = buildMeal(score.type, '');
-    current.score = score;
+    var result = scoreAnswers(state.answers);
+    current = buildMeal(pickType(result.primary), '');
+    current.result = result;
     dom.signInput.value = '';
     renderResult();
     showScreen('result');
@@ -2408,24 +2718,33 @@
    * 11. 结果渲染
    * ===================================================================== */
 
-  /** 渲染小票头部：标题 + 身份（名字只改标题）。 */
+  /**
+   * 渲染小票头部。
+   * 标题固定是「主类型名」；平局时是「A × B」。
+   * 名字不参与任何计分，也不改标题，只印在抬头和签名上。
+   */
   function updateTicketHead() {
     if (!current) { return; }
-    var type = current.type;
-    var badge = type.isMix ? '<span class="type-badge">混合型</span>' : '';
+    var result = current.result;
+    var primaryType = current.type;
+    var secondType = result && TYPES[result.second] ? TYPES[result.second] : null;
 
-    if (current.display) {
-      dom.typeTitle.textContent = current.display + '的麦门人格';
+    dom.ownerLabel.textContent = current.display
+      ? current.display + ' 的麦门人格小票 · 12 题'
+      : '麦门人格测试 · 12 题';
+
+    if (result && result.isTie && secondType) {
+      dom.typeTitle.textContent = '「' + primaryType.name + ' × ' + secondType.name + '」';
       dom.typeIdentity.innerHTML =
-        '<span class="type-name">「' + escapeHtml(type.name) + '」</span>' + badge +
-        escapeHtml(type.identity);
+        '<span class="type-name">两种倾向几乎一样高</span>——' +
+        escapeHtml(primaryType.identity) + '；' + escapeHtml(secondType.identity) + '。';
     } else {
-      dom.typeTitle.textContent = '「' + type.name + '」';
-      dom.typeIdentity.innerHTML = badge + escapeHtml(type.identity);
+      dom.typeTitle.textContent = '「' + primaryType.name + '」';
+      dom.typeIdentity.textContent = primaryType.identity;
     }
   }
 
-  /** 渲染小票签名（FNV-1a，纯粹装饰，不影响类型与套餐）。 */
+  /** 渲染小票签名（FNV-1a，纯粹装饰，不影响倾向、类型与套餐）。 */
   function updateSign() {
     if (!current || !current.display) {
       dom.signHex.textContent = '';
@@ -2452,10 +2771,132 @@
       escapeHtml(safe.reason);
   }
 
-  /** 整页渲染结果（类型卡 + 成分表 + 解析 + 关系 + 分数）。 */
+  /**
+   * 渲染六条倾向横条：按归一化比例从高到低排。
+   * 主类型红色、次要倾向浅红、其余灰色，一眼能看出最高的三个是谁。
+   * @param {object} result scoreAnswers 的返回值
+   */
+  function renderTendencies(result) {
+    if (!result) {
+      dom.tendList.innerHTML = '';
+      dom.tendNote.textContent = '';
+      dom.tieNote.classList.add('hidden');
+      dom.secondLine.classList.add('hidden');
+      return;
+    }
+
+    var highlightSecond = result.isTie || result.showSecond;
+    var html = '';
+    for (var i = 0; i < result.ranked.length; i += 1) {
+      var key = result.ranked[i];
+      var cls = 'tend-row';
+      if (key === result.primary) {
+        cls += ' is-primary';
+      } else if (highlightSecond && key === result.second) {
+        cls += ' is-second';
+      }
+      /* 比例为 0 时也留一条最小可见宽度，避免看起来像渲染失败 */
+      var width = clamp(result.pct[key], 1, 100);
+      html +=
+        '<div class="' + cls + '">' +
+          '<span class="tend-name">' + escapeHtml(tendencyLabel(key)) + '</span>' +
+          '<span class="tend-track" aria-hidden="true">' +
+            '<span class="tend-fill" style="width: ' + width + '%"></span>' +
+          '</span>' +
+          '<span class="tend-pct">' + result.pct[key] + '%</span>' +
+        '</div>';
+    }
+    dom.tendList.innerHTML = html;
+
+    /* 原始分 / 满分：按固定顺序列出来，方便和「怎么算的」对照 */
+    var parts = [];
+    for (var t = 0; t < TENDENCIES.length; t += 1) {
+      var k = TENDENCIES[t];
+      parts.push(tendencyLabel(k) + ' ' + result.score[k] + '/' + MAX_SCORE[k]);
+    }
+    dom.tendNote.textContent = '原始分 / 满分：' + parts.join(' · ') + '。';
+
+    /* 平局说明 */
+    if (result.isTie) {
+      var gapDesc = Math.round(Math.abs(result.gap) * 1000) === 0
+        ? '几乎完全一样'
+        : '只差 ' + gapText(result);
+      dom.tieNote.textContent =
+        '「' + tendencyLabel(result.primary) + '」和「' + tendencyLabel(result.second) +
+        '」的归一化比例' + gapDesc + '，所以按双主型处理。';
+      dom.tieNote.classList.remove('hidden');
+    } else {
+      dom.tieNote.textContent = '';
+      dom.tieNote.classList.add('hidden');
+    }
+
+    /* 次要倾向：满足三条件才露一行，带它的身份描述 */
+    if (result.showSecond) {
+      var secondType = TYPES[result.second];
+      dom.secondLine.innerHTML =
+        '你还有一点<b>「' + escapeHtml(tendencyLabel(result.second)) + '」</b>' +
+        (secondType
+          ? '——也就是「' + escapeHtml(secondType.name) + '」：' + escapeHtml(secondType.identity)
+          : '') +
+        '。';
+      dom.secondLine.classList.remove('hidden');
+    } else {
+      dom.secondLine.innerHTML = '';
+      dom.secondLine.classList.add('hidden');
+    }
+  }
+
+  /**
+   * 渲染「为什么是这个」：主倾向的得分 + 用户实际选中、且对它有贡献的选项原文。
+   * 这一块是可信度的关键——让用户能把自己的选择对回来。
+   * @param {object} result scoreAnswers 的返回值
+   */
+  function renderWhy(result) {
+    if (!result) {
+      dom.whyLead.textContent = '';
+      dom.whyList.innerHTML = '';
+      return;
+    }
+
+    var key = result.primary;
+    var type = pickType(key);
+    dom.whyLead.innerHTML =
+      '你的<b>「' + escapeHtml(tendencyLabel(key)) + '」</b>得分最高：' +
+      result.score[key] + '/' + MAX_SCORE[key] + ' 分，归一化后 ' + result.pct[key] + '%。' +
+      '这个倾向对应的类型是「' + escapeHtml(type.name) + '」：' +
+      escapeHtml(TENDENCY_META[key] ? TENDENCY_META[key].definition : '') + '。';
+
+    var picked = [];
+    for (var i = 0; i < result.picks.length; i += 1) {
+      var pick = result.picks[i];
+      if (pick.marks && toNumber(pick.marks[key], 0) > 0) {
+        picked.push(pick);
+        if (picked.length >= WHY_MAX_PICKS) { break; }
+      }
+    }
+
+    if (!picked.length) {
+      dom.whyList.innerHTML =
+        '<li><span class="why-text">没有哪一题单独把它顶上去——它是好几题零散的分加起来的。</span></li>';
+      return;
+    }
+
+    var html = '';
+    for (var j = 0; j < picked.length; j += 1) {
+      html +=
+        '<li>' +
+          '<span class="why-q">' + escapeHtml(picked[j].id) + '</span>' +
+          '<span class="why-text">' + escapeHtml(picked[j].label) + '</span>' +
+        '</li>';
+    }
+    dom.whyList.innerHTML = html;
+  }
+
+  /** 整页渲染结果（类型卡 + 成分表 + 六倾向 + 为什么 + 解析 + 关系）。 */
   function renderResult() {
     if (!current) { return; }
     var type = current.type;
+    var result = current.result || null;
 
     updateTicketHead();
 
@@ -2491,8 +2932,21 @@
     }
     dom.panelRows.innerHTML = panelHtml;
 
+    /* 类型补充说明（目前只有「我在交易」有） */
+    if (type.note) {
+      dom.typeNote.textContent = type.note;
+      dom.typeNote.classList.remove('hidden');
+    } else {
+      dom.typeNote.textContent = '';
+      dom.typeNote.classList.add('hidden');
+    }
+
     /* 签名 */
     updateSign();
+
+    /* 六倾向横条 + 为什么是这个 */
+    renderTendencies(result);
+    renderWhy(result);
 
     /* 三段解析 */
     dom.anaStrength.textContent = type.strength;
@@ -2504,18 +2958,6 @@
     renderRel(dom.relOpposite, '相反', type.opposite);
     renderRel(dom.relClash, '合不来', type.clash);
 
-    /* 分数明细 */
-    var s = current.score;
-    if (s) {
-      dom.scoreLive.innerHTML =
-        'A 怎么下决定：Q1 + Q2 + Q3 = <b>' + s.A + '</b> 分 → ' + thLine(s.A, '算计', '凭感觉') + '<br />' +
-        'B 要不要结构：Q4 + Q5 + Q6 = <b>' + s.B + '</b> 分 → ' + thLine(s.B, '整装', '散装') + '<br />' +
-        'C 现在还是要等：Q7 + Q8 + Q9 = <b>' + s.C + '</b> 分 → ' + thLine(s.C, '即时', '延后') + '<br />' +
-        '组合：<b>' + escapeHtml(scoreLabel(s)) + '</b> → <b>「' + escapeHtml(type.name) + '」</b>';
-    } else {
-      dom.scoreLive.textContent = '';
-    }
-
     /* 订单换算卡随结果一起出现 */
     dom.budgetCard.classList.remove('hidden');
     dom.budgetCard.classList.add('fade-in');
@@ -2523,19 +2965,7 @@
   }
 
   /**
-   * 维度阈值说明一小段，例如 "≥2 → 算计"。
-   * @param {number} value 该维度得分
-   * @param {string} high 高分标签
-   * @param {string} low 低分标签
-   * @returns {string} 含 HTML 的片段
-   */
-  function thLine(value, high, low) {
-    if (value >= 2) { return '≥2 → <b>' + escapeHtml(high) + '</b>'; }
-    return '&lt;2 → <b>' + escapeHtml(low) + '</b>';
-  }
-
-  /**
-   * 名字输入后只更新标题与签名，不重算类型、不重渲染套餐。
+   * 名字输入后只更新抬头与签名，不重算倾向、不重渲染套餐。
    * @param {string} raw 输入框的原始值
    */
   function applyName(raw) {
@@ -2545,27 +2975,104 @@
     updateSign();
   }
 
+  /**
+   * 生成首屏「怎么算的」里的三块动态内容：六倾向定义、每题测什么、自动统计的满分。
+   * 全部从 QUESTIONS / TENDENCY_META / MAX_SCORE 现算，题库一改这里自动跟着改。
+   */
+  function renderHowto() {
+    if (dom.howtoTend) {
+      var tendHtml =
+        '<table class="map-table">' +
+          '<thead><tr><th>倾向</th><th>一句话定义</th><th>看得到的表现</th><th>满分</th></tr></thead>' +
+          '<tbody>';
+      for (var i = 0; i < TENDENCIES.length; i += 1) {
+        var key = TENDENCIES[i];
+        var meta = TENDENCY_META[key] || {};
+        tendHtml +=
+          '<tr>' +
+            '<td>' + escapeHtml(meta.label || key) + '</td>' +
+            '<td>' + escapeHtml(meta.definition || '') + '</td>' +
+            '<td>' + escapeHtml(meta.signal || '') + '</td>' +
+            '<td>' + MAX_SCORE[key] + '</td>' +
+          '</tr>';
+      }
+      tendHtml += '</tbody></table>';
+      dom.howtoTend.innerHTML = tendHtml;
+    }
+
+    if (dom.howtoQuestions) {
+      var qHtml =
+        '<table class="map-table">' +
+          '<thead><tr><th>题</th><th>选项</th><th>加给</th></tr></thead>' +
+          '<tbody>';
+      for (var q = 0; q < QUESTIONS.length; q += 1) {
+        var question = QUESTIONS[q];
+        qHtml +=
+          '<tr class="q-row"><td colspan="3">' + escapeHtml(question.id + '　' + question.text) + '</td></tr>';
+        for (var o = 0; o < question.options.length; o += 1) {
+          var option = question.options[o];
+          var marks = option.scores || {};
+          var targets = [];
+          for (var k in marks) {
+            if (!Object.prototype.hasOwnProperty.call(marks, k)) { continue; }
+            targets.push(tendencyLabel(k));
+          }
+          qHtml +=
+            '<tr>' +
+              '<td>' + LETTERS[o] + '</td>' +
+              '<td>' + escapeHtml(option.label) + '</td>' +
+              '<td>' + escapeHtml(targets.join(' + ')) + '</td>' +
+            '</tr>';
+        }
+      }
+      qHtml += '</tbody></table>';
+      dom.howtoQuestions.innerHTML = qHtml;
+    }
+
+    if (dom.howtoMax) {
+      var parts = [];
+      var sum = 0;
+      for (var t = 0; t < TENDENCIES.length; t += 1) {
+        var tk = TENDENCIES[t];
+        parts.push(tendencyLabel(tk) + ' ' + MAX_SCORE[tk]);
+        sum += MAX_SCORE[tk];
+      }
+      dom.howtoMax.innerHTML =
+        '代码自动统计出的六个满分：<b>' + escapeHtml(parts.join(' / ')) + '</b>，加起来 ' +
+        sum + ' 分。注意这不是一次答题能拿到的总分——每个选项只加给一个倾向。';
+    }
+  }
+
   /* =====================================================================
    * 12. 分享文案与复制
    * ===================================================================== */
 
   /**
-   * 生成可分享的纯文本文案（格式固定五行）。
-   * @param {object} meal 当前的 buildMeal 结果
+   * 生成可分享的纯文本文案（五行）。
+   * @param {object} meal 当前的 buildMeal 结果（result 里带六倾向得分）
    * @returns {string}
    */
   function buildCopyText(meal) {
     if (!meal || !meal.type) { return ''; }
+    var result = meal.result || null;
+    var secondType = result && TYPES[result.second] ? TYPES[result.second] : null;
+
+    var titleText = '「' + meal.type.name + '」';
+    if (result && result.isTie && secondType) {
+      titleText = '「' + meal.type.name + ' × ' + secondType.name + '」';
+    }
+
     var names = [];
     for (var i = 0; i < meal.items.length; i += 1) {
       names.push(meal.items[i].data.name);
     }
     var priceText = (meal.hasUnverified ? '≈' : '') + moneyFixed(meal.totalPrice);
+
     return [
-      '我的麦门人格是「' + meal.type.name + '」',
+      '我的麦门人格是' + titleText,
       meal.type.identity,
+      '倾向：' + tendencySummary(result, 3),
       '套餐：' + names.join(' + ') + ' · ' + priceText + ' / ' + thousands(meal.totalKcal) + ' kcal',
-      meal.type.punch,
       '来测测你是哪种：https://yuunyaj921-ui.github.io/mcd-name-meal/'
     ].join('\n');
   }
@@ -2958,8 +3465,8 @@
     var node = event.target;
     while (node && node !== dom.quizOptions) {
       if (node.classList && node.classList.contains('opt')) {
-        var raw = node.getAttribute('data-opt');
-        selectOption(raw === '1' ? 1 : 0);
+        var raw = parseInt(node.getAttribute('data-opt'), 10);
+        if (!isNaN(raw)) { selectOption(raw); }
         return;
       }
       node = node.parentNode;
@@ -3015,19 +3522,29 @@
    * 15. 初始化
    * ===================================================================== */
   resetAnswers();
+  renderHowto();
   showScreen('intro');
 
   /* 便于自测与第三方验证：在控制台可直接调用 */
   window.MealPersona = {
-    /* 题目与计分：可以自己把 answers 传进去核对 */
+    /* 题目与计分：把 answers 数组传进去就能核对 */
     questions: QUESTIONS,
+    tendencies: TENDENCIES,
+    tendencyMeta: TENDENCY_META,
+    maxScore: MAX_SCORE,
+    computeMaxScore: computeMaxScore,
     scoreAnswers: scoreAnswers,
-    scoreLabel: scoreLabel,
-    /* 类型与组合映射 */
+    tendencyLabel: tendencyLabel,
+    tendencySummary: tendencySummary,
+    thresholds: {
+      tieGap: TIE_GAP,
+      tieMinRate: TIE_MIN_RATE,
+      secondRatio: SECOND_RATIO,
+      secondMinScore: SECOND_MIN_SCORE
+    },
+    /* 类型与套餐 */
     types: TYPES,
-    typeMap: TYPE_MAP,
     pickType: pickType,
-    /* 套餐组装 */
     buildMeal: buildMeal,
     findItem: findItem,
     menu: MENU,
