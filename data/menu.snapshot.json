@@ -1,4 +1,5 @@
 {
+  "_comment": "旧价格快照，页面不读取。index.html 内嵌的 MENU 才是实际使用的数据；本文件价格未经门店核实，仅作历史留档。",
   "store_code": "SZ0001",
   "currency": "CNY",
   "source": "demo · 结构对齐 MCP query-meals / list-nutrition-foods 归一化结果",
