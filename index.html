@@ -938,6 +938,8 @@
 
     <p class="comment" id="comment"></p>
 
+    <p class="rarity-note hidden" id="priceNote">* 该商品价格未在本门店核实，合计为约数</p>
+
     <div class="fingerprint">
       <div class="fingerprint-row">
         <span>常见度 <b id="commonness"></b></span>
@@ -946,6 +948,8 @@
       </div>
       <p class="rarity-note" id="rarityNote"></p>
     </div>
+
+    <p class="rarity-note">试试改一个字，看看你的套餐会发生什么变化。</p>
 
     <p class="disclaimer">纯属娱乐，不构成任何营养或心理建议。</p>
   </section>
@@ -1027,8 +1031,10 @@
   <footer>
     <div class="rule"></div>
     <p>纯属娱乐，不构成任何营养或心理建议。</p>
-    <p>本页面为 2026 麦当劳程序员创意开发大赛参赛作品，非麦当劳官方产品。价格为数据快照，实际以门店为准。</p>
-    <p>价格与供应来自麦当劳 MCP 官方接口快照（2026-10-22）；营养成分来自官方 list-nutrition-foods 接口，实际以门店为准。</p>
+    <p>本页面为 2026 麦当劳程序员创意开发大赛参赛作品，非麦当劳官方产品。</p>
+    <p>价格为<b>麦当劳成都府青路(恒大)餐厅</b>（门店 3450314）2026-10-22 通过 MCP <code>calculate-price</code> 实时查询，<b>仅代表该门店</b>，不是全国统一价，请以你所在门店为准。</p>
+    <p>带 <sup>*</sup> 的商品（大薯条、小薯条、雪碧中杯、鲜萃咖啡大杯、无糖可乐中杯、奥利奥麦旋风、菠萝派）在该门店无对应单品，价格未能核实，仅供参考；含此类商品的合计以「≈」标示为约数。</p>
+    <p>营养成分来自官方 <code>list-nutrition-foods</code> 接口（160 条），与价格数据相互独立。</p>
     <p>本页不含任何预测或健康评价内容，全部结果由哈希函数确定性生成。</p>
   </footer>
 </div>
@@ -1057,30 +1063,30 @@
    * ===================================================================== */
   var MENU = {
     mains: [
-      { code: 'BIGMAC',   name: '巨无霸',        short: '巨无霸',     price: 25.5, kcal: 513, meat: 'beef' },
-      { code: 'MCSPICY',  name: '麦辣鸡腿汉堡',  short: '麦辣鸡腿堡', price: 21.5, kcal: 485, meat: 'chicken', spicy: true },
-      { code: 'MCCRISPY', name: '板烧鸡腿堡',    short: '板烧鸡腿堡', price: 22.5, kcal: 391, meat: 'chicken' },
-      { code: 'DUBLECHE', name: '双层吉士汉堡',  short: '双层吉士堡', price: 18.0, kcal: 429, meat: 'beef' },
-      { code: 'FILEFISH', name: '麦香鱼',        short: '麦香鱼',     price: 17.5, kcal: 325, meat: 'fish' }
+      { code: 'BIGMAC',   name: '巨无霸',        short: '巨无霸',     price: 26.5, kcal: 513, meat: 'beef' },
+      { code: 'MCSPICY',  name: '麦辣鸡腿汉堡',  short: '麦辣鸡腿堡', price: 22.5, kcal: 485, meat: 'chicken', spicy: true },
+      { code: 'MCCRISPY', name: '板烧鸡腿堡',    short: '板烧鸡腿堡', price: 23.5, kcal: 391, meat: 'chicken' },
+      { code: 'DUBLECHE', name: '双层吉士汉堡',  short: '双层吉士堡', price: 23.0, kcal: 429, meat: 'beef' },
+      { code: 'FILEFISH', name: '麦香鱼',        short: '麦香鱼',     price: 22.0, kcal: 325, meat: 'fish' }
     ],
     sides: [
-      { code: 'FRIES_M',    name: '中薯条',         price: 12.5, kcal: 289 },
-      { code: 'FRIES_L',    name: '大薯条',         price: 15.0, kcal: 379 },
-      { code: 'NUGGETS_5',  name: '麦乐鸡 5 块',    price: 13.5, kcal: 213 },
-      { code: 'WINGS_2',    name: '麦辣鸡翅 2 块',  price: 12.5, kcal: 224, spicy: true },
-      { code: 'FRIES_S',    name: '小薯条',         price: 11.5, kcal: 210, ref: true }
+      { code: 'FRIES_M',    name: '中薯条',         price: 14.0, kcal: 289 },
+      { code: 'FRIES_L',    name: '大薯条',         price: 15.0, kcal: 379, unverified: true },
+      { code: 'NUGGETS_5',  name: '麦乐鸡 5 块',    price: 14.5, kcal: 213 },
+      { code: 'WINGS_2',    name: '麦辣鸡翅 2 块',  price: 14.5, kcal: 224, spicy: true },
+      { code: 'FRIES_S',    name: '小薯条',         price: 11.5, kcal: 210, unverified: true }
     ],
     drinks: [
-      { code: 'COKE_M',     name: '可口可乐 中杯',    price: 9.0,  kcal: 147, kind: 'coke' },
-      { code: 'SPRITE_M',   name: '雪碧 中杯',        price: 9.0,  kcal: 105, kind: 'sprite' },
-      { code: 'COFFEE_H',   name: '鲜萃咖啡 大杯',    price: 12.0, kcal: 13, coffee: true, kind: 'coffee', ref: true },
-      { code: 'COKE_ZERO',  name: '无糖可乐 中杯',    price: 9.0,  kcal: 0,  kind: 'zero', ref: true }
+      { code: 'COKE_M',     name: '可口可乐 中杯',    price: 9.5,  kcal: 147, kind: 'coke' },
+      { code: 'SPRITE_M',   name: '雪碧 中杯',        price: 9.0,  kcal: 105, kind: 'sprite', unverified: true },
+      { code: 'COFFEE_H',   name: '鲜萃咖啡 大杯',    price: 12.0, kcal: 13, coffee: true, kind: 'coffee', unverified: true },
+      { code: 'COKE_ZERO',  name: '无糖可乐 中杯',    price: 9.0,  kcal: 0,  kind: 'zero', unverified: true }
     ],
     desserts: [
-      { code: 'MCFLURRY',   name: '奥利奥麦旋风', price: 12.5, kcal: 266, type: 'flurry' },
-      { code: 'PIE_TARO',   name: '香芋派',       price: 7.5,  kcal: 232, type: 'pie' },
-      { code: 'CONE',       name: '圆筒冰淇淋',   price: 4.0,  kcal: 93,  type: 'cone' },
-      { code: 'PIE_PINE',   name: '菠萝派',       price: 8.0,  kcal: 221, type: 'pie', ref: true }
+      { code: 'MCFLURRY',   name: '奥利奥麦旋风', price: 12.5, kcal: 266, type: 'flurry', unverified: true },
+      { code: 'PIE_TARO',   name: '香芋派',       price: 8.5,  kcal: 232, type: 'pie' },
+      { code: 'CONE',       name: '圆筒冰淇淋',   price: 5.0,  kcal: 93,  type: 'cone' },
+      { code: 'PIE_PINE',   name: '菠萝派',       price: 8.0,  kcal: 221, type: 'pie', unverified: true }
     ]
   };
 
@@ -1893,6 +1899,7 @@
     comment: document.getElementById('comment'),
     commonness: document.getElementById('commonness'),
     rarityNote: document.getElementById('rarityNote'),
+    priceNote: document.getElementById('priceNote'),
     hashHex: document.getElementById('hashHex'),
     actions: document.getElementById('actions'),
     copyBtn: document.getElementById('copyBtn'),
@@ -1957,19 +1964,22 @@
     dom.panelRows.innerHTML = panelHtml;
 
     var rows = '';
+    var hasUnverified = false;
     for (var i = 0; i < meal.items.length; i += 1) {
       var row = meal.items[i];
+      if (row.data.unverified) { hasUnverified = true; }
       rows +=
         '<div class="item">' +
           '<span class="item-role">' + row.role + '</span>' +
           '<span class="item-name">' + escapeHtml(row.data.name) + '</span>' +
           '<span class="item-kcal">' + thousands(row.data.kcal) + ' kcal</span>' +
-          '<span class="item-price">' + money(row.data.price) + '</span>' +
+          '<span class="item-price">' + money(row.data.price) + (row.data.unverified ? '<sup>*</sup>' : '') + '</span>' +
         '</div>';
     }
     dom.items.innerHTML = rows;
 
-    dom.totalPrice.textContent = moneyFixed(meal.totalPrice);
+    dom.totalPrice.textContent = (hasUnverified ? '≈ ' : '') + moneyFixed(meal.totalPrice);
+    if (dom.priceNote) { dom.priceNote.classList.toggle('hidden', !hasUnverified); }
     dom.totalKcal.innerHTML = thousands(meal.totalKcal) + '<small>kcal</small>';
     dom.comment.textContent = meal.comment;
     dom.commonness.textContent = meal.commonness.toFixed(1) + '%';
