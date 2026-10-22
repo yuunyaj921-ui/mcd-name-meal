@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>你的名字是一份麦门人格</title>
-<meta name="description" content="输入名字，用 FNV-1a 哈希算出你的麦门人格和专属四件套：54 种自嘲人格、中英双代号、一句拆穿你的解读。同名同人格，这不是算命，是密码学。" />
+<meta name="description" content="输入名字，用 FNV-1a 哈希算出你的麦门人格和专属四件套：55 句点餐时说过的话、一张只有你能看到的成分表、一句拆穿你的解读。同名同人格，这不是算命，是密码学。" />
 <style>
   /* ============ 设计令牌 ============ */
   :root {
@@ -250,19 +250,77 @@
     word-break: break-word;
   }
 
+  /* 人格名：一句点餐时会说出口的话，不再有任何字母代号 */
   .meal-name .pn-zh { color: var(--ink); }
 
-  /* 英文代号：像 SBTI 的类型码，全大写 + 连字符 */
-  .meal-name .pn-en {
-    font-size: 12.5px;
+  /* ============ 成分表：仿食品包装的营养成分表 ============ */
+  .panel {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: #FFFDF7;
+    border: 1.5px solid var(--ink);
+    border-radius: 10px;
+    padding: 12px 14px 10px;
+    margin: 0 0 16px;
+  }
+
+  .panel-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    padding-bottom: 6px;
+    border-bottom: 2.5px solid var(--ink);
+  }
+
+  .panel-name {
+    font-size: 13.5px;
     font-weight: 800;
-    letter-spacing: 0.13em;
-    color: var(--mcd-red);
-    background: #FDF0EE;
-    border-radius: 6px;
-    padding: 3px 8px 3px 9px;
+    letter-spacing: 0.06em;
+  }
+
+  .panel-sub {
+    font-size: 10px;
+    color: var(--ink-faint);
+  }
+
+  .panel-rows { padding-top: 2px; }
+
+  .panel-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 12px;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .panel-row:last-child { border-bottom: none; }
+
+  .panel-label { color: var(--ink); white-space: nowrap; }
+
+  .panel-lead {
+    flex: 1 1 auto;
+    border-bottom: 1px dotted var(--line-strong);
     transform: translateY(-3px);
+  }
+
+  .panel-pct {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    color: var(--ink);
     white-space: nowrap;
+  }
+
+  .panel-row.is-play .panel-label,
+  .panel-row.is-play .panel-pct { color: var(--mcd-red); }
+
+  .panel-note {
+    margin: 6px 0 0;
+    padding-top: 6px;
+    border-top: 1px solid var(--line);
+    font-size: 9.5px;
+    line-height: 1.6;
+    color: var(--ink-faint);
   }
 
   /* 人格描述：这句才是让人截图的东西 */
@@ -824,7 +882,7 @@
 
   <h1>你的名字是一份<br /><span class="hl">麦门人格</span></h1>
   <p class="lede">
-    输入名字，用 <strong>FNV-1a 哈希</strong>算出你的自嘲人格 + 专属四件套。<br />
+    输入名字，用 <strong>FNV-1a 哈希</strong>算出你会说的那句点餐话 + 专属四件套。<br />
     同名同人格，这不是算命，是密码学。
   </p>
 
@@ -846,12 +904,22 @@
   <section class="ticket hidden" id="ticket" aria-live="polite">
     <div class="ticket-top">
       <span class="ticket-owner" id="ownerLabel"></span>
-      <span class="ticket-stamp">PERSONA ID</span>
+      <span class="ticket-stamp">点单凭条</span>
     </div>
 
     <h2 class="meal-name" id="mealName"></h2>
 
     <p class="persona-desc" id="personaDesc"></p>
+
+    <!-- 成分表：仿食品包装营养成分表，前三项是真实营养占比 -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-name">成分表</span>
+        <span class="panel-sub">每份你这份套餐</span>
+      </div>
+      <div class="panel-rows" id="panelRows"></div>
+      <p class="panel-note">前三项为真实营养占比，后两项为娱乐。</p>
+    </div>
 
     <div class="items" id="items"></div>
 
@@ -879,7 +947,7 @@
       <p class="rarity-note" id="rarityNote"></p>
     </div>
 
-    <p class="disclaimer">纯属娱乐，不构成任何心理测评。</p>
+    <p class="disclaimer">纯属娱乐，不构成任何营养或心理建议。</p>
   </section>
 
   <div class="actions hidden" id="actions">
@@ -939,8 +1007,17 @@
           再 <code>h = (h × 16777619) mod 2³²</code>（代码里用 <code>Math.imul(h, 16777619)</code> 做精确 32 位乘法）。</li>
         <li>主食 <code>(h &gt;&gt;&gt; 0) % 5</code>、小食 <code>(h &gt;&gt;&gt; 8) % 5</code>、
           饮料 <code>(h &gt;&gt;&gt; 16) % 4</code>、甜品 <code>(h &gt;&gt;&gt; 24) % 4</code>。</li>
-        <li>人格标签不看哈希，只看你点了什么：按 <b>肉类 / 辣度（含双辣）/ 咖啡 / 甜品类型 / 热量档 / 份量感</b>
-          六项依次匹配规则表，再按总热量选最终档位。哈希决定商品，商品决定人格。</li>
+        <li>人格名字不看哈希，只看你点了什么：按 <b>肉类 / 辣度（含双辣）/ 咖啡 / 甜品类型 / 热量档 / 份量感</b>
+          规则依次匹配，再按总热量选最终档位。哈希决定商品，商品决定人格。</li>
+        <li>成分表前三项是真的：营养数据来自<b>麦当劳官方 list-nutrition-foods 接口</b>
+          （160 条商品营养记录，本项目取其中 18 项，落盘在 <code>data/nutrition.official.json</code>）。
+          把四件套里每样的碳水 × 4、脂肪 × 9、蛋白质 × 4 折成热量，算出碳水 / 脂肪 / 蛋白质
+          各自占这三大营养素热量的百分比，四舍五入取整，零头归到「其他」。
+          后两项是娱乐成分，占 2%~8%，从前面三项里按比例扣掉，所以整张表恒等于 100%。</li>
+        <li>为什么折算热量和商品热量会差一点：营养素折算必然有 1% 左右的误差，
+          例如「张三」的 98 g 碳水 × 4 + 40 g 脂肪 × 9 + 31 g 蛋白质 × 4 = 876 kcal，
+          而四件套标称热量是 886 kcal，差 1.1%。我们没有去凑这个数，
+          成分表用的是营养素折算值，热量合计用的是官方标称值。</li>
         <li>常见度 <code>((h &gt;&gt;&gt; 0) % 1000) / 10</code>，指纹为 <code>h</code> 的 8 位小写十六进制。</li>
       </ol>
       <div class="howto-live" id="howtoLive">先在上面输入一个名字，这里会显示本次的中间值。</div>
@@ -949,8 +1026,9 @@
 
   <footer>
     <div class="rule"></div>
+    <p>纯属娱乐，不构成任何营养或心理建议。</p>
     <p>本页面为 2026 麦当劳程序员创意开发大赛参赛作品，非麦当劳官方产品。价格为数据快照，实际以门店为准。</p>
-    <p>数据来自麦当劳 MCP 官方接口快照（2026-10-22），价格与供应以门店实时为准。</p>
+    <p>价格与供应来自麦当劳 MCP 官方接口快照（2026-10-22）；营养成分来自官方 list-nutrition-foods 接口，实际以门店为准。</p>
     <p>本页不含任何预测或健康评价内容，全部结果由哈希函数确定性生成。</p>
   </footer>
 </div>
@@ -1013,230 +1091,303 @@
   var RATE = { HOUSE_PER_SQM: 2000, IPHONE: 5999, MOVIE_TICKET: 45 };
 
   /* =====================================================================
-   * 2. 麦门人格：54 个自嘲标签 + 英文代号 + 一句人格描述
-   *    命名完全由套餐特征决定（肉类 / 辣度含双辣 / 咖啡 / 甜品类型 / 热量档 / 份量感），
-   *    规则表自上而下匹配，命中后用总热量选具体档位，保证「点了什么就得到什么人设」。
-   *    400 种组合（5×5×4×4）全部有标签，且 54 个标签都有组合命中，不会出现死标签。
+   * 2. 麦门人格：55 句「点餐时在柜台前会说出口的话」+ 一句解读 + 两项荒诞成分
+   *
+   *    命名标准（硬规则，改名字前先过这一条）：
+   *      每个名字必须命中一个只有点餐场景才成立的东西——
+   *        a) 麦当劳专属物件：巨无霸 / 麦香鱼(鱼堡) / 麦辣鸡翅(鸡翅) / 薯条(中薯/大薯) /
+   *           可乐(无糖可乐) / 派 / 圆筒(甜筒) / 麦旋风 / 麦咖啡 / 套餐 / 纸袋 …
+   *        b) 或者一个只在柜台前才成立的动作：换 / 加 / 少放 / 现炸 / 现做 / 再来一个 /
+   *           还有吗 / 分开装 / 留一个 / 先上 …
+   *      不允许出现"通用的自嘲状态词"（例如"假装犒劳""我在做实验""工位蹲守"这类
+   *      换成任何消费场景都成立的短语），那样会和答题测试的人格标签同质化。
+   *      名字里不得出现任何字母代号，全部中文短句，≤8 字。
+   *
+   *    人格仍由套餐特征决定（肉类 / 辣度含双辣 / 咖啡 / 甜品类型 / 热量档 / 份量感），
+   *    规则表自上而下匹配，命中后按总热量选档。400 种组合（5×5×4×4）全部有名字，
+   *    55 个名字全部有组合命中，不存在从未被用到的死名字。
+   *
+   *    字段说明：
+   *      zh   —— 结果卡上显示的那句话（≤8 字，点餐动作）
+   *      desc —— 1~2 句解读，主语是"你"，可以有情绪，但名字本身必须是点餐动作
+   *      mix  —— 成分表后两项的荒诞成分，[名称, 百分比]，各取 2%~8%
    * ===================================================================== */
   var PERSONAS = {
-    /* ===== 双辣：主食辣 + 小食辣 ===== */
-    'ZZZZ-SPICY':     { zh: '辣到装死',        en: 'ZZZZ-SPICY',     desc: '每次都说"这次少放辣"，每次都被辣到怀疑人生，第二天打开 App 还是点同一份。' },
-    'HOT-ADDICT':     { zh: '无辣不欢',        en: 'HOT-ADDICT',     desc: '嘴上说微辣就行，手上加了份鸡翅。你的"微辣"，是别人的工伤。' },
+    /* ===== 双辣：麦辣鸡腿堡 + 麦辣鸡翅 ===== */
+    wingsMild:        { zh: '鸡翅别太辣',   desc: '“鸡翅别太辣”，说完自己先笑，因为上次也这么讲，辣度一次都没降过。你要的是个说法，不是真的少辣。', mix: [['嘴硬', 7], ['面子', 2]] },
+    wingsMore:        { zh: '再来份鸡翅',   desc: '鸡翅还剩一半，你已经把下一份算好了。汉堡还没动，追加的那句已经先出口了。',                     mix: [['贪心', 6], ['面子', 2]] },
+    /* ===== 牛 + 可乐 + 中薯：十年不变的那一套 ===== */
+    midFriesCoke:     { zh: '中薯可乐，谢谢', desc: '报单只有六个字：中薯可乐，谢谢。不用看菜单，不用想，这套组合你点了几百次。',                   mix: [['松弛', 5], ['拖延', 2]] },
+    /* ===== 牛 + 无糖可乐 + 中薯：自欺欺人的经典款 ===== */
+    zeroCoke:         { zh: '可乐换无糖',   desc: '巨无霸、中薯，一样没少，只有可乐换成无糖。你不是在控糖，你是在给这顿找一个能过关的说法。',     mix: [['自欺', 6], ['侥幸', 3]] },
+    /* ===== 份量拉满：大薯 + 麦旋风 ===== */
+    bigFriesFlurry:   { zh: '大薯加麦旋风', desc: '大薯和麦旋风同时报出来，柜台抬头看了你一眼。你说“今天就当没吃”，说得很有底气。',               mix: [['自欺', 5], ['拖延', 3]] },
+    upgradeFries:     { zh: '中薯换大薯',   desc: '服务员问要中薯还是大薯，你说中薯。三秒后改口：还是大薯吧。你的人生充满了这种三秒后的改口。',   mix: [['贪心', 6], ['纠结', 2]] },
+    friesFresh:       { zh: '薯条要现炸的', desc: '“薯条要现炸的”，说完就站到柜台边上等。你不是挑，你只是愿意为一包热薯条多站三分钟。',           mix: [['面子', 4], ['纠结', 4]] },
     /* ===== 辣 + 麦旋风 ===== */
-    'FULL-ON':        { zh: '全开状态',        en: 'FULL-ON',        desc: '本来只想"稍微犒劳一下"，结果大薯加麦旋风，你把犒劳执行成了彻底放弃抵抗。' },
-    'SPICY-ICE':      { zh: '辣完开冰',        en: 'SPICY-ICE',      desc: '辣到冒汗，立刻用麦旋风救场，一冷一热来回换。你不是在吃饭，你在做温度管理。' },
-    'SUGAR-SPICY':    { zh: '糖辣双开',        en: 'SUGAR-SPICY',    desc: '辣的和甜的一个都不许少，谁劝你减一样都算冒犯。你的口味从不谈判，直接双开。' },
+    flurryCookie:     { zh: '麦旋风多加饼干', desc: '“麦旋风多加饼干”，说得特别熟练。你不是爱吃甜，你是需要一点能自己加的东西。',                 mix: [['贪心', 5], ['自欺', 3]] },
+    flurryAgain:      { zh: '再来个麦旋风', desc: '麦旋风见底，你说再来个。柜台问要一样的吗，你说对，一样的，就一样的。',                         mix: [['贪心', 7], ['侥幸', 2]] },
     /* ===== 辣 + 派 ===== */
-    'ACT-FINE':       { zh: '辣完装没事',      en: 'ACT-FINE',       desc: '辣到眼泪都出来了，还硬说"不太辣，还行"。你连疼都要面子，逞强是你的默认设置。' },
-    'TRUCE':          { zh: '甜辣讲和',        en: 'TRUCE',          desc: '辣完马上咬一口派，谁也不占上风。你处理矛盾的方式，是往嘴里加东西。' },
-    'CRUST-BREAK':    { zh: '酥皮破防',        en: 'CRUST-BREAK',    desc: '刚说完要克制，手已经在撕派了。你的破防有固定流程，从酥皮开始。' },
-    'JOY-FIRST':      { zh: '快乐至上',        en: 'JOY-FIRST',      desc: '算账的事以后再说，先吃了。你不是不理性，你只是把快乐排在前面。' },
+    spicyPiePlease:   { zh: '辣完来个派',   desc: '辣到吸气，马上补一句“来个派”。谁也不许占上风，你处理矛盾的方式就是往嘴里再加一样。',         mix: [['纠结', 5], ['贪心', 3]] },
+    pieFresh:         { zh: '派要现炸的吗', desc: '“派要现炸的吗”，问完自己也觉得多余。你就是想确认一下，这一份是不是刚出锅的。',                 mix: [['纠结', 5], ['侥幸', 3]] },
+    pieReserve:       { zh: '派给我留一个', desc: '单都下完了，特意补一句“派给我留一个”。你不怕别的卖完，只怕最后那个派没了。',                   mix: [['侥幸', 6], ['贪心', 2]] },
+    pieOneMore:       { zh: '再加一个派',   desc: '单都报完了，你又补一句“再加一个派”。你不是想吃，你是不想让这单结束得太干脆。',               mix: [['贪心', 6], ['拖延', 2]] },
     /* ===== 辣 + 圆筒 ===== */
-    'SPICY-END':      { zh: '辣完收尾',        en: 'SPICY-END',      desc: '辣到一半来支圆筒，权当这顿的句号。你的自制力只在最后一口上线。' },
-    'SWEAT':          { zh: '辣到冒汗',        en: 'SWEAT',          desc: '一边吃一边擦汗，餐巾纸堆成小山，还嫌不够辣。你的快乐必须带一点痛才成立。' },
-    /* ===== 辣 + 咖啡 ===== */
-    'TRIPLE':         { zh: '三开模式',        en: 'TRIPLE',         desc: '辣、苦、冰，三个一起上。你不是饿，你是需要点刺激证明自己还醒着。' },
-    'CAFFEINE-NAH':   { zh: '咖啡续命但没用',  en: 'CAFFEINE-NAH',   desc: '咖啡下肚，人没醒，账先醒了。你在拿明天的精神，抵押今天的三小时。' },
-    'THREE-WAY':      { zh: '辣苦甜三修',      en: 'THREE-WAY',      desc: '辣、苦、甜轮着来，像你一天的三种状态。都尝过了，还是没缓过来。' },
-    'ALIVE':          { zh: '靠咖啡活着',      en: 'ALIVE',          desc: '今天唯一一顿正经饭，是靠一杯咖啡撑起来的。你过得很省，还嘴硬说够用。' },
-    'AWAKE-ZZZZ':     { zh: '清醒地装死',      en: 'AWAKE-ZZZZ',     desc: '咖啡让你醒着，圆筒让你假装轻松，两样一起下肚。你清醒地敷衍了自己一整天。' },
-    'HANG-ON':        { zh: '硬撑型人格',      en: 'HANG-ON',        desc: '再辣也要加杯咖啡，再累也回一句"没事"。你的强项是硬撑，弱项是承认自己撑不住。' },
-    /* ===== 牛 ===== */
-    'KCAL-ZZZZ':      { zh: '热量装死者',      en: 'KCAL-ZZZZ',      desc: '点完就把热量那栏划过去，假装没看见。你不是不知道，你是选择不知道。' },
-    'CARB-MALO':      { zh: '碳水吗喽',        en: 'CARB-MALO',      desc: '嘴上说着控糖，手已经点了大薯。你和碳水的关系像极了和前任——知道不合适，但下次还来。' },
-    '2ND-STOMACH':    { zh: '甜品另存一胃',    en: '2ND-STOMACH',    desc: '正餐吃不下，甜品永远有位。你的胃像一块分区管理的硬盘，甜品单独占一个盘。' },
-    'DIET-ACT':       { zh: '假装在减肥',      en: 'DIET-ACT',       desc: '点了麦旋风，然后跟自己说"只尝一口"。你的一口，是别人完整的一整杯。' },
-    'NICE-GUY':       { zh: '麦门老好人',      en: 'NICE-GUY',       desc: '永远点那一套，永远说都行。你的稳定是别人眼里的没主见，你自己的安全感。' },
-    'SOLID':          { zh: '踏实型人类',      en: 'SOLID',          desc: '不折腾，不加戏，点完就吃。你的人生信条只有四个字：能吃饱就行。' },
-    'LAO-SHI':        { zh: '已老实体',        en: 'LAO-SHI',        desc: '点完就开始后悔，后悔完继续吃完。你已经老实了，只是老实得不太彻底。' },
-    'REGRET':         { zh: '吃到一半就后悔',  en: 'REGRET',         desc: '第一口是天堂，第五口开始算热量。你还是会吃完，因为浪费更难受。' },
-    'KCAL-VOID':      { zh: '热量不算数',      en: 'KCAL-VOID',      desc: '"今天走了一万步"，你觉得够了，够抵消这一份。你用的是自己那套换算单位。' },
-    'BEACH':          { zh: '假装在海边',      en: 'BEACH',          desc: '一个圆筒，硬是吃出了海边的感觉，还得慢慢舔。你的年假就藏在这三分钟里。' },
-    'SWEET-ADULT':    { zh: '成年人的甜',      en: 'SWEET-ADULT',    desc: '吃完咸的必须来点甜的，这是你的收尾仪式。仪式一结束，回去上班。' },
-    'MYSTERY':        { zh: '口味成谜',        en: 'MYSTERY',        desc: '牛肉配咖啡，谁也看不懂。你享受这种"我和你们不一样"的三秒钟。' },
-    'DUAL-BOOT':      { zh: '双开模式',        en: 'DUAL-BOOT',      desc: '一个系统负责工作，一个系统负责快乐，谁也不许关。你每天都要双开才跑得动。' },
-    '3PM':            { zh: '下午三点人',      en: '3PM',            desc: '三点一到，咖啡和派同时到位。你不是饿，你需要一件事来打断工作。' },
-    'CAFE-LIFE':      { zh: '咖啡配派式人生',  en: 'CAFE-LIFE',      desc: '苦的先来，甜的压后，先扛完再补偿。你处理工作、感情、这一顿，都是这个顺序。' },
-    'MEH':            { zh: '温吞型人类',      en: 'MEH',            desc: '咖啡、圆筒、牛肉，三样都不出错，也都不激动。你把生活过成了一份安全答案。' },
-    'AWAKE-FALL':     { zh: '清醒着堕落',      en: 'AWAKE-FALL',     desc: '咖啡负责维持体面，圆筒负责制造快乐。你一边清醒着，一边把标准悄悄往下调。' },
-    /* ===== 鸡 ===== */
-    '9TO5':           { zh: '打工人本工',      en: '9TO5',           desc: '点单不超过三秒，因为你在开会。这不是午饭，是打工人的中途补给。' },
-    'TREAT':          { zh: '假装犒劳',        en: 'TREAT',          desc: '"今天辛苦了"，然后点了带麦旋风的那款。你奖励自己的方式永远是加糖。' },
-    'BOTH':           { zh: '咸甜双修',        en: 'BOTH',           desc: '一口鸡腿一口派，咸甜在嘴里轮流开会。你不是贪心，你只是单纯什么都不想错过。' },
-    'STUBBORN':       { zh: '嘴硬型',          en: 'STUBBORN',       desc: '"我不饿"，然后吃完了整份。你的嘴和你的胃长期不在同一个群里。' },
-    'BARELY':         { zh: '凑合活着',        en: 'BARELY',         desc: '最低配置，能跑就行，别卡就好。你对生活的要求已经降到"今天别出问题"。' },
-    'AFTERS':         { zh: '饭后仪式',        en: 'AFTERS',         desc: '不管前面吃了多少，最后一定要有支圆筒收尾。没有它，这顿在你心里就不算结束。' },
-    'DESK':           { zh: '工位蹲守者',      en: 'DESK',           desc: '咖啡放左手，汉堡放右手，电脑不敢合。你的一天从这顿开始，也在这顿结束。' },
-    'OFF-PEAK':       { zh: '饭点逃兵',        en: 'OFF-PEAK',       desc: '特意避开饭点来，就为了不用和人挤。你的社交电量只够点单那 20 秒。' },
-    'FAKE-BUSY':      { zh: '假装很忙',        en: 'FAKE-BUSY',      desc: '点得飞快，吃得飞快，因为待办还在堆着。你忙的其实是别人的事。' },
-    'RUN-TMRW':       { zh: '明天开始跑步',    en: 'RUN-TMRW',       desc: '一边吃一边立誓，明天一定去跑步。结果跑步计划和这份套餐一起被消化掉了。' },
-    /* ===== 鱼 ===== */
-    'HIDDEN':         { zh: '隐藏菜单猎人',    en: 'HIDDEN',         desc: '别人点鱼配圆筒，你点鱼配麦旋风。你不是在吃饭，你是在做实验。' },
-    'FAKE-RESTRAINT': { zh: '假装克制',        en: 'FAKE-RESTRAINT', desc: '点鱼是为了显得克制，加麦旋风是为了显得诚实。你把两种人设穿在同一份套餐里。' },
-    'FAKE-LIGHT':     { zh: '轻食伪人',        en: 'FAKE-LIGHT',     desc: '点单时特意选了鱼，然后加了个派。你不是在养生，你是在演养生。' },
-    'GENTLE':         { zh: '温柔派',          en: 'GENTLE',         desc: '吃鱼配派，温柔得像在哄自己。你对自己最大的温柔，是允许自己吃甜的。' },
-    'SURVIVAL':       { zh: '生存模式',        en: 'SURVIVAL',       desc: '六百多卡就算一顿正餐，你活得像在修行，只是这修行一点也不苦，还有点甜。' },
-    'PERFORM':        { zh: '自律表演艺术家',  en: 'PERFORM',        desc: '点得清淡，拍照发圈，然后回工位吃同事的薯条。自律是你的社交货币。' },
-    'ACTOR':          { zh: '养生表演家',      en: 'ACTOR',          desc: '一条鱼配一杯咖啡，仪式感做足。演完这一场，晚上还得再补一顿真的。' },
-    'TOUCHED':        { zh: '自我感动',        en: 'TOUCHED',        desc: '清淡到像在照顾身体，其实只是懒得想。你感动了自己，胃还在等外卖。' },
-    'GENTLE-FAKE':    { zh: '斯文型人格',      en: 'GENTLE-FAKE',    desc: '鱼、派、咖啡，摆盘像模像样。你吃的不是饭，是一种"我过得还行"的证明。' },
-    'MAX-SELF':       { zh: '极限自律',        en: 'MAX-SELF',       desc: '无糖可乐配鱼配圆筒，你把菜单点成了一份体检报告。谁劝都没用，你自己也吃不饱。' }
+    coneOnly:         { zh: '就要个圆筒',   desc: '排了半天队，最后只要一个圆筒。克制得让人心疼，你自己还挺得意。',                               mix: [['面子', 4], ['自欺', 4]] },
+    coneOne:          { zh: '圆筒来一个',   desc: '“圆筒来一个”，说得像顺便。其实你从进门前就在等这一句，等了一路。',                                       mix: [['侥幸', 4], ['松弛', 3]] },
+    /* ===== 辣 + 咖啡 + 麦旋风 ===== */
+    flurryCoffee:     { zh: '麦旋风配咖啡', desc: '麦旋风配咖啡，一冷一热一起上。你说这叫平衡，其实是两头都不肯放。',                             mix: [['逞强', 5], ['贪心', 3]] },
+    flurryNow:        { zh: '麦旋风现在吃', desc: '“麦旋风现在吃”，不打包。你受不了它在纸袋里多待十分钟，一分钟都不行。',                                       mix: [['松弛', 5], ['贪心', 3]] },
+    /* ===== 辣 + 咖啡 + 派 ===== */
+    coffeeAndPie:     { zh: '麦咖啡和派',   desc: '麦咖啡和派，一起报。你不需要想，这两样在你心里早就绑成一单了。',                               mix: [['松弛', 4], ['拖延', 4]] },
+    coffeePie:        { zh: '麦咖啡配个派', desc: '麦咖啡配个派，是你能想到最省事的安慰。苦的喝完，甜的收尾，然后继续。',                         mix: [['自欺', 4], ['拖延', 4]] },
+    /* ===== 辣 + 咖啡 + 圆筒 ===== */
+    coffeeCone:       { zh: '咖啡加个圆筒', desc: '咖啡加个圆筒，苦的甜的都要。你说这是一天的完整流程，其实只是不肯收尾。',                       mix: [['自欺', 5], ['逞强', 3]] },
+    coneCoolSpicy:    { zh: '圆筒压一压辣', desc: '辣到不行，先咬一口圆筒压下去。你对付辣的办法，从来不是点不辣的。',                             mix: [['逞强', 7], ['面子', 2]] },
+    /* ===== 牛 + 麦旋风 ===== */
+    flurryFresh:      { zh: '麦旋风要现做的', desc: '“麦旋风要现做的”，说完就站边上等。你愿意为一杯刚打出来的多站两分钟。',                       mix: [['纠结', 5], ['面子', 3]] },
+    flurryExtra:      { zh: '麦旋风多加料', desc: '“多加料”，说得很小声，怕被人听见。你连贪心都要贪得体面，还怕多花那两块钱。',                                       mix: [['贪心', 6], ['面子', 2]] },
+    /* ===== 牛 + 派 ===== */
+    taroAsk:          { zh: '香芋派还有吗', desc: '每次都要问一句“香芋派还有吗”，哪怕答案从来没变过。你问的不是派，是那点确定感。',               mix: [['纠结', 5], ['拖延', 3]] },
+    pieHotPlease:     { zh: '派要热的谢谢', desc: '“派要热的，谢谢”，提完要求还要补一句谢谢。你连开口都不好意思。',                               mix: [['面子', 6], ['纠结', 2]] },
+    taroOneMore:      { zh: '香芋派加一个', desc: '“香芋派加一个”，语气很随意。其实你心里清楚，这是今天第二个了。',                               mix: [['贪心', 6], ['侥幸', 2]] },
+    comboOneMore:     { zh: '套餐再加一份', desc: '套餐都点完了，你说再加一份。柜台问确定吗，你说确定，然后自己先笑了。',                         mix: [['贪心', 7], ['面子', 2]] },
+    /* ===== 牛 + 圆筒 ===== */
+    coneFirst:        { zh: '圆筒先上',     desc: '“圆筒先上”，主食还没到。你把甜的安排在前面，理由是不想等。',                                 mix: [['松弛', 5], ['贪心', 3]] },
+    coneSeparate:     { zh: '圆筒分开装',   desc: '“圆筒分开装”，怕它化在袋子里。你对一支圆筒的照顾，比对自己还细致。',                           mix: [['面子', 5], ['纠结', 3]] },
+    /* ===== 牛 + 咖啡 + 麦旋风 ===== */
+    coffeeFlurry:     { zh: '麦咖啡配旋风', desc: '麦咖啡配旋风，苦的冰的一起上。你上班的每个下午，都靠这一对撑着。',                             mix: [['逞强', 5], ['自欺', 3]] },
+    flurryDouble:     { zh: '麦旋风双份',   desc: '“麦旋风双份”，说得很轻，怕柜台多问一句。你不是请客，你是给自己留了后路。',                                     mix: [['贪心', 7], ['自欺', 2]] },
+    /* ===== 牛 + 咖啡 + 派 ===== */
+    coffeePieAdd:     { zh: '麦咖啡加派',   desc: '麦咖啡加派，报得飞快，怕被人听出来。你在会上偷偷下的单，比谁都熟练。',                                       mix: [['松弛', 4], ['拖延', 4]] },
+    coffeePieTogether: { zh: '咖啡派一起上', desc: '咖啡派一起上，报单不到五秒。你把复杂的事交给这两样，简单得像在敷衍自己。',                     mix: [['贪心', 5], ['逞强', 3]] },
+    /* ===== 牛 + 咖啡 + 圆筒 ===== */
+    coffeeConeLight:  { zh: '咖啡配圆筒',   desc: '咖啡配圆筒，一个负责醒，一个负责哄。你把自己拆成两半来照顾。',                                 mix: [['自欺', 5], ['松弛', 3]] },
+    coneCoffee:       { zh: '圆筒配麦咖啡', desc: '圆筒配麦咖啡，先甜后苦。你说这样能收心，其实只是想让下午慢一点。',                             mix: [['纠结', 4], ['自欺', 4]] },
+    /* ===== 鸡 + 麦旋风 ===== */
+    flurrySingle:     { zh: '麦旋风要一个', desc: '“麦旋风要一个”，说得毫无起伏。你已经不需要给自己找理由了。',                                   mix: [['松弛', 5], ['自欺', 3]] },
+    flurryScoop:      { zh: '麦旋风多给一勺', desc: '“多给一勺行吗”，问得很客气。柜台真多给了，你能高兴一下午。',                                 mix: [['面子', 5], ['侥幸', 3]] },
+    /* ===== 鸡 + 派 ===== */
+    pieSwap:          { zh: '派换个口味',   desc: '“派换个口味吧”，其实上次也这么换。你不是想尝新，你只是不想每次都一样。',                       mix: [['纠结', 6], ['拖延', 2]] },
+    pieAddOne:        { zh: '派再加一个',   desc: '派再加一个，说的时候眼睛盯着柜台。你怕对方拒绝，又怕自己反悔。',                               mix: [['纠结', 5], ['侥幸', 3]] },
+    /* ===== 鸡 + 圆筒 ===== */
+    coneAgain:        { zh: '再要一个甜筒', desc: '甜筒吃完，你说再要一个。你不是热，你是想让这顿的结尾再长一点。',                               mix: [['贪心', 6], ['侥幸', 2]] },
+    coneNow:          { zh: '甜筒现在吃',   desc: '“甜筒现在吃”，不带走。你连一支甜筒都要趁它最好的那两分钟。',                                   mix: [['松弛', 5], ['贪心', 3]] },
+    /* ===== 鸡 + 咖啡 + 麦旋风 ===== */
+    flurryTakeaway:   { zh: '麦旋风打包',   desc: '“麦旋风打包”，带回去慢慢吃。你的快乐要留到晚上，白天不配。',                                   mix: [['拖延', 6], ['自欺', 2]] },
+    /* ===== 鸡 + 咖啡 + 派 ===== */
+    threepm:          { zh: '三点麦咖啡',   desc: '三点一到，麦咖啡和派一起报，总共五个字。你不是饿，你需要一件事把下午切成两半。',               mix: [['拖延', 5], ['装死', 3]] },
+    pieCoffeeTakeaway: { zh: '派配咖啡打包', desc: '派配咖啡打包，一路拎回工位。你连吃都排在别人后面，还觉得挺合理。',                                         mix: [['拖延', 5], ['面子', 3]] },
+    /* ===== 鸡 + 咖啡 + 圆筒 ===== */
+    coneHold:         { zh: '圆筒留一个',   desc: '“圆筒留一个”，说得像给别人留的。其实到最后，你谁也舍不得给。',                                 mix: [['面子', 6], ['自欺', 2]] },
+    /* ===== 鱼 + 麦旋风 ===== */
+    fishFlurry:       { zh: '麦香鱼配旋风', desc: '麦香鱼配旋风，谁看都觉得怪。只有你觉得这叫搭，还得意了一整路。',                                     mix: [['纠结', 5], ['面子', 3]] },
+    fishCombo:        { zh: '麦香鱼要套餐', desc: '“麦香鱼要套餐”，说得规规矩矩。你在柜台前最老实，老实得像个模范顾客。',                         mix: [['松弛', 5], ['拖延', 3]] },
+    /* ===== 鱼 + 派 ===== */
+    fishPie:          { zh: '麦香鱼加个派', desc: '麦香鱼加个派，鱼是点给别人看的，派才是点给自己吃的。你不骗人，只是先骗过自己。',               mix: [['纠结', 5], ['贪心', 3]] },
+    fishFresh:        { zh: '鱼堡要现做的', desc: '“鱼堡要现做的”，说完自己都有点不好意思。你难得提一次要求，还得先道歉。',                       mix: [['面子', 5], ['侥幸', 3]] },
+    /* ===== 鱼 + 圆筒 ===== */
+    fishCone:         { zh: '鱼堡配圆筒',   desc: '鱼堡配圆筒，一份咸的一份甜的。你把一顿饭安排得很讲究，讲究得有点空。',                         mix: [['松弛', 4], ['自欺', 4]] },
+    coneDinner:       { zh: '圆筒当晚饭',   desc: '圆筒当晚饭，说得轻描淡写。你不是不饿，你是懒得再想一遍吃什么。',                                   mix: [['拖延', 5], ['装死', 3]] },
+    /* ===== 鱼 + 咖啡 + 麦旋风 ===== */
+    fishComboFlurry:  { zh: '麦香鱼旋风套餐', desc: '“麦香鱼旋风套餐”，报得很顺，一个字都没错。你把一份套餐点成了一套流程。',                                   mix: [['装死', 4], ['松弛', 4]] },
+    /* ===== 鱼 + 咖啡 + 派 ===== */
+    fishCoffee:       { zh: '麦香鱼配咖啡', desc: '麦香鱼配咖啡，清淡得像在照顾自己。演完这一场，晚上还得再补一顿真的。',                         mix: [['自欺', 6], ['面子', 2]] },
+    fishComboPie:     { zh: '麦香鱼套餐加派', desc: '套餐再加个派，加得毫不犹豫。你说这叫刚好，其实你从来没算过。',                               mix: [['贪心', 5], ['拖延', 3]] },
+    /* ===== 鱼 + 咖啡 + 圆筒 ===== */
+    fishConeEnough:   { zh: '鱼堡圆筒就够', desc: '“鱼堡圆筒就够”，说完还真觉得够了。你一向很会给自己做减法，减到只剩甜。',                       mix: [['嘴硬', 6], ['自欺', 2]] }
   };
 
   /**
-   * 人格规则表：自上而下第一条命中即生效，再按总热量落在哪个区间决定最终标签。
+   * 营养成分表：按商品 code 索引，单位克（碳水 / 蛋白质 / 脂肪）。
+   * 数据来自麦当劳官方 list-nutrition-foods 接口的 160 条商品营养记录，逐项对应后
+   * 落盘在 data/nutrition.official.json，本表与那份文件逐格一致（18 项）。
+   * 与 MENU 里同商品的 kcal 交叉校验过：三大营养素按 4 / 4 / 9 kcal/g 折算出的热量
+   * 与商品 kcal 的偏差都在 5% 以内，整份套餐合计偏差约 1%，所以成分表的前三项
+   * 是真的从「这份套餐」算出来的，不是编的。
+   */
+  var NUTRI = {
+    BIGMAC:    { carb: 42, protein: 27, fat: 26 },
+    MCSPICY:   { carb: 42, protein: 24, fat: 24 },
+    MCCRISPY:  { carb: 35, protein: 23, fat: 17 },
+    DUBLECHE:  { carb: 31, protein: 27, fat: 22 },
+    FILEFISH:  { carb: 35, protein: 16, fat: 13 },
+    FRIES_M:   { carb: 38, protein:  4, fat: 12 },
+    FRIES_L:   { carb: 50, protein:  6, fat: 16 },
+    NUGGETS_5: { carb: 13, protein: 12, fat: 12 },
+    WINGS_2:   { carb:  9, protein: 13, fat: 15 },
+    FRIES_S:   { carb: 28, protein:  3, fat:  9 },
+    COKE_M:    { carb: 36, protein:  0, fat:  0 },
+    SPRITE_M:  { carb: 26, protein:  0, fat:  0 },
+    COFFEE_H:  { carb:  0, protein:  1, fat:  0 },
+    COKE_ZERO: { carb:  1, protein:  0, fat:  0 },
+    MCFLURRY:  { carb: 40, protein:  5, fat:  9 },
+    PIE_TARO:  { carb: 28, protein:  2, fat: 12 },
+    PIE_PINE:  { carb: 27, protein:  2, fat: 11 },
+    CONE:      { carb: 14, protein:  2, fat:  3 }
+  };
+
+  /** 兜底荒诞成分（人格数据缺字段时使用，正常不会触发）。 */
+  var FALLBACK_MIX = [['嘴硬', 5], ['侥幸', 3]];
+
+  /**
+   * 人格规则表：自上而下第一条命中即生效，再按总热量落在哪个区间决定最终名字。
    * 判定维度只取六项——肉类 / 辣度（含双辣）/ 咖啡 / 甜品类型 / 热量档 / 份量感（大薯+甜品），
-   * 所以标签一定和用户"点了什么"绑定，不会出现随机命名。
+   * 所以名字一定和用户"点了什么"绑定，不会出现随机命名。
    * slots 里的 max 是总热量（kcal）的开区间上界。
    */
   var PERSONA_RULES = [
     /* 双辣：主食辣 + 小食辣 */
     { when: { dbl: true }, slots: [
-      { max: 1000,  id: 'ZZZZ-SPICY' },
-      { max: 99999, id: 'HOT-ADDICT' }
+      { max: 1000,  id: 'wingsMild' },
+      { max: 99999, id: 'wingsMore' }
     ] },
     /* 最经典款：牛 + 可乐 + 中薯 */
     { when: { meat: 'beef', drink: 'coke', side: 'FRIES_M' }, slots: [
-      { max: 99999, id: 'NICE-GUY' }
+      { max: 99999, id: 'midFriesCoke' }
+    ] },
+    /* 牛 + 无糖可乐 + 中薯：可乐换无糖 */
+    { when: { meat: 'beef', drink: 'zero', side: 'FRIES_M' }, slots: [
+      { max: 99999, id: 'zeroCoke' }
     ] },
     /* 份量感全开：大薯 + 麦旋风 */
     { when: { fullOpen: true, meat: 'beef', kcalMin: 1200 }, slots: [
-      { max: 99999, id: 'KCAL-ZZZZ' }
+      { max: 99999, id: 'bigFriesFlurry' }
     ] },
     { when: { fullOpen: true, meat: 'beef' }, slots: [
-      { max: 99999, id: 'CARB-MALO' }
+      { max: 99999, id: 'upgradeFries' }
     ] },
     { when: { fullOpen: true }, slots: [
-      { max: 99999, id: 'FULL-ON' }
+      { max: 99999, id: 'friesFresh' }
     ] },
 
     /* 辣 + 麦旋风 */
     { when: { spicy: true, coffee: false, dessert: 'flurry' }, slots: [
-      { max: 1040,  id: 'SPICY-ICE' },
-      { max: 99999, id: 'SUGAR-SPICY' }
+      { max: 1040,  id: 'flurryCookie' },
+      { max: 99999, id: 'flurryAgain' }
     ] },
     /* 辣 + 派 */
     { when: { spicy: true, coffee: false, dessert: 'pie' }, slots: [
-      { max: 900,   id: 'ACT-FINE' },
-      { max: 1010,  id: 'TRUCE' },
-      { max: 1100,  id: 'CRUST-BREAK' },
-      { max: 99999, id: 'JOY-FIRST' }
+      { max: 900,   id: 'spicyPiePlease' },
+      { max: 1010,  id: 'pieFresh' },
+      { max: 1100,  id: 'pieReserve' },
+      { max: 99999, id: 'pieOneMore' }
     ] },
     /* 辣 + 圆筒 */
     { when: { spicy: true, coffee: false, dessert: 'cone' }, slots: [
-      { max: 805,   id: 'SPICY-END' },
-      { max: 99999, id: 'SWEAT' }
+      { max: 805,   id: 'coneOnly' },
+      { max: 99999, id: 'coneOne' }
     ] },
     /* 辣 + 咖啡 + 麦旋风 */
     { when: { spicy: true, coffee: true, dessert: 'flurry' }, slots: [
-      { max: 980,   id: 'TRIPLE' },
-      { max: 99999, id: 'CAFFEINE-NAH' }
+      { max: 980,   id: 'flurryCoffee' },
+      { max: 99999, id: 'flurryNow' }
     ] },
     /* 辣 + 咖啡 + 派 */
     { when: { spicy: true, coffee: true, dessert: 'pie' }, slots: [
-      { max: 950,   id: 'THREE-WAY' },
-      { max: 99999, id: 'ALIVE' }
+      { max: 950,   id: 'coffeeAndPie' },
+      { max: 99999, id: 'coffeePie' }
     ] },
     /* 辣 + 咖啡 + 圆筒 */
     { when: { spicy: true, coffee: true, dessert: 'cone' }, slots: [
-      { max: 800,   id: 'AWAKE-ZZZZ' },
-      { max: 99999, id: 'HANG-ON' }
+      { max: 800,   id: 'coffeeCone' },
+      { max: 99999, id: 'coneCoolSpicy' }
     ] },
 
     /* 牛 + 麦旋风 */
     { when: { meat: 'beef', coffee: false, dessert: 'flurry' }, slots: [
-      { max: 1080,  id: '2ND-STOMACH' },
-      { max: 99999, id: 'DIET-ACT' }
+      { max: 1080,  id: 'flurryFresh' },
+      { max: 99999, id: 'flurryExtra' }
     ] },
     /* 牛 + 派 */
     { when: { meat: 'beef', coffee: false, dessert: 'pie' }, slots: [
-      { max: 940,   id: 'SOLID' },
-      { max: 1020,  id: 'LAO-SHI' },
-      { max: 1110,  id: 'REGRET' },
-      { max: 99999, id: 'KCAL-VOID' }
+      { max: 940,   id: 'taroAsk' },
+      { max: 1020,  id: 'pieHotPlease' },
+      { max: 1110,  id: 'taroOneMore' },
+      { max: 99999, id: 'comboOneMore' }
     ] },
     /* 牛 + 圆筒 */
     { when: { meat: 'beef', coffee: false, dessert: 'cone' }, slots: [
-      { max: 860,   id: 'BEACH' },
-      { max: 99999, id: 'SWEET-ADULT' }
+      { max: 860,   id: 'coneFirst' },
+      { max: 99999, id: 'coneSeparate' }
     ] },
     /* 牛 + 咖啡 + 麦旋风 */
     { when: { meat: 'beef', coffee: true, dessert: 'flurry' }, slots: [
-      { max: 1000,  id: 'MYSTERY' },
-      { max: 99999, id: 'DUAL-BOOT' }
+      { max: 1000,  id: 'coffeeFlurry' },
+      { max: 99999, id: 'flurryDouble' }
     ] },
     /* 牛 + 咖啡 + 派 */
     { when: { meat: 'beef', coffee: true, dessert: 'pie' }, slots: [
-      { max: 960,   id: '3PM' },
-      { max: 99999, id: 'CAFE-LIFE' }
+      { max: 960,   id: 'coffeePieAdd' },
+      { max: 99999, id: 'coffeePieTogether' }
     ] },
     /* 牛 + 咖啡 + 圆筒 */
     { when: { meat: 'beef', coffee: true, dessert: 'cone' }, slots: [
-      { max: 790,   id: 'MEH' },
-      { max: 99999, id: 'AWAKE-FALL' }
+      { max: 790,   id: 'coffeeConeLight' },
+      { max: 99999, id: 'coneCoffee' }
     ] },
 
     /* 鸡 + 麦旋风 */
     { when: { meat: 'chicken', coffee: false, dessert: 'flurry' }, slots: [
-      { max: 980,   id: '9TO5' },
-      { max: 99999, id: 'TREAT' }
+      { max: 980,   id: 'flurrySingle' },
+      { max: 99999, id: 'flurryScoop' }
     ] },
     /* 鸡 + 派 */
     { when: { meat: 'chicken', coffee: false, dessert: 'pie' }, slots: [
-      { max: 930,   id: 'BOTH' },
-      { max: 99999, id: 'STUBBORN' }
+      { max: 930,   id: 'pieSwap' },
+      { max: 99999, id: 'pieAddOne' }
     ] },
     /* 鸡 + 圆筒 */
     { when: { meat: 'chicken', coffee: false, dessert: 'cone' }, slots: [
-      { max: 800,   id: 'BARELY' },
-      { max: 99999, id: 'AFTERS' }
+      { max: 800,   id: 'coneAgain' },
+      { max: 99999, id: 'coneNow' }
     ] },
     /* 鸡 + 咖啡 + 麦旋风 */
     { when: { meat: 'chicken', coffee: true, dessert: 'flurry' }, slots: [
-      { max: 99999, id: 'DESK' }
+      { max: 99999, id: 'flurryTakeaway' }
     ] },
     /* 鸡 + 咖啡 + 派 */
     { when: { meat: 'chicken', coffee: true, dessert: 'pie' }, slots: [
-      { max: 880,   id: 'OFF-PEAK' },
-      { max: 99999, id: 'FAKE-BUSY' }
+      { max: 880,   id: 'threepm' },
+      { max: 99999, id: 'pieCoffeeTakeaway' }
     ] },
     /* 鸡 + 咖啡 + 圆筒 */
     { when: { meat: 'chicken', coffee: true, dessert: 'cone' }, slots: [
-      { max: 99999, id: 'RUN-TMRW' }
+      { max: 99999, id: 'coneHold' }
     ] },
 
     /* 鱼 + 麦旋风 */
     { when: { meat: 'fish', coffee: false, dessert: 'flurry' }, slots: [
-      { max: 910,   id: 'HIDDEN' },
-      { max: 99999, id: 'FAKE-RESTRAINT' }
+      { max: 910,   id: 'fishFlurry' },
+      { max: 99999, id: 'fishCombo' }
     ] },
     /* 鱼 + 派 */
     { when: { meat: 'fish', coffee: false, dessert: 'pie' }, slots: [
-      { max: 870,   id: 'FAKE-LIGHT' },
-      { max: 99999, id: 'GENTLE' }
+      { max: 870,   id: 'fishPie' },
+      { max: 99999, id: 'fishFresh' }
     ] },
     /* 鱼 + 圆筒 */
     { when: { meat: 'fish', coffee: false, dessert: 'cone' }, slots: [
-      { max: 720,   id: 'SURVIVAL' },
-      { max: 99999, id: 'PERFORM' }
+      { max: 720,   id: 'fishCone' },
+      { max: 99999, id: 'coneDinner' }
     ] },
     /* 鱼 + 咖啡 + 麦旋风 */
     { when: { meat: 'fish', coffee: true, dessert: 'flurry' }, slots: [
-      { max: 99999, id: 'ACTOR' }
+      { max: 99999, id: 'fishComboFlurry' }
     ] },
     /* 鱼 + 咖啡 + 派 */
     { when: { meat: 'fish', coffee: true, dessert: 'pie' }, slots: [
-      { max: 800,   id: 'TOUCHED' },
-      { max: 99999, id: 'GENTLE-FAKE' }
+      { max: 800,   id: 'fishCoffee' },
+      { max: 99999, id: 'fishComboPie' }
     ] },
     /* 鱼 + 咖啡 + 圆筒 */
     { when: { meat: 'fish', coffee: true, dessert: 'cone' }, slots: [
-      { max: 99999, id: 'MAX-SELF' }
+      { max: 99999, id: 'fishConeEnough' }
     ] }
   ];
 
   /** 兜底人格（规则表理论上已覆盖全部 400 种组合）。 */
-  var FALLBACK_PERSONA = 'SOLID';
+  var FALLBACK_PERSONA = 'midFriesCoke';
 
   var CALORIE_LINES = {
     heavy: ['这一顿的热量，先记在明天的账上。', '这一顿顶我两天饭。', '热量是快乐的计量单位。'],
@@ -1422,11 +1573,11 @@
   }
 
   /**
-   * 依据套餐特征挑一个麦门人格（中文标签 + 英文代号 + 人格描述）。
+   * 依据套餐特征挑一句麦门人格的话（点餐动作 + 人格描述 + 荒诞成分）。
    * 规则表自上而下匹配，第一条命中的规则里再按总热量选档；
    * 全程只依赖套餐本身，不含随机成分，同名必得同一个人格。
    * @param {object} f 套餐特征（buildMeal 里组装）
-   * @returns {{zh: string, en: string, desc: string}}
+   * @returns {{zh: string, desc: string, mix: Array<Array<string|number>>}}
    */
   function pickPersona(f) {
     for (var i = 0; i < PERSONA_RULES.length; i += 1) {
@@ -1445,7 +1596,7 @@
   }
 
   /**
-   * 常见度对应的稀有度话术（学 SBTI 的「恭喜您」）。
+   * 常见度对应的稀有度话术。
    * @param {number} commonness 0 ~ 99.9 的百分比
    * @returns {string}
    */
@@ -1485,6 +1636,142 @@
 
     if (!extras.length) { return calorieLine; }
     return calorieLine + ' ' + extras[(hash >>> 28) % extras.length];
+  }
+
+  /* =====================================================================
+   * 3.6 成分表：仿食品包装的营养成分表
+   *     前三项是真的：把套餐里每样东西的碳水 / 蛋白质 / 脂肪克数按
+   *     碳水 4 kcal/g、蛋白质 4 kcal/g、脂肪 9 kcal/g 折算成热量占比。
+   *     后两项是娱乐：从人格里挑两个荒诞成分，占 2%~8%，并从这个占比里扣掉，
+   *     所以整张表一定加起来等于 100%。这套东西只有真能拿到营养数据的作品做得出来。
+   * ===================================================================== */
+
+  /**
+   * 累加一份套餐的三大营养素克数（按商品 code 查 NUTRI 表）。
+   * @param {object} meal buildMeal 的返回值
+   * @returns {{carb: number, protein: number, fat: number}}
+   */
+  function macroOf(meal) {
+    var carb = 0;
+    var protein = 0;
+    var fat = 0;
+    var items = (meal && meal.items) || [];
+    for (var i = 0; i < items.length; i += 1) {
+      var code = items[i] && items[i].data ? items[i].data.code : '';
+      var row = NUTRI[code];
+      if (!row) { continue; }
+      carb += row.carb;
+      protein += row.protein;
+      fat += row.fat;
+    }
+    return { carb: carb, protein: protein, fat: fat };
+  }
+
+  /**
+   * 生成成分表：三行真实营养占比 + 一行可能的「其他」+ 两行荒诞成分，合计恒为 100%。
+   * @param {object} meal buildMeal 的返回值
+   * @returns {{rows: Array<{label: string, pct: number, play: boolean}>,
+   *            macro: {carb: number, protein: number, fat: number},
+   *            macroKcal: number, total: number}}
+   */
+  function nutritionPanel(meal) {
+    var macro = macroOf(meal);
+    var carbKcal = macro.carb * 4;
+    var proteinKcal = macro.protein * 4;
+    var fatKcal = macro.fat * 9;
+    var macroKcal = carbKcal + proteinKcal + fatKcal;
+
+    var mix = (meal && meal.persona && meal.persona.mix && meal.persona.mix.length)
+      ? meal.persona.mix
+      : FALLBACK_MIX;
+
+    var play = [];
+    var playSum = 0;
+    for (var i = 0; i < mix.length; i += 1) {
+      var label = String(mix[i][0]);
+      var pct = clamp(Math.round(Number(mix[i][1])), 2, 8);
+      play.push({ label: label, pct: pct, play: true });
+      playSum += pct;
+    }
+
+    // 荒诞成分从真实占比里扣，保证整张表加起来是 100%
+    var realSum = 100 - playSum;
+    var carbPct = 0;
+    var fatPct = 0;
+    var proteinPct = 0;
+    if (macroKcal > 0) {
+      carbPct = Math.round(carbKcal / macroKcal * realSum);
+      fatPct = Math.round(fatKcal / macroKcal * realSum);
+      proteinPct = Math.round(proteinKcal / macroKcal * realSum);
+    }
+
+    var rows = [
+      { label: '碳水', pct: carbPct, play: false },
+      { label: '脂肪', pct: fatPct, play: false },
+      { label: '蛋白质', pct: proteinPct, play: false }
+    ];
+
+    // 四舍五入剩下的零头：多了给「其他」，少了从最大的一项里退回去
+    var other = 100 - (carbPct + fatPct + proteinPct + playSum);
+    if (other > 0) {
+      rows.push({ label: '其他', pct: other, play: false });
+    } else if (other < 0) {
+      var maxIdx = 0;
+      for (var k = 1; k < rows.length; k += 1) {
+        if (rows[k].pct > rows[maxIdx].pct) { maxIdx = k; }
+      }
+      rows[maxIdx].pct += other;
+    }
+
+    for (var m = 0; m < play.length; m += 1) { rows.push(play[m]); }
+
+    var total = 0;
+    for (var n = 0; n < rows.length; n += 1) { total += rows[n].pct; }
+
+    return { rows: rows, macro: macro, macroKcal: macroKcal, total: total };
+  }
+
+  /**
+   * 把数值夹在 [min, max] 之间。
+   * @param {number} value
+   * @param {number} min
+   * @param {number} max
+   * @returns {number}
+   */
+  function clamp(value, min, max) {
+    var n = Number(value);
+    if (!isFinite(n)) { return min; }
+    if (n < min) { return min; }
+    if (n > max) { return max; }
+    return n;
+  }
+
+  /**
+   * 成分表转成一行纯文字（复制文案用），例如
+   * 「碳水 42% / 脂肪 36% / 蛋白质 13% / 嘴硬 7% / 面子 2%」。
+   * @param {object} panel nutritionPanel 的返回值
+   * @returns {string}
+   */
+  function panelLine(panel) {
+    var parts = [];
+    for (var i = 0; i < panel.rows.length; i += 1) {
+      parts.push(panel.rows[i].label + ' ' + panel.rows[i].pct + '%');
+    }
+    return parts.join(' / ');
+  }
+
+  /**
+   * 三大营养素折算热量与商品标称热量的相对偏差（保留一位小数，带百分号）。
+   * 这个数字是「数据是真的」的证据：折算必然有 1% 左右的误差，我们没有去凑。
+   * @param {object} panel nutritionPanel 的返回值
+   * @param {number} totalKcal 四件套标称热量合计
+   * @returns {string} 例如 "1.1%"
+   */
+  function panelDeviation(panel, totalKcal) {
+    var base = Number(totalKcal);
+    if (!isFinite(base) || base <= 0) { return '—'; }
+    var diff = Math.abs(panel.macroKcal - base) / base * 100;
+    return diff.toFixed(1) + '%';
   }
 
   /* =====================================================================
@@ -1599,6 +1886,7 @@
     owner: document.getElementById('ownerLabel'),
     mealName: document.getElementById('mealName'),
     personaDesc: document.getElementById('personaDesc'),
+    panelRows: document.getElementById('panelRows'),
     items: document.getElementById('items'),
     totalPrice: document.getElementById('totalPrice'),
     totalKcal: document.getElementById('totalKcal'),
@@ -1652,10 +1940,21 @@
     current = meal;
 
     dom.owner.textContent = meal.display + '的麦门人格';
-    dom.mealName.innerHTML =
-      '<span class="pn-zh">「' + escapeHtml(meal.persona.zh) + '」</span>' +
-      '<span class="pn-en">' + escapeHtml(meal.persona.en) + '</span>';
+    dom.mealName.textContent = '「' + meal.persona.zh + '」';
     dom.personaDesc.textContent = meal.persona.desc;
+
+    // 成分表：打印出来像真的营养成分表
+    var panel = nutritionPanel(meal);
+    var panelHtml = '';
+    for (var p = 0; p < panel.rows.length; p += 1) {
+      panelHtml +=
+        '<div class="panel-row' + (panel.rows[p].play ? ' is-play' : '') + '">' +
+          '<span class="panel-label">' + escapeHtml(panel.rows[p].label) + '</span>' +
+          '<span class="panel-lead" aria-hidden="true"></span>' +
+          '<span class="panel-pct">' + panel.rows[p].pct + '%</span>' +
+        '</div>';
+    }
+    dom.panelRows.innerHTML = panelHtml;
 
     var rows = '';
     for (var i = 0; i < meal.items.length; i += 1) {
@@ -1692,7 +1991,11 @@
       '人格判定：' + meal.features.meat + (meal.features.spicy ? ' + 辣' : '') +
       (meal.features.dbl ? '（双辣）' : '') + (meal.features.coffee ? ' + 咖啡' : '') +
       ' + ' + meal.features.dessertType + ' · ' + meal.totalKcal + ' kcal' +
-      ' → <b>' + escapeHtml(meal.persona.zh) + '</b> ' + escapeHtml(meal.persona.en);
+      ' → <b>' + escapeHtml(meal.persona.zh) + '</b>' +
+      '<br />成分表：碳水 ' + panel.macro.carb + ' g × 4 + 脂肪 ' + panel.macro.fat + ' g × 9 + 蛋白质 ' +
+      panel.macro.protein + ' g × 4 = ' + panel.macroKcal + ' kcal（与商品标称合计 ' + meal.totalKcal +
+      ' kcal 差 ' + panelDeviation(panel, meal.totalKcal) + '）的三大营养素热量占比，' +
+      '再按人格扣掉后两项娱乐成分。';
 
     // 已经导入过订单的话，用新套餐的单价重算一遍（"份你这份套餐" 会变）
     if (importedStats) { renderOrders(importedStats); }
@@ -1714,7 +2017,7 @@
 
   /**
    * 生成可分享的纯文本文案。
-   * 人格描述只取第一句：短一点，才有人愿意贴出去。
+   * 只留人格名、成分表、套餐、合计、指纹——短一点，才有人愿意贴出去。
    * @param {object} meal
    * @returns {string}
    */
@@ -1723,26 +2026,17 @@
     for (var i = 0; i < meal.items.length; i += 1) {
       parts.push(meal.items[i].data.name);
     }
+    var panel = nutritionPanel(meal);
     return [
-      '我的麦门人格是「' + meal.persona.zh + '」' + meal.persona.en,
-      '——' + firstSentence(meal.persona.desc),
+      '我测出来是「' + meal.persona.zh + '」。',
+      '',
+      '成分表：' + panelLine(panel),
       '套餐：' + parts.join(' + '),
       '合计 ' + moneyFixed(meal.totalPrice) + ' / ' + thousands(meal.totalKcal) + ' kcal · 常见度 ' + meal.commonness.toFixed(1) + '%',
-      '哈希指纹 ' + meal.hashHex,
-      '你的名字是什么人格？'
+      '指纹 ' + meal.hashHex,
+      '',
+      '你的名字测出来是什么？'
     ].join('\n');
-  }
-
-  /**
-   * 取一句话里的第一个完整句子（找不到句号就原样返回）。
-   * @param {string} text
-   * @returns {string}
-   */
-  function firstSentence(text) {
-    var raw = String(text == null ? '' : text);
-    var end = raw.indexOf('。');
-    if (end === -1) { return raw; }
-    return raw.slice(0, end + 1);
   }
 
   /**
@@ -2182,12 +2476,18 @@
     buildMeal: buildMeal,
     menu: MENU,
     comboCount: MENU.mains.length * MENU.sides.length * MENU.drinks.length * MENU.desserts.length,
-    /* 人格命名：可自行遍历 400 种组合核对标签分布 */
+    /* 人格命名：可自行遍历 400 种组合核对名字分布 */
     personas: PERSONAS,
     personaRules: PERSONA_RULES,
     pickPersona: pickPersona,
     rarityNote: rarityNote,
     personaCount: Object.keys(PERSONAS).length,
+    /* 成分表：真实营养占比可以自己按克数复算 */
+    nutri: NUTRI,
+    macroOf: macroOf,
+    nutritionPanel: nutritionPanel,
+    panelLine: panelLine,
+    buildCopyText: buildCopyText,
     /* 订单换算相关：可直接用文本验证导入链路，例如
        MealHash.handleOrderText(JSON.stringify({orders:[...], summary:{...}})) */
     handleOrderText: handleOrderText,
