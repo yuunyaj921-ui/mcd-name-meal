@@ -1128,7 +1128,7 @@
     flurryCookie:     { zh: '麦旋风多加饼干', desc: '“麦旋风多加饼干”，说得特别熟练。你不是爱吃甜，你是需要一点能自己加的东西。',                 mix: [['贪心', 5], ['自欺', 3]] },
     flurryAgain:      { zh: '再来个麦旋风', desc: '麦旋风见底，你说再来个。柜台问要一样的吗，你说对，一样的，就一样的。',                         mix: [['贪心', 7], ['侥幸', 2]] },
     /* ===== 辣 + 派 ===== */
-    spicyPiePlease:   { zh: '辣完来个派',   desc: '辣到吸气，马上补一句“来个派”。谁也不许占上风，你处理矛盾的方式就是往嘴里再加一样。',         mix: [['纠结', 5], ['贪心', 3]] },
+    spicyPiePlease:   { zh: '辣完来个派',   desc: '辣到吸气，马上补一句“来个派”。谁也不许占上风，你处理矛盾的方式就是往嘴里再加一样。',         mix: [['嘴硬', 7], ['面子', 2]] },
     pieFresh:         { zh: '派要现炸的吗', desc: '“派要现炸的吗”，问完自己也觉得多余。你就是想确认一下，这一份是不是刚出锅的。',                 mix: [['纠结', 5], ['侥幸', 3]] },
     pieReserve:       { zh: '派给我留一个', desc: '单都下完了，特意补一句“派给我留一个”。你不怕别的卖完，只怕最后那个派没了。',                   mix: [['侥幸', 6], ['贪心', 2]] },
     pieOneMore:       { zh: '再加一个派',   desc: '单都报完了，你又补一句“再加一个派”。你不是想吃，你是不想让这单结束得太干脆。',               mix: [['贪心', 6], ['拖延', 2]] },
@@ -2487,6 +2487,7 @@
     macroOf: macroOf,
     nutritionPanel: nutritionPanel,
     panelLine: panelLine,
+    panelDeviation: panelDeviation,
     buildCopyText: buildCopyText,
     /* 订单换算相关：可直接用文本验证导入链路，例如
        MealHash.handleOrderText(JSON.stringify({orders:[...], summary:{...}})) */
