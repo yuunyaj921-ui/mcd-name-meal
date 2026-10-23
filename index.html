@@ -782,161 +782,6 @@
 
   .star-line a:hover { border-bottom-color: var(--mcd-red); }
 
-  /* ============ 订单导入区 ============ */
-  .import-row {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 8px;
-  }
-
-  /* 视觉隐藏但仍可聚焦 / 可点击，保证键盘与读屏可用 */
-  #orderFile {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    white-space: nowrap;
-    border: 0;
-  }
-
-  .btn-import {
-    display: inline-flex;
-    align-items: center;
-    height: 44px;
-    padding: 0 18px;
-    box-shadow: none;
-  }
-
-  #orderFile:focus-visible + .btn-import {
-    outline: 2px solid var(--mcd-red);
-    outline-offset: 2px;
-  }
-
-  .import-hint {
-    font-size: 11.5px;
-    color: var(--ink-faint);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 100%;
-  }
-
-  .import-help {
-    font-size: 11.5px;
-    color: var(--ink-faint);
-    line-height: 1.7;
-    margin: 0 0 12px;
-  }
-
-  .import-help code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 11px;
-    background: #F7F1E8;
-    border-radius: 4px;
-    padding: 1px 5px;
-    color: var(--ink-soft);
-  }
-
-  .import-error {
-    font-size: 12.5px;
-    color: var(--mcd-red-dark);
-    background: #FDF0EE;
-    border-left: 3px solid var(--mcd-red);
-    border-radius: 0 8px 8px 0;
-    padding: 9px 12px;
-    margin: 0 0 12px;
-    line-height: 1.65;
-  }
-
-  .order-headline {
-    font-size: 13.5px;
-    font-weight: 600;
-    color: var(--ink-soft);
-    margin: 0 0 12px;
-    line-height: 1.7;
-  }
-
-  .order-headline b {
-    color: var(--mcd-red);
-    font-size: 17px;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.01em;
-  }
-
-  .order-insight {
-    font-size: 12.5px;
-    color: var(--ink-soft);
-    background: #FCF8F2;
-    border-radius: 10px;
-    padding: 10px 12px;
-    margin: 12px 0 0;
-    line-height: 1.85;
-  }
-
-  .order-insight p { margin: 0; }
-
-  .order-insight .k {
-    color: var(--ink);
-    font-weight: 700;
-  }
-
-  .convert-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-  }
-
-  .convert-list li {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 8px;
-    font-size: 13.5px;
-    color: var(--ink-soft);
-    padding: 9px 12px;
-    background: #FCF8F2;
-    border-radius: 10px;
-  }
-
-  .convert-list li .num {
-    font-size: 17px;
-    font-weight: 800;
-    color: var(--mcd-red);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.02em;
-  }
-
-  .convert-list li .unit {
-    color: var(--ink);
-    font-weight: 600;
-  }
-
-  .budget-note {
-    font-size: 12.5px;
-    color: var(--ink-soft);
-    background: #FFFBF0;
-    border-radius: 10px;
-    padding: 9px 12px;
-    margin: 12px 0 0;
-  }
-
-  .rates {
-    font-size: 11px;
-    color: var(--ink-faint);
-    margin: 12px 0 0;
-    line-height: 1.6;
-  }
-
   /* ============ 算法说明 ============ */
   details.howto {
     margin-top: 18px;
@@ -1521,47 +1366,6 @@
       <button class="btn btn-ghost" type="button" id="resetBtn">再测一次</button>
     </div>
 
-    <!-- 消费换算（导入你自己的真实订单） -->
-    <section class="card hidden" id="budgetCard">
-      <div class="card-head">
-        <h2>我一年在麦当劳花多少钱</h2>
-        <span class="tag">读你自己的真实订单</span>
-      </div>
-      <p class="card-sub">用你自己的真实订单，看看这笔钱还能变成什么。</p>
-
-      <div class="import-row">
-        <input
-          id="orderFile"
-          type="file"
-          accept=".json,application/json"
-          aria-label="导入我的订单文件"
-        />
-        <label class="btn btn-primary btn-import" for="orderFile" id="importLabel">导入我的订单</label>
-        <span class="import-hint" id="importHint">选择一个 JSON 文件</span>
-      </div>
-
-      <p class="import-help">
-        本地计算，数据不上传。先用 <code>python export_orders.py</code> 导出 <code>my-orders.json</code>
-      </p>
-
-      <p class="import-error hidden" id="importError" role="alert"></p>
-
-      <div class="hidden" id="orderResult">
-        <p class="order-headline" id="orderHeadline"></p>
-
-        <ul class="convert-list" id="convertList"></ul>
-
-        <div class="order-insight" id="orderInsight"></div>
-
-        <p class="budget-note hidden" id="budgetVerdict"></p>
-
-        <p class="rates">
-          换算口径：鹤岗房子 2000 元/㎡、iPhone 5999 元/台、电影票 45 元/张。<br />
-          金额全部来自你导入的订单文件，全程在浏览器里算，没有任何数据离开这台电脑。
-        </p>
-      </div>
-    </section>
-
     <!-- 7. Star 引导：一行小字，不阻断任何东西 -->
     <p class="star-line">
       这个测试是一个人的业余作品，参加麦当劳 1024 创意开发大赛。如果你觉得有意思，
@@ -1632,9 +1436,6 @@
       { code: 'PIE_PINE',   name: '菠萝派',       price: 8.0,  kcal: 221, type: 'pie', unverified: true }
     ]
   };
-
-  /** 消费换算口径。 */
-  var RATE = { HOUSE_PER_SQM: 2000, IPHONE: 5999, MOVIE_TICKET: 45 };
 
   /**
    * 营养成分表：按商品 code 索引，单位克（碳水 / 蛋白质 / 脂肪）。
@@ -1728,7 +1529,7 @@
       options: [
         { label: '慢慢啃，这个过程挺爽', scores: { process: 2 } },
         { label: '有点麻烦，但味道值', scores: { process: 1 } },
-        { label: '下次还是点无骨的', scores: { split: 1 } }
+        { label: '下次还是点麦乐鸡', scores: { split: 1 } }
       ]
     },
     {
@@ -1850,10 +1651,9 @@
       items: [['BIGMAC', '主食'], ['FRIES_M', '小食'], ['COKE_M', '饮料']],
       strength: '你从不踩雷，是所有人里最靠谱的饭搭子。说到就到，绝不临时改主意。',
       shadow: '别人问你“这家有什么好吃的”，你答不上来。你吃了三年，但你说不出它好在哪。',
-      paradox: '最熟悉的那个东西，恰恰是你最说不出理由的。你能详细解释为什么喜欢一部电影，但解释不了为什么每次都是巨无霸。',
+      paradox: '你能详细解释为什么喜欢一部电影，但解释不了为什么每次都是巨无霸。',
       mix: [['惯性', 5], ['安全感', 3]],
-      punch: '——吃了三年，还是说不出它好在哪。',
-      kin: { name: '我在交易', reason: '都不冲动，都点固定的东西。区别是他算过，你没算。' },
+      kin: { name: '我在交易', reason: '他点巨无霸要配无糖可乐，你连这个都不配。你俩都不会抬头看新品。' },
       opposite: { name: '中薯换大薯', reason: '你永远一模一样，他永远再加一样。' },
       clash: { name: '不要主食', reason: '他觉得你被套餐驯化了，你觉得他不好好吃饭。' }
     },
@@ -1865,13 +1665,12 @@
       name: '中薯换大薯',
       identity: '用“更多”对抗“不够”的人',
       items: [['DUBLECHE', '主食'], ['FRIES_L', '小食'], ['MCFLURRY', '甜品']],
-      strength: '你不亏待自己，活得尽兴。跟你吃饭的人会觉得“这人真会吃”。',
+      strength: '你不亏待自己。跟你吃饭的人会觉得“这人真会吃”。',
       shadow: '吃不完，但不会承认吃不完。剩半份薯条放在那，你说“一会儿再吃”，然后没有一会儿。',
-      paradox: '你用“更多”来掩盖“其实不知道自己要什么”。加芝士、换大薯、加甜品——每一次“加”，都是一次“我还没想清楚，先多要点”。',
+      paradox: '加芝士、换大薯、加甜品。每一次“加”，都是“我还没想清楚，先多要点”。',
       mix: [['贪心', 6], ['嘴硬', 2]],
-      punch: '——你在算人均，我在算还差一样什么。',
-      kin: { name: '先来个甜的', reason: '都要“现在”。区别是他要“甜”，你要“多”。' },
-      opposite: { name: '老样子', reason: '他永远一模一样，你永远再加一样。' },
+      kin: { name: '先来个甜的', reason: '他先吃甜品，你先换大份。都是不想等，只是等的东西不一样。' },
+      opposite: { name: '老样子', reason: '他进门就知道点什么。你进门先看今天有什么新的。' },
       clash: { name: '我在交易', reason: '他在算人均，你在算还差一样什么。他觉得你失控，你觉得他扫兴。' }
     },
 
@@ -1882,14 +1681,13 @@
       name: '不要主食',
       identity: '拒绝被规定的人',
       items: [['NUGGETS_5', '小食'], ['FRIES_M', '小食'], ['CONE', '甜品']],
-      strength: '你自由，不被“应该怎么吃”绑架。你是那种在所有人都点套餐时敢单点的人。',
-      shadow: '你不是不想吃主食，你是不敢承认自己想要一整份。',
-      paradox: '你拒绝“主体”，是因为“主体”意味着承诺。一份套餐是一个完整的承诺（我就要这一顿），而拼凑的小食可以是“我还没决定”。',
+      strength: '所有人都在点套餐的时候，你敢单点。',
+      shadow: '你其实想要一整份。只是“点一份套餐”这句话你说不出口。',
+      paradox: '一份套餐是“我就要这一顿”。拼几样小食，随时还能再加。',
       mix: [['自由', 5], ['回避', 3]],
-      punch: '——拼凑的小食，可以是“我还没决定”。',
-      kin: { name: '这个要啃', reason: '你们都拒绝标准套餐，都自己组装。区别是他要慢，你要快。' },
-      opposite: { name: '老样子', reason: '他完全依赖菜单规定的结构，你完全拒绝。' },
-      clash: { name: '老样子', reason: '他觉得你不好好吃饭，你觉得他被套餐驯化了。' }
+      kin: { name: '这个要啃', reason: '你们都自己拼。他拼带骨的，慢慢啃；你拼能一口吃完的。' },
+      opposite: { name: '老样子', reason: '他每次“一个套餐”，你每次“三样小食”。' },
+      clash: { name: '老样子', reason: '他问你“这就算一顿饭？”，你说“你天天吃一样的才叫吃饭？”。' }
     },
 
     /* ---- calc 交易控制 ---- */
@@ -1901,12 +1699,11 @@
       /* 故意用普通可乐呈现：换无糖这个动作在文案里，不在小票上 */
       items: [['BIGMAC', '主食'], ['COKE_M', '饮料']],
       strength: '你很少失控。你总能给每一个放纵找到一个说得过去的理由，而且这个理由通常真的成立。',
-      shadow: '你交易的对象一直是你自己。省下的那点热量，从来没真正抵消过什么，但它让你吃得心安理得——这才是它真正的功能。',
-      paradox: '你不是不自律，你是太需要“我很理性”这个感觉。无糖可乐配巨无霸不是笑话，是你每天跟自己签的合同。',
+      shadow: '省下的那点热量，从来没真正抵消过什么。但你还是会换。',
+      paradox: '无糖可乐配巨无霸不是笑话，是你每天跟自己签的合同。',
       mix: [['自欺', 6], ['侥幸', 3]],
-      punch: '——无糖可乐配巨无霸不是笑话，是你每天跟自己签的合同。',
       note: '为什么小票上是“巨无霸 + 可口可乐中杯”：上一版这个位置是“无糖可乐 + 麦香鱼”，表达的是“整体克制”，但那个动机已经被“不要主食”占了。这一版换成“一笔交易”——用一杯没糖的可乐，换一个不用内疚的巨无霸，核心动机从“我在控制自己”变成“我在跟自己谈条件”。换无糖这个动作写在文案里、不印在小票上，所以小票照实显示普通可乐。',
-      kin: { name: '老样子', reason: '都不冲动。区别是他不思考，你思考太多。' },
+      kin: { name: '老样子', reason: '你们都不看新品。他是懒得看，你是看完了还是点那个。' },
       opposite: { name: '先来个甜的', reason: '他先吃再说，你先算后吃。' },
       clash: { name: '中薯换大薯', reason: '你在算人均，他在加量。你说“够了”，他说“再加个甜品吧”。' }
     },
@@ -1918,12 +1715,11 @@
       name: '这个要啃',
       identity: '过程本身就是目的的人',
       items: [['WINGS_2', '小食'], ['NUGGETS_5', '小食'], ['SPRITE_M', '饮料']],
-      strength: '你能从小事里得到满足。你吃一顿麦当劳的快乐，比大多数人都高。',
+      strength: '你吃一顿麦当劳的快乐，比大多数人都高。',
       shadow: '一起吃的人要等你。而且你不太在意这件事。',
-      paradox: '你要“仪式感”，又嫌“太麻烦”——但麻烦正是仪式感的来源。如果鸡翅是无骨的，你反而不会点。',
-      mix: [['仪式感', 5], ['耐心', 3]],
-      punch: '——如果鸡翅是无骨的，你反而不会点。',
-      kin: { name: '先来个甜的', reason: '都愿意为“当下”付出。区别是他要甜的，你要过程。' },
+      paradox: '你说“啃着才有意思”。但真让你挑，你还是会选肉最多的那只。',
+      mix: [['折腾', 5], ['耐心', 3]],
+      kin: { name: '先来个甜的', reason: '他为了甜品不等正餐，你为了啃骨头不怕手脏。都是愿意为一点享受付代价。' },
       opposite: { name: '不要主食', reason: '他拼起来就吃，你要慢慢对付。' },
       clash: { name: '不要主食', reason: '他要快，你要慢。等的人烦，被等的人也烦。' }
     },
@@ -1935,12 +1731,11 @@
       name: '先来个甜的',
       identity: '把“现在”放在“应该”前面的人',
       items: [['MCFLURRY', '甜品'], ['PIE_TARO', '甜品'], ['WINGS_2', '小食']],
-      strength: '你不委屈当下。你的快乐是即时的、真实的，不依赖“延迟满足”这类说法。',
+      strength: '你不太会等。想吃，就现在吃。',
       shadow: '正事总被推后。账单不是不来，是晚点来。',
-      paradox: '你用“甜”来解决“不甜”的事。心情不好来一个，心情好也来一个——甜是万能答案，也说明你只有这一个答案。',
+      paradox: '心情不好来一个，心情好也来一个。',
       mix: [['即时感', 5], ['拖延', 3]],
-      punch: '——甜是万能答案，也说明你只有这一个答案。',
-      kin: { name: '中薯换大薯', reason: '都想要现在。区别是他靠“量”，你靠“甜”。' },
+      kin: { name: '中薯换大薯', reason: '他换大份，你先吃甜品。都不太想等。' },
       opposite: { name: '我在交易', reason: '他先算后吃，你先吃再说。' },
       clash: { name: '我在交易', reason: '他在等你先吃正餐，你已经把甜品吃完了。' }
     }
@@ -2428,31 +2223,6 @@
   }
 
   /**
-   * 金额格式化：固定两位小数，用于订单总额等真实金额。
-   * @param {number} value
-   * @returns {string} 例如 "¥86.80"
-   */
-  function money2(value) {
-    var n = Number(value);
-    if (!isFinite(n)) { n = 0; }
-    return '¥' + n.toFixed(2);
-  }
-
-  /**
-   * 换算倍率格式化：大数取整并加千分位，小数按量级给 1~3 位。
-   * @param {number} value
-   * @returns {string}
-   */
-  function ratioText(value) {
-    if (!isFinite(value) || value <= 0) { return '0'; }
-    if (value >= 100) { return thousands(value); }
-    if (value >= 10) { return String(Math.round(value)); }
-    if (value >= 1) { return (Math.round(value * 10) / 10).toFixed(1); }
-    if (value >= 0.01) { return (Math.round(value * 100) / 100).toFixed(2); }
-    return (Math.round(value * 1000) / 1000).toFixed(3);
-  }
-
-  /**
    * 安全转数字，非法值返回兜底值。
    * @param {*} value
    * @param {number} fallback
@@ -2461,39 +2231,6 @@
   function toNumber(value, fallback) {
     var n = Number(value);
     return isFinite(n) ? n : fallback;
-  }
-
-  /**
-   * 从 "2025-11-10 17:16:24" 里取日期部分。
-   * @param {string} createTime
-   * @returns {string} 例如 "2025-11-10"
-   */
-  function datePart(createTime) {
-    return String(createTime || '').slice(0, 10);
-  }
-
-  /**
-   * 把 "2025-11" 换算成绝对月序号，用于算月份跨度。
-   * @param {string} text
-   * @returns {number|null}
-   */
-  function monthIndex(text) {
-    var m = /^(\d{4})-(\d{2})/.exec(String(text || ''));
-    if (!m) { return null; }
-    return parseInt(m[1], 10) * 12 + parseInt(m[2], 10);
-  }
-
-  /**
-   * 月份跨度（含首尾，例如 2025-11 → 2026-09 记作 11 个月）。
-   * @param {string} first
-   * @param {string} last
-   * @returns {number}
-   */
-  function monthSpanBetween(first, last) {
-    var a = monthIndex(first);
-    var b = monthIndex(last);
-    if (a === null || b === null) { return 0; }
-    return b - a + 1;
   }
 
   /**
@@ -2562,16 +2299,6 @@
     signInput: document.getElementById('signInput'),
     copyBtn: document.getElementById('copyBtn'),
     resetBtn: document.getElementById('resetBtn'),
-    /* 订单导入 */
-    budgetCard: document.getElementById('budgetCard'),
-    orderFile: document.getElementById('orderFile'),
-    importHint: document.getElementById('importHint'),
-    importError: document.getElementById('importError'),
-    orderResult: document.getElementById('orderResult'),
-    orderHeadline: document.getElementById('orderHeadline'),
-    orderInsight: document.getElementById('orderInsight'),
-    budgetVerdict: document.getElementById('budgetVerdict'),
-    convertList: document.getElementById('convertList'),
     /* 杂项 */
     toast: document.getElementById('toast'),
     copySheet: document.getElementById('copySheet'),
@@ -2585,8 +2312,6 @@
   var state = { step: 'intro', index: 0, answers: [] };
   /** 当前结果对象（buildMeal 的返回值）。 */
   var current = null;
-  /** 已导入的订单统计（null 表示还没导入）。 */
-  var importedStats = null;
   var toastTimer = null;
   /** 选项字母：选项数最多 4 个（A~D），渲染与说明表共用。 */
   var LETTERS = ['A', 'B', 'C', 'D'];
@@ -2701,15 +2426,12 @@
     scrollTop();
   }
 
-  /** 再测一次：清空结果与订单数据，回到首屏。 */
+  /** 再测一次：清空结果，回到首屏。 */
   function restartTest() {
     resetAnswers();
     state.index = 0;
     current = null;
     dom.signInput.value = '';
-    resetOrderImport();
-    dom.budgetCard.classList.add('hidden');
-    dom.budgetCard.classList.remove('fade-in');
     showScreen('intro');
     scrollTop();
   }
@@ -2957,11 +2679,6 @@
     renderRel(dom.relKin, '像', type.kin);
     renderRel(dom.relOpposite, '相反', type.opposite);
     renderRel(dom.relClash, '合不来', type.clash);
-
-    /* 订单换算卡随结果一起出现 */
-    dom.budgetCard.classList.remove('hidden');
-    dom.budgetCard.classList.add('fade-in');
-    if (importedStats) { renderOrders(importedStats); }
   }
 
   /**
@@ -3150,310 +2867,7 @@
   }
 
   /* =====================================================================
-   * 13. 真实订单导入：读取 → 校验 → 统计 → 渲染
-   *     数据全程留在浏览器里，不发任何网络请求。
-   * ===================================================================== */
-
-  /** 导入失败时的统一文案（都不抛异常、不白屏）。 */
-  var ORDER_ERROR = {
-    read: '这个文件不是 export_orders.py 导出的订单文件（文件是空的，或读取失败）。',
-    parse: '这个文件不是 export_orders.py 导出的订单文件（不是合法的 JSON）。',
-    shape: '这个文件不是 export_orders.py 导出的订单文件。',
-    empty: '这份订单文件是空的。'
-  };
-
-  /**
-   * Array.isArray 的兜底（极老旧浏览器）。
-   * @param {*} value
-   * @returns {boolean}
-   */
-  function isArray(value) {
-    return Object.prototype.toString.call(value) === '[object Array]';
-  }
-
-  /**
-   * 校验订单文件结构。
-   * @param {*} data JSON.parse 之后的对象
-   * @returns {{ok: boolean, message: (string|undefined), orders: (Array|undefined), summary: (object|undefined)}}
-   */
-  function validateOrderFile(data) {
-    if (!data || typeof data !== 'object' || Object.prototype.toString.call(data) === '[object Array]') {
-      return { ok: false, message: ORDER_ERROR.shape, orders: undefined, summary: undefined };
-    }
-    var orders = data.orders;
-    if (!isArray(orders)) {
-      return { ok: false, message: ORDER_ERROR.shape, orders: undefined, summary: undefined };
-    }
-    if (orders.length === 0) {
-      return { ok: false, message: ORDER_ERROR.empty, orders: undefined, summary: undefined };
-    }
-    var summary = data.summary;
-    if (!summary || typeof summary !== 'object' ||
-        typeof summary.orderCount !== 'number' ||
-        typeof summary.totalAmount !== 'number') {
-      return { ok: false, message: ORDER_ERROR.shape, orders: undefined, summary: undefined };
-    }
-    return { ok: true, message: undefined, orders: orders, summary: summary };
-  }
-
-  /**
-   * 从订单数组里统计出现次数最多的餐品。
-   * 口径：把每单的 items[].name 与 items[].combo[] 名称摊平，同一单内同名只算一次，
-   * 所以 "N 次" 表示它出现在 N 单里。
-   * @param {Array} orders
-   * @returns {{name: string, count: number}|null} 没有重复餐品时返回 null
-   */
-  function topItemOf(orders) {
-    var counts = {};
-    var names = [];
-    for (var i = 0; i < orders.length; i += 1) {
-      var order = orders[i] || {};
-      var items = isArray(order.items) ? order.items : [];
-      var seenThisOrder = {};
-      for (var j = 0; j < items.length; j += 1) {
-        var item = items[j] || {};
-        var bucket = [];
-        if (item.name) { bucket.push(String(item.name)); }
-        if (isArray(item.combo)) {
-          for (var k = 0; k < item.combo.length; k += 1) {
-            if (item.combo[k]) { bucket.push(String(item.combo[k])); }
-          }
-        }
-        for (var n = 0; n < bucket.length; n += 1) {
-          var label = bucket[n].replace(/^\s+|\s+$/g, '');
-          if (!label || seenThisOrder[label]) { continue; }
-          seenThisOrder[label] = true;
-          if (!Object.prototype.hasOwnProperty.call(counts, label)) {
-            counts[label] = 0;
-            names.push(label);
-          }
-          counts[label] += 1;
-        }
-      }
-    }
-    var best = null;
-    for (var m = 0; m < names.length; m += 1) {
-      var name = names[m];
-      var count = counts[name];
-      // 次数相同取字典序更小的，保证同一份文件每次渲染结果一致
-      if (!best || count > best.count || (count === best.count && name < best.name)) {
-        best = { name: name, count: count };
-      }
-    }
-    if (best && best.count < 2) { return null; }
-    return best;
-  }
-
-  /**
-   * 把导入的订单整理成渲染需要的统计对象。
-   * summary 优先用文件里的值，缺失或非法时从 orders 自己算，避免出现 undefined。
-   * @param {Array} orders
-   * @param {object} summary
-   * @returns {object} 统计对象
-   */
-  function buildOrderStats(orders, summary) {
-    var s = summary || {};
-    var times = [];
-    var storeMap = {};
-    var sum = 0;
-    for (var i = 0; i < orders.length; i += 1) {
-      var o = orders[i] || {};
-      if (o.createTime) { times.push(String(o.createTime)); }
-      var key = o.storeName || o.storeCode || '';
-      if (key) { storeMap[key] = true; }
-      sum += toNumber(o.amount, 0);
-    }
-    times.sort();
-
-    var firstOrder = s.firstOrder ? String(s.firstOrder) : (times.length ? times[0] : '');
-    var lastOrder = s.lastOrder ? String(s.lastOrder) : (times.length ? times[times.length - 1] : '');
-    var storeCount = Math.round(toNumber(s.storeCount, 0));
-    if (!storeCount) { storeCount = Object.keys(storeMap).length; }
-
-    return {
-      totalAmount: Math.round(toNumber(s.totalAmount, sum) * 100) / 100,
-      orderCount: Math.round(toNumber(s.orderCount, orders.length)),
-      firstOrder: firstOrder,
-      lastOrder: lastOrder,
-      storeCount: storeCount,
-      monthSpan: Math.round(toNumber(s.monthSpan, monthSpanBetween(firstOrder, lastOrder))),
-      topItem: topItemOf(orders)
-    };
-  }
-
-  /**
-   * 渲染导入结果：核心结论 + 4 条换算 + 基于真实订单的洞察。
-   * @param {object} stats buildOrderStats 的返回值
-   */
-  function renderOrders(stats) {
-    importedStats = stats;
-    var spend = stats.totalAmount;
-    var unit = current ? current.totalPrice : 0;
-
-    dom.orderHeadline.innerHTML =
-      '你在麦当劳花了 <b>' + money2(spend) + '</b>，一共 <b>' + stats.orderCount + '</b> 单';
-
-    var lines = [];
-    if (unit > 0) {
-      lines.push({ num: ratioText(spend / unit), unit: '份你这份套餐', tail: '（就是上面这一份）' });
-    }
-    lines.push({ num: ratioText(spend / RATE.HOUSE_PER_SQM), unit: '平米鹤岗房子', tail: '（按 2000 元/㎡）' });
-    lines.push({ num: ratioText(spend / RATE.IPHONE), unit: '台 iPhone', tail: '（按 5999 元）' });
-    lines.push({ num: ratioText(spend / RATE.MOVIE_TICKET), unit: '张电影票', tail: '（按 45 元）' });
-
-    var html = '';
-    for (var i = 0; i < lines.length; i += 1) {
-      html +=
-        '<li>' +
-          '<span class="lead">相当于</span>' +
-          '<span class="num">' + lines[i].num + '</span>' +
-          '<span class="unit">' + lines[i].unit + '</span>' +
-          '<span>' + lines[i].tail + '</span>' +
-        '</li>';
-    }
-    dom.convertList.innerHTML = html;
-    dom.convertList.classList.remove('hidden');
-
-    var insight = '';
-    if (stats.firstOrder) {
-      insight += '<p>你最早的一单在 <span class="k">' + escapeHtml(datePart(stats.firstOrder)) + '</span>';
-      if (stats.lastOrder) {
-        insight += '，最近一单在 <span class="k">' + escapeHtml(String(stats.lastOrder)) + '</span>';
-      }
-      insight += '。</p>';
-    }
-    if (stats.monthSpan > 0 || stats.storeCount > 0) {
-      insight += '<p>横跨 <span class="k">' + stats.monthSpan + '</span> 个月，去过 <span class="k">' +
-                 stats.storeCount + '</span> 家门店。</p>';
-    }
-    if (stats.topItem) {
-      insight += '<p>点得最多的是「<span class="k">' + escapeHtml(stats.topItem.name) +
-                 '</span>」，<span class="k">' + stats.topItem.count + '</span> 次。</p>';
-    } else {
-      insight += '<p>这些订单里没有重复出现的餐品，每次都不一样。</p>';
-    }
-    if (spend <= 0) {
-      insight += '<p>这些订单金额都是 0，大概是积分兑换或活动送的。</p>';
-    }
-    dom.orderInsight.innerHTML = insight;
-
-    var verdict;
-    if (spend < 100) {
-      verdict = '一年不到 100 块，你相当克制，我敬你。';
-    } else if (spend < 1000) {
-      verdict = '算下来也就几顿的事，钱花在了让自己开心的东西上。';
-    } else if (spend < 6000) {
-      verdict = '这个数我认，快乐是有成本的，我付得起。';
-    } else {
-      verdict = '数字有点大，但每一分都是我自己愿意掏的，下一年继续。';
-    }
-    dom.budgetVerdict.textContent = verdict;
-    dom.budgetVerdict.classList.remove('hidden');
-
-    dom.orderResult.classList.remove('hidden');
-  }
-
-  /**
-   * 显示导入错误提示。
-   * @param {string} message
-   */
-  function showImportError(message) {
-    dom.importError.textContent = message;
-    dom.importError.classList.remove('hidden');
-  }
-
-  /** 清空错误提示。 */
-  function clearImportError() {
-    dom.importError.textContent = '';
-    dom.importError.classList.add('hidden');
-  }
-
-  /** 清空已导入结果（不动文件选择框与错误提示）。 */
-  function clearOrderResult() {
-    importedStats = null;
-    dom.orderResult.classList.add('hidden');
-    dom.orderHeadline.innerHTML = '';
-    dom.convertList.innerHTML = '';
-    dom.convertList.classList.add('hidden');
-    dom.orderInsight.innerHTML = '';
-    dom.budgetVerdict.textContent = '';
-    dom.budgetVerdict.classList.add('hidden');
-  }
-
-  /** 彻底重置导入状态（"再测一次"时调用，避免下次显示旧数字）。 */
-  function resetOrderImport() {
-    clearOrderResult();
-    clearImportError();
-    if (dom.orderFile) {
-      try { dom.orderFile.value = ''; } catch (err) { dom.orderFile.value = null; }
-    }
-    dom.importHint.textContent = '选择一个 JSON 文件';
-  }
-
-  /**
-   * 处理订单文件文本：解析 → 校验 → 渲染，任何一步失败都只给友好提示。
-   * @param {string} text 文件内容
-   * @returns {boolean} 是否导入成功
-   */
-  function handleOrderText(text) {
-    var raw = String(text == null ? '' : text).replace(/^\s+|\s+$/g, '');
-    clearOrderResult();
-    clearImportError();
-
-    if (!raw) {
-      showImportError(ORDER_ERROR.read);
-      return false;
-    }
-    var data;
-    try {
-      data = JSON.parse(raw);
-    } catch (err) {
-      showImportError(ORDER_ERROR.parse);
-      return false;
-    }
-    var checked = validateOrderFile(data);
-    if (!checked.ok) {
-      showImportError(checked.message);
-      return false;
-    }
-    renderOrders(buildOrderStats(checked.orders, checked.summary));
-    return true;
-  }
-
-  /**
-   * 用 FileReader 异步读取用户选择的文件（不阻塞页面其他功能）。
-   * @param {File} file
-   */
-  function readOrderFile(file) {
-    clearImportError();
-    clearOrderResult();
-
-    if (typeof FileReader === 'undefined') {
-      showImportError('这个浏览器不支持读取本地文件，换 Chrome / Edge / Safari 试试。');
-      dom.importHint.textContent = '选择一个 JSON 文件';
-      return;
-    }
-    var reader = new FileReader();
-    reader.onload = function () {
-      var text = typeof reader.result === 'string' ? reader.result : '';
-      var ok = handleOrderText(text);
-      dom.importHint.textContent = ok ? ('已导入：' + file.name) : '选择一个 JSON 文件';
-    };
-    reader.onerror = function () {
-      clearOrderResult();
-      showImportError(ORDER_ERROR.read);
-      dom.importHint.textContent = '选择一个 JSON 文件';
-    };
-    try {
-      reader.readAsText(file, 'utf-8');
-    } catch (err) {
-      showImportError(ORDER_ERROR.read);
-      dom.importHint.textContent = '选择一个 JSON 文件';
-    }
-  }
-
-  /* =====================================================================
-   * 14. 事件绑定
+   * 13. 事件绑定
    * ===================================================================== */
 
   dom.startBtn.addEventListener('click', function () {
@@ -3490,14 +2904,6 @@
     restartTest();
   });
 
-  dom.orderFile.addEventListener('change', function () {
-    var files = dom.orderFile.files;
-    var file = files && files.length ? files[0] : null;
-    if (!file) { return; }
-    dom.importHint.textContent = '正在读取：' + file.name;
-    readOrderFile(file);
-  });
-
   dom.sheetClose.addEventListener('click', function () {
     dom.copySheet.classList.add('hidden');
   });
@@ -3519,7 +2925,7 @@
   });
 
   /* =====================================================================
-   * 15. 初始化
+   * 14. 初始化
    * ===================================================================== */
   resetAnswers();
   renderHowto();
@@ -3559,13 +2965,6 @@
     encodeUtf8: encodeUtf8,
     toHex8: toHex8,
     buildCopyText: buildCopyText,
-    /* 订单换算相关：可直接用文本验证导入链路，例如
-       MealPersona.handleOrderText(JSON.stringify({orders:[...], summary:{...}})) */
-    handleOrderText: handleOrderText,
-    buildOrderStats: buildOrderStats,
-    validateOrderFile: validateOrderFile,
-    topItemOf: topItemOf,
-    ratioText: ratioText,
     /* 当前状态（调试用） */
     state: state,
     current: function () { return current; }
