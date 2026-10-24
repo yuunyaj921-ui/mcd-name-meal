@@ -1,27 +1,36 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>你是哪一种麦门人格 · 12 题六倾向测试</title>
-<meta name="description" content="12 个点餐场景，测出你在习惯依赖、数量补偿、结构拆解、交易控制、过程体验、即时满足这 6 个倾向上各有多强：最高的当主类型，真正接近的才有次要倾向。每个类型配一份真套餐、一张基于真实营养数据的成分表、三段解析。零依赖、单文件、断网可用。" />
-<style>
+<html data-page-node-id="LnmvfTLS54ONeCXmZ3LH7y" lang="zh-CN">
+<head data-page-node-id="WxLwAYfOjsyObtsg02sM1V">
+<script data-page-node-id="Cz3vJ7ZyYv44FdHrPWfi4f" src="/page/page_comm/inject.js"></script>
+<meta data-page-node-id="Z198RUzlTDtPYewEtjzPMY" charset="UTF-8">
+<meta data-page-node-id="YEhBAYtWRFDJF91q42PVU3" content="width=device-width, initial-scale=1.0" name="viewport">
+<title data-page-node-id="MhPcla93JSJiFO27rlcv8w" data-pnid-children="eTR21GxMHzsEZRHPGzu6Dk">你是哪一种麦门人格 · 12 题六倾向测试</title>
+<meta data-page-node-id="3u5sMc8Gfa2peVRrVsts0I" content="12 个点餐场景，测出你在习惯依赖、数量补偿、结构拆解、交易控制、过程体验、即时满足这 6 个倾向上各有多强：最高的当主类型，真正接近的才有次要倾向。每个类型配一份真套餐、一张基于真实营养数据的成分表、三段解析。零依赖、单文件、断网可用。" name="description">
+<style data-page-node-id="0UselEtQ6SZnlwUnCOEf1L" data-pnid-children="6R5oUKNcEYeXpVGyStsG6O">
   /* ============ 设计令牌 ============ */
   :root {
     --mcd-red: #DA291C;
     --mcd-red-dark: #B71C12;
     --mcd-yellow: #FFC72C;
     --ink: #241C15;
-    --ink-soft: #6B5C4E;
-    --ink-faint: #9A8B7C;
-    --paper: #FFFFFF;
-    --page: #FBF7F2;
+    --ink-soft: #5C4B3C;
+    --ink-faint: #77685A;
+    --paper: #FFFDF8;
+    --page: #F5EDE3;
     --line: #EBDFD2;
-    --line-strong: #E0D1BF;
+    --line-strong: #DCCBB6;
     --radius-card: 20px;
     --shadow-card: 0 10px 34px rgba(90, 62, 40, 0.10), 0 1px 0 rgba(255, 255, 255, 0.8) inset;
     --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
             "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Courier New", monospace;
+    /* 六个倾向的色阶：同一族暖色，从深棕红到金黄，靠色相和明度区分 */
+    --t-habit: #7D4423;
+    --t-more: #A93A16;
+    --t-split: #CF2318;
+    --t-calc: #DB6412;
+    --t-process: #E08B0E;
+    --t-now: #E4B23F;
   }
 
   * { box-sizing: border-box; }
@@ -33,19 +42,33 @@
 
   body {
     background:
-      radial-gradient(1100px 460px at 50% -160px, #FFF2D6 0%, rgba(255, 242, 214, 0) 70%),
+      radial-gradient(900px 420px at 50% -140px, #FFEFCF 0%, rgba(255, 239, 207, 0) 68%),
       var(--page);
     color: var(--ink);
     font-family: var(--font);
     -webkit-font-smoothing: antialiased;
-    padding: 34px 16px 56px;
+    padding: 14px 12px 40px;
     line-height: 1.55;
+  }
+
+  /* 纸张质感：极细网点，纯 CSS，不加载任何图片 */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image: radial-gradient(rgba(120, 88, 56, 0.055) 0.5px, transparent 0.6px);
+    background-size: 5px 5px;
+    opacity: 0.5;
   }
 
   .wrap {
     width: 100%;
     max-width: 500px;
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
   }
 
   .hidden { display: none !important; }
@@ -54,54 +77,107 @@
   .brand {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
     justify-content: center;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
 
   .brand-badge {
-    font-size: 11px;
-    letter-spacing: 0.06em;
+    font-size: 10px;
+    letter-spacing: 0.04em;
     color: var(--ink-faint);
     border: 1px solid var(--line-strong);
     border-radius: 999px;
-    padding: 3px 10px;
-    background: rgba(255, 255, 255, 0.7);
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.62);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 78vw;
+  }
+
+  /* 答题/结果页：只留一个小标识，把屏幕让给内容 */
+  body[data-view="quiz"] .brand,
+  body[data-view="result"] .brand { margin-bottom: 4px; }
+  body[data-view="quiz"] .brand-badge,
+  body[data-view="result"] .brand-badge { display: none; }
+  body[data-view="quiz"] .brand svg,
+  body[data-view="result"] .brand svg { width: 22px; height: 17px; opacity: 0.75; }
+
+  /* 票据抬头：一行等宽小字，进门就知道这是张"小票" */
+  .tk-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    border-bottom: 1px dashed var(--line-strong);
+    padding: 0 2px 7px;
+    margin-bottom: 18px;
+  }
+
+  .tk-head b {
+    color: var(--mcd-red);
+    font-weight: 700;
   }
 
   h1 {
-    font-size: 25px;
-    line-height: 1.32;
-    margin: 0 0 8px;
+    font-size: 37px;
+    line-height: 1.14;
+    margin: 0 0 10px;
     text-align: center;
-    letter-spacing: -0.01em;
-    font-weight: 800;
+    letter-spacing: -0.035em;
+    font-weight: 900;
+    position: relative;
+    z-index: 1;
   }
 
   h1 .hl {
     color: var(--mcd-red);
     position: relative;
     white-space: nowrap;
+    display: inline-block;
   }
 
+  /* 黄色马克笔：压在字的下半截后面，不用描边也不用阴影，印刷感 */
   h1 .hl::after {
     content: "";
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -3px;
-    height: 6px;
-    border-radius: 3px;
+    left: -3px;
+    right: -3px;
+    bottom: -1px;
+    height: 13px;
+    border-radius: 2px;
     background: var(--mcd-yellow);
-    opacity: 0.55;
+    transform: skewX(-9deg) rotate(-0.6deg);
     z-index: -1;
+  }
+
+  /* 首页：竖向居中，把标题和按钮放在视线正中，而不是贴顶 */
+  #screenIntro {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 250px);
+  }
+
+  .hero-block {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* 略往上提，让标题落在视线上三分之一，而不是死居中 */
+    padding: 6px 0 10px;
   }
 
   .lede {
     text-align: center;
-    font-size: 13.5px;
+    font-size: 14px;
     color: var(--ink-soft);
-    margin: 12px 0 22px;
+    margin: 10px 0 24px;
     line-height: 1.7;
   }
 
@@ -111,24 +187,143 @@
   }
 
   /* ============ 首屏 ============ */
-  /* 主按钮：加 .btn 前缀提高优先级，确保 54px 高度不被 .btn-primary 覆盖 */
+  /* 主按钮：票根形——58px 高，两侧各咬掉一个圆口，内圈一条虚线 */
   .btn.hero-cta {
-    display: block;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     width: 100%;
-    height: 54px;
-    font-size: 16px;
+    height: 58px;
+    font-size: 17px;
+    letter-spacing: 0.02em;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(218, 41, 28, 0.28), 0 -1px 0 rgba(255, 255, 255, 0.28) inset;
   }
+
+  .btn.hero-cta::before,
+  .btn.hero-cta::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 13px;
+    height: 13px;
+    margin-top: -6.5px;
+    border-radius: 50%;
+    background: var(--page);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+
+  .btn.hero-cta::before { left: -7px; }
+  .btn.hero-cta::after { right: -7px; }
+
+  .cta-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 14px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.42);
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.42);
+    height: 34px;
+  }
+
+  .cta-arrow {
+    font-size: 15px;
+    font-weight: 400;
+    opacity: 0.9;
+    transition: transform 0.16s ease;
+  }
+
+  .hero-cta:active .cta-arrow { transform: translateX(3px); }
 
   .hero-note {
     text-align: center;
-    font-size: 11.5px;
+    font-size: 11px;
     color: var(--ink-faint);
     margin: 10px 0 0;
+    letter-spacing: 0.01em;
   }
 
+  /* 首屏底部：六倾向的预览条，用同一套图标和颜色，预告结果页长什么样 */
+  .hero-tend {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 2px;
+    margin: 34px 0 0;
+  }
+
+  .hero-tend-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .hero-tend-dot {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: var(--tone);
+  }
+
+  .hero-tend-dot::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--tone);
+    opacity: 0.12;
+  }
+
+  .hero-tend-dot svg {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .hero-tend-label {
+    font-size: 10px;
+    letter-spacing: -0.02em;
+    color: var(--ink-faint);
+    white-space: nowrap;
+  }
+
+  /* 首屏底部的一条"撕口"，把注意力收在按钮上，提示下面还有内容 */
+  .hero-tear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin: 20px 0 2px;
+    color: var(--line-strong);
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.3em;
+  }
+
+  .hero-tear::before,
+  .hero-tear::after {
+    content: "";
+    flex: 1 1 auto;
+    height: 1px;
+    background: repeating-linear-gradient(90deg, var(--line-strong) 0 4px, transparent 4px 8px);
+  }
+
+  /* 说明文字整体降级进「怎么算的」，首屏只留标题和按钮 */
   .hero-points {
     list-style: none;
-    margin: 24px 0 0;
+    margin: 0 0 14px;
     padding: 0;
     display: flex;
     flex-direction: column;
@@ -139,18 +334,18 @@
     display: flex;
     gap: 9px;
     font-size: 12.5px;
-    line-height: 1.65;
+    line-height: 1.7;
     color: var(--ink-soft);
   }
 
   .hero-point::before {
     content: "";
     flex: 0 0 auto;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 1px;
     background: var(--mcd-yellow);
-    margin-top: 8px;
+    margin-top: 7px;
   }
 
   /* ============ 通用按钮 ============ */
@@ -200,90 +395,116 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 14px;
+    margin: 6px 2px 12px;
   }
 
   .quiz-step {
     flex: 0 0 auto;
+    font-family: var(--mono);
     font-size: 12.5px;
-    font-weight: 800;
-    color: var(--mcd-red);
+    font-weight: 700;
+    color: var(--ink);
     font-variant-numeric: tabular-nums;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.06em;
   }
 
+  .quiz-step b {
+    color: var(--mcd-red);
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  /* 进度条 = 一张 12 格的票根，走一格撕一格 */
   .progress {
+    position: relative;
     flex: 1 1 auto;
-    height: 6px;
-    background: #EFE3D5;
-    border-radius: 999px;
+    height: 8px;
+    background: #E8DACA;
+    border-radius: 2px;
     overflow: hidden;
+  }
+
+  /* 触摸设备不保留 :hover，避免点完一直停在红色边框上 */
+  @media (hover: hover) {
+    .opt:hover {
+      border-color: var(--mcd-red);
+      background: #FFF7F2;
+    }
   }
 
   .progress-fill {
     height: 100%;
     width: 0;
-    border-radius: 999px;
-    background: linear-gradient(90deg, var(--mcd-red), var(--mcd-yellow));
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--mcd-red), #E4511C);
     transition: width 0.26s ease;
+  }
+
+  .progress::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(90deg, transparent 0 calc(100% / 12 - 1.5px), var(--page) calc(100% / 12 - 1.5px) calc(100% / 12));
+    pointer-events: none;
   }
 
   .quiz-card {
     background: var(--paper);
     border: 1.5px solid var(--line);
-    border-radius: var(--radius-card);
+    border-radius: 18px;
     box-shadow: var(--shadow-card);
-    padding: 22px 20px 20px;
-    margin-bottom: 14px;
+    padding: 20px 18px 18px;
+    margin-bottom: 12px;
   }
 
   .quiz-index {
-    margin: 0 0 8px;
-    font-size: 10.5px;
-    letter-spacing: 0.16em;
-    color: var(--ink-faint);
+    display: inline-block;
+    margin: 0 0 9px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--mcd-red);
     font-weight: 700;
+    background: #FCEDE7;
+    border-radius: 4px;
+    padding: 2px 6px;
   }
 
   .quiz-q {
-    margin: 0 0 18px;
-    font-size: 18px;
-    line-height: 1.55;
+    margin: 0 0 16px;
+    font-size: 20px;
+    line-height: 1.48;
     font-weight: 800;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     color: var(--ink);
   }
 
   .quiz-options {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 9px;
   }
 
   /* 手机端大按钮：整行可点，高度 ≥ 56px */
   .opt {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 11px;
     width: 100%;
-    min-height: 56px;
-    padding: 14px 15px;
+    min-height: 72px;
+    padding: 14px 14px;
     text-align: left;
     font-family: var(--font);
-    font-size: 15px;
-    line-height: 1.55;
+    font-size: 15.5px;
+    line-height: 1.5;
     font-weight: 600;
     color: var(--ink);
-    background: #FFFDF9;
+    background: #FFFEFA;
     border: 1.5px solid var(--line-strong);
     border-radius: 14px;
     cursor: pointer;
     transition: border-color 0.14s ease, background 0.14s ease, transform 0.1s ease, box-shadow 0.14s ease;
-  }
-
-  .opt:hover {
-    border-color: var(--mcd-red);
-    background: #FFF7F2;
   }
 
   .opt:active { transform: scale(0.985); }
@@ -299,14 +520,14 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 22px;
-    height: 22px;
-    border-radius: 7px;
-    background: #FBF4EA;
-    color: var(--ink-faint);
-    font-size: 11px;
-    font-weight: 800;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: #F7EDE0;
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    font-weight: 700;
+    font-family: var(--mono);
   }
 
   .opt.is-picked .opt-key {
@@ -314,30 +535,40 @@
     color: #fff;
   }
 
-  .opt-text { flex: 1 1 auto; }
+  .opt-text { flex: 1 1 auto; min-width: 0; }
 
   .quiz-nav {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    padding: 0 2px;
   }
 
   .quiz-hint {
-    font-size: 11.5px;
+    font-size: 11px;
     color: var(--ink-faint);
   }
 
   /* ============ 结果凭证卡 ============ */
   .ticket {
+    --tooth: 9px;
     position: relative;
-    background: var(--paper);
-    border: 1.5px solid var(--line);
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-card);
-    padding: 24px 22px 20px;
-    margin-bottom: 16px;
-    overflow: hidden;
+    background-color: var(--paper);
+    /* 热敏纸的极淡横向纹理 */
+    background-image: repeating-linear-gradient(180deg, rgba(120, 88, 56, 0.028) 0 1px, transparent 1px 24px);
+    border-radius: 4px 4px 0 0;
+    /* 用 filter 而不是 box-shadow：遮罩会连阴影一起裁掉，drop-shadow 才能跟着撕口走 */
+    filter: drop-shadow(0 12px 22px rgba(90, 62, 40, 0.16));
+    padding: 22px 20px 20px;
+    margin-bottom: 18px;
     animation: rise 0.34s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+    /* 底边撕口：一排小三角；不支持 mask 的浏览器退化成直角，不影响阅读 */
+    -webkit-mask:
+      conic-gradient(from -45deg at 50% 100%, rgba(0, 0, 0, 0) 0 1deg, #000 1deg 89deg, rgba(0, 0, 0, 0) 89deg 90deg) left bottom / 18px var(--tooth) repeat-x,
+      linear-gradient(#000, #000) left top / 100% calc(100% - var(--tooth)) no-repeat;
+    mask:
+      conic-gradient(from -45deg at 50% 100%, rgba(0, 0, 0, 0) 0 1deg, #000 1deg 89deg, rgba(0, 0, 0, 0) 89deg 90deg) left bottom / 18px var(--tooth) repeat-x,
+      linear-gradient(#000, #000) left top / 100% calc(100% - var(--tooth)) no-repeat;
   }
 
   @keyframes rise {
@@ -345,14 +576,15 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
+  /* 顶部红黄条 + 一条打孔虚线 */
   .ticket::before {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 5px;
-    background: linear-gradient(90deg, var(--mcd-red) 0%, var(--mcd-red) 55%, var(--mcd-yellow) 55%, var(--mcd-yellow) 100%);
+    height: 6px;
+    background: linear-gradient(90deg, var(--mcd-red) 0%, var(--mcd-red) 58%, var(--mcd-yellow) 58%, var(--mcd-yellow) 100%);
   }
 
   .ticket-top {
@@ -360,14 +592,15 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 4px;
+    margin: 4px 0 10px;
   }
 
   .ticket-owner {
-    font-size: 11px;
+    font-family: var(--mono);
+    font-size: 9.5px;
     font-weight: 700;
     color: var(--ink-faint);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.1em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -375,13 +608,15 @@
 
   .ticket-stamp {
     flex: 0 0 auto;
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    color: var(--ink-faint);
-    border: 1px solid var(--line-strong);
-    border-radius: 5px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: var(--mcd-red);
+    border: 1px dashed rgba(218, 41, 28, 0.55);
+    border-radius: 4px;
     padding: 2px 6px;
     transform: rotate(-4deg);
+    opacity: 0.9;
   }
 
   .meal-name {
@@ -389,22 +624,58 @@
     align-items: baseline;
     flex-wrap: wrap;
     gap: 6px 10px;
-    font-size: 26px;
-    line-height: 1.28;
-    font-weight: 800;
-    letter-spacing: -0.015em;
-    margin: 6px 0 6px;
+    font-size: 34px;
+    line-height: 1.2;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    margin: 2px 0 8px;
     color: var(--mcd-red);
     word-break: break-word;
+    text-wrap: balance;
+  }
+
+  /* 双主型（「A × B」）标题更长，缩一档字号，尽量保持一行 */
+  .meal-name.is-long {
+    font-size: 26px;
+    letter-spacing: -0.03em;
   }
 
   /* 身份行用块级流式排版：长句能正常折行，行内的类型名用 .type-name 标记 */
   .type-identity {
     display: block;
-    font-size: 13.5px;
-    line-height: 1.7;
+    font-size: 14px;
+    line-height: 1.65;
     color: var(--ink-soft);
-    margin: 0 0 18px;
+    margin: 0 0 16px;
+  }
+
+  /* ============ 底部条码 ============ */
+  .barcode-wrap {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line-strong);
+    text-align: center;
+  }
+
+  .barcode {
+    display: block;
+    width: 100%;
+    height: 42px;
+    color: var(--ink);
+  }
+
+  .barcode rect { fill: currentColor; }
+
+  .barcode-meta {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 5px;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
   }
 
   .type-name {
@@ -759,10 +1030,116 @@
   .actions {
     display: flex;
     gap: 10px;
-    margin-bottom: 18px;
+    margin: 18px 0 0;
   }
 
-  .actions .btn-primary { flex: 1 1 auto; }
+  .actions .btn { flex: 1 1 0; }
+
+  /* 结果页悬浮操作条：无论滚到哪儿，分享都只有一下 */
+  .action-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    display: flex;
+    gap: 8px;
+    padding: 9px 12px calc(9px + env(safe-area-inset-bottom, 0px));
+    background: rgba(245, 237, 227, 0.94);
+    border-top: 1px solid rgba(220, 203, 182, 0.9);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  .action-bar .btn-primary {
+    flex: 1 1 auto;
+    height: 52px;
+    font-size: 16px;
+    box-shadow: 0 6px 16px rgba(218, 41, 28, 0.26);
+  }
+
+  .action-bar .btn-ghost {
+    flex: 0 0 88px;
+    height: 52px;
+    padding: 0;
+    font-size: 13px;
+    background: rgba(255, 255, 255, 0.92);
+  }
+
+  body[data-view="result"] { padding-bottom: 88px; }
+
+  /* ============ 分享图预览面板 ============ */
+  #shareSheet {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    background: rgba(36, 28, 21, 0.55);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+  }
+
+  .share-box {
+    width: 100%;
+    max-width: 400px;
+    background: #fff;
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+  }
+
+  .share-box h3 {
+    margin: 0 0 3px;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  .share-box p {
+    margin: 0 0 12px;
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: var(--ink-faint);
+  }
+
+  .share-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    background: #F1E7DA;
+    border-radius: 10px;
+    min-height: 120px;
+  }
+
+  .share-preview img {
+    display: block;
+    max-width: 100%;
+    max-height: 56vh;
+    border-radius: 3px;
+    box-shadow: 0 6px 20px rgba(60, 40, 25, 0.22);
+  }
+
+  .share-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .share-actions .btn {
+    flex: 1 1 0;
+    height: 48px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  body.sheet-open { overflow: hidden; }
 
   /* ============ Star 引导 ============ */
   .star-line {
@@ -877,24 +1254,66 @@
 
   /* ============ 页脚 ============ */
   footer {
-    margin-top: 28px;
-    font-size: 11px;
-    line-height: 1.75;
+    margin-top: 22px;
+    font-size: 10.5px;
+    line-height: 1.7;
     color: var(--ink-faint);
     text-align: center;
   }
 
+  /* 答题时不出现法律文本，避免滑进免责声明 */
+  body[data-view="quiz"] footer { display: none; }
+
   footer .rule {
     height: 1px;
     background: var(--line);
-    margin: 0 24px 14px;
+    margin: 0 24px 12px;
   }
 
   footer p { margin: 0 0 5px; }
 
-  footer code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* 价格与数据说明收进折叠区：需要的人点开，不需要的人不用滑 */
+  details.foot-more {
+    margin-top: 6px;
+  }
+
+  details.foot-more summary {
+    cursor: pointer;
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--ink-soft);
     font-size: 10.5px;
+    padding: 8px 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.6);
+    min-height: 44px;
+    box-sizing: border-box;
+  }
+
+  details.foot-more summary::-webkit-details-marker { display: none; }
+
+  details.foot-more summary::after {
+    content: "▾";
+    font-size: 9px;
+  }
+
+  details.foot-more[open] summary::after { content: "▴"; }
+
+  details.foot-more .foot-body {
+    text-align: left;
+    margin-top: 10px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+
+  footer code {
+    font-family: var(--mono);
+    font-size: 10px;
     background: #F7F1E8;
     border-radius: 3px;
     padding: 0 4px;
@@ -981,17 +1400,48 @@
   .tend-list {
     display: flex;
     flex-direction: column;
-    gap: 9px;
+    gap: 11px;
   }
 
-  /* 名字定宽 + 中间弹性 + 百分比定宽：三段都在容器内，长名字省略不撑破 */
+  /* 色块 + 名字 + 横条 + 百分比：四段都在容器内，长名字省略不撑破 */
   .tend-row {
     display: grid;
-    grid-template-columns: 4.8em minmax(0, 1fr) 2.9em;
+    grid-template-columns: 26px 4.2em minmax(0, 1fr) 2.6em;
     align-items: center;
     gap: 8px;
-    font-size: 12px;
+    font-size: 12.5px;
     line-height: 1.4;
+  }
+
+  .tend-icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    color: var(--tone);
+  }
+
+  .tend-icon::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 7px;
+    background: var(--tone);
+    opacity: 0.13;
+  }
+
+  .tend-icon svg {
+    position: relative;
+    width: 15px;
+    height: 15px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   .tend-name {
@@ -1003,9 +1453,10 @@
 
   .tend-track {
     display: block;
-    height: 9px;
-    border-radius: 999px;
-    background: #F1E7DA;
+    height: 12px;
+    border-radius: 2px;
+    background-color: #F0E4D5;
+    background-image: repeating-linear-gradient(90deg, rgba(120, 88, 56, 0.10) 0 1px, transparent 1px 22px);
     overflow: hidden;
   }
 
@@ -1013,28 +1464,34 @@
     display: block;
     height: 100%;
     min-width: 3px;
-    border-radius: 999px;
-    background: #D9CABA;
+    border-radius: 2px;
+    background: var(--tone);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset;
     transition: width 0.4s ease;
   }
 
   .tend-pct {
     text-align: right;
+    font-family: var(--mono);
+    font-size: 12px;
     font-variant-numeric: tabular-nums;
     font-weight: 700;
-    color: var(--ink-faint);
+    color: var(--ink);
     white-space: nowrap;
   }
 
-  .tend-row.is-primary .tend-name,
+  .tend-row.is-primary .tend-name {
+    color: var(--ink);
+    font-weight: 800;
+  }
+
   .tend-row.is-primary .tend-pct { color: var(--mcd-red); }
 
-  .tend-row.is-primary .tend-fill { background: var(--mcd-red); }
+  .tend-row.is-primary .tend-icon { color: #fff; }
 
-  .tend-row.is-second .tend-name,
-  .tend-row.is-second .tend-pct { color: var(--mcd-red-dark); }
+  .tend-row.is-primary .tend-icon::before { opacity: 1; }
 
-  .tend-row.is-second .tend-fill { background: #F2A199; }
+  .tend-row.is-primary .tend-track { height: 14px; }
 
   .tend-note {
     margin: 13px 0 0;
@@ -1134,13 +1591,14 @@
 
   /* ============ 响应式 ============ */
   @media (max-width: 400px) {
-    body { padding: 22px 12px 40px; }
-    h1 { font-size: 21px; }
-    .meal-name { font-size: 23px; }
-    .quiz-q { font-size: 17px; }
-    .opt { font-size: 14.5px; padding: 13px 13px; }
+    body { padding: 12px 12px 34px; }
+    h1 { font-size: 35px; }
+    .meal-name { font-size: 33px; }
+    .meal-name.is-long { font-size: 24px; }
+    .quiz-q { font-size: 19px; }
+    .opt { font-size: 15px; padding: 13px 13px; min-height: 70px; }
     .item { font-size: 13.5px; grid-template-columns: 32px 1fr auto auto; gap: 7px; }
-    .total-value { font-size: 21px; }
+    .total-value { font-size: 22px; }
     .panel { padding: 11px 12px 9px; }
   }
 
@@ -1149,257 +1607,292 @@
   }
 </style>
 </head>
-<body>
-<div class="wrap">
+<body data-page-node-id="xNTAGcPX7bjPiVWVFB3KRz" data-view="intro">
+<div data-page-node-id="JLHV177rIpYIRv2bG213Gc" class="wrap">
 
-  <div class="brand">
-    <svg viewBox="0 0 64 48" width="30" height="23" aria-hidden="true" focusable="false">
-      <path d="M8 44V21.5c0-6.9 4-11.5 9-11.5s8 3.5 9 9.5c1-6 4-9.5 9-9.5s9 4.6 9 11.5V44"
-            fill="none" stroke="#FFC72C" stroke-width="9" stroke-linejoin="round" />
+  <div data-page-node-id="RhdAe7ZFg3CdeeCRmsjapt" class="brand">
+    <svg data-page-node-id="VZ7qKXhfbfK98W3Jb31nUC" aria-hidden="true" focusable="false" height="23" viewBox="0 0 64 48" width="30">
+      <path data-page-node-id="oeog4wyKADChIn5HqNvJJa" d="M8 44V21.5c0-6.9 4-11.5 9-11.5s8 3.5 9 9.5c1-6 4-9.5 9-9.5s9 4.6 9 11.5V44" fill="none" stroke="#FFC72C" stroke-linejoin="round" stroke-width="9"/>
     </svg>
-    <span class="brand-badge">麦当劳 1024 程序员创意开发大赛 · 参赛作品</span>
+    <span data-page-node-id="16Ldcm1qlvAiqVp6nEBZAV" class="brand-badge"><!--pnid:SVYlAOMargFmWC6sUiXoDW-->麦当劳 1024 程序员创意开发大赛 · 参赛作品</span>
   </div>
 
-  <!-- ============================================================
+  <!--pnid:8hIKHHbvNjoESYv4YRxJJI--><!-- ============================================================
        第一屏：介绍 + 开始
        ============================================================ -->
-  <section id="screenIntro">
-    <h1>你是哪一种<br /><span class="hl">麦门人格</span></h1>
-    <p class="lede">12 个点餐场景，测出你在 6 个倾向上各有多强</p>
+  <section data-page-node-id="3dgKQ5HdSr9kzF5e40pfbv" id="screenIntro">
+    <div data-page-node-id="5zvv15TZrVzheCbEePg66Z" aria-hidden="true" class="tk-head">
+      <span data-page-node-id="xvfy0iScFTN29mpJul4KIq"><!--pnid:eLNSmH2ZhyJnc2KGWvx7f4-->MEAL TICKET</span>
+      <span data-page-node-id="XfhGV7PEj0JbHiYlwqQOAe"><!--pnid:f9ctFEj9y2Y5M9b6JCysfy-->NO. <b data-page-node-id="H9BtoTj7mvzMQMaVpNITur"><!--pnid:H63YeZgCYn3BcY9B8JM5kl-->1024</b></span>
+      <span data-page-node-id="LNYWAsFNVe9wog7K92Iou7"><!--pnid:ecEhbJ9mhgws9h5z1PL0lG-->12 SCENES</span>
+    </div>
 
-    <button class="btn btn-primary hero-cta" type="button" id="startBtn">开始测试</button>
-    <p class="hero-note">12 题 · 约 1 分钟 · 没有对错，只有习惯</p>
+    <div data-page-node-id="w8WVVLL6WvLFpdSPNnaS85" class="hero-block">
+      <h1 data-page-node-id="cO7rIw7qw4XsGh9t0ZXxDl"><!--pnid:drZdzDnolgShQ8y9wAiQpg-->你是哪一种<br data-page-node-id="6NRginYlQ4gViDV046WoWW"><span data-page-node-id="sMejHbxE4s3333MplksTzI" class="hl"><!--pnid:uWU1AIkqK9r7z3X9oCgP3I-->麦门人格</span></h1>
+      <p data-page-node-id="6n0pt9sLxwnpvWFqS46dYa" class="lede"><!--pnid:Dm5NKVgksNIOB9XQlJ50YY-->12 个点餐场景，测出你在 6 个倾向上各有多强</p>
 
-    <ul class="hero-points">
-      <li class="hero-point">这 6 个倾向不在同一个层级上：有人用「以前的选择」省掉决策，有人用「更多份量」消除不安，有人只是把甜品提前。同一个人完全可以同时符合好几个。</li>
-      <li class="hero-point">所以这里不做互斥分类，只给每个倾向单独打分：最高的当主类型，第二高而且真的接近的，才作为次要倾向露一面。</li>
-      <li class="hero-point">每个类型固定一份真套餐，成分表用官方营养数据，前三项是真占比，整张表恒等 100%。</li>
-    </ul>
+      <button data-page-node-id="r24gb5WBS41dAbOQKfrMWl" class="btn btn-primary hero-cta" id="startBtn" type="button">
+        <span data-page-node-id="8M0oPCWUdc0nQFH5PkrnNT" class="cta-inner"><!--pnid:CsG5L6wPscYj5fo6JQlGNi-->开始测试<span data-page-node-id="HlLlCTV4aAbzEwExDF1rz6" aria-hidden="true" class="cta-arrow"><!--pnid:AFUGavMMglry5MB0TfDNHv-->→</span></span>
+      </button>
+      <p data-page-node-id="RpcW8xkEkIXTUQ49OaoWBe" class="hero-note"><!--pnid:eHTR3xIZlM9kKBGAJpXDvU-->12 题 · 约 1 分钟 · 没有对错，只有习惯</p>
 
-    <!-- ============ 算法说明（可自行验证） ============ -->
-    <details class="howto">
-      <summary>怎么算的（可以自己验证）</summary>
-      <div class="howto-body">
-        <p><b>12 道题测 6 个倾向。每题选一个选项，这个选项的分数加给某一个倾向，倾向之间互不排斥——所以你完全可能在两三个倾向上同时高分。</b></p>
+      <!--pnid:eNKu1FxHYOgxLoEntwnxUq--><!-- 六倾向预览：图标与色块和结果页同一套 -->
+      <div data-page-node-id="W8pPDXXexgN3Hp5y1EKJo1" aria-hidden="true" class="hero-tend" id="heroTend"></div>
+    </div>
 
-        <p><b>六个倾向</b></p>
-        <div id="howtoTend"></div>
+    <div data-page-node-id="YFMhMVnoiZHqPiYHUI7KeS" aria-hidden="true" class="hero-tear"><!--pnid:KqByOiXSROvoS6EBnA9NJK-->SCROLL</div>
 
-        <p><b>每题测什么</b>（右边写着这个选项加给哪个倾向；这部分只在说明里出现，答题页不显示）</p>
-        <div id="howtoQuestions"></div>
+    <!--pnid:6QvWw1tWq2psR9JiA8Kxgt--><!-- ============ 算法说明（可自行验证） ============ -->
+    <details data-page-node-id="xGSVOeELbfpUJJzAFebdBy" class="howto">
+      <summary data-page-node-id="WFnPtx7fhNwMi0fjQcxMh7"><!--pnid:7d2VHhbnzdrCebkOk74FAA-->怎么算的（可以自己验证）</summary>
+      <div data-page-node-id="MOJOIcLQsr8jeug8Zy9lCx" class="howto-body">
+        <ul data-page-node-id="KjzCSPHGaQWkE7OHu5gBvh" class="hero-points">
+          <li data-page-node-id="exnD12oDGL5mMBfhPg4fkC" class="hero-point"><!--pnid:EDrj6uOc9lCa5oMvzQtJP4-->这 6 个倾向不在同一个层级上：有人用「以前的选择」省掉决策，有人用「更多份量」消除不安，有人只是把甜品提前。同一个人完全可以同时符合好几个。</li>
+          <li data-page-node-id="A617DQhwqpfGny8F6NPitd" class="hero-point"><!--pnid:W0SbniD5xJwxyljWblUN9j-->所以这里不做互斥分类，只给每个倾向单独打分：最高的当主类型，第二高而且真的接近的，才作为次要倾向露一面。</li>
+          <li data-page-node-id="8leq3dgWsDIFgjp9nvNAH3" class="hero-point"><!--pnid:iC1zZtv0ci3JblABkTYO3V-->每个类型固定一份真套餐，成分表用官方营养数据，前三项是真占比，整张表恒等 100%。</li>
+        </ul>
 
-        <p><b>第一步 · 归一化</b></p>
-        <p>六个倾向的满分并不一样——覆盖它的题有多少不同。直接拿原始分比大小是不公平的，所以先各自除以自己的满分：</p>
-        <p><code>rate[key] = score[key] / maxScore[key]</code></p>
-        <div class="howto-live" id="howtoMax"></div>
-        <p>举个例子：「交易控制」最多能拿 9 分，「数量补偿」最多只有 5 分。如果直接比原始分，覆盖题多的倾向几乎总占便宜——数量补偿得把 5 分全拿满，才勉强追得上交易控制拿 5 分。归一化之后每个倾向都落在 0–100%，才有可比性。</p>
+        <p data-page-node-id="Tzp6Uzf9rVfFITXx46KPIn"><b data-page-node-id="0JoMSwj1ldEb4TaWNnOx0T"><!--pnid:Jn9FHmTHIPehhiI1iaO0Vo-->12 道题测 6 个倾向。每题选一个选项，这个选项的分数加给某一个倾向，倾向之间互不排斥——所以你完全可能在两三个倾向上同时高分。</b></p>
 
-        <p><b>第二步 · 定主次</b></p>
-        <ol>
-          <li>rate 最高的那个是<b>主类型</b>：套餐、三段解析、关系区全部按它出。</li>
-          <li>次要倾向要<b>三个条件同时满足</b>才展示：① rate 排第二；② rate ≥ 主类型 rate × 0.8；③ 绝对分 ≥ 2 分。只看「第二高」会强行给人贴标签，这三条一起卡住，才说明它是真的接近，而不是蒙对了一题。</li>
-          <li>主类型与次要倾向的 rate 相差 <b>&lt; 0.03</b>、且主类型本身 <b>≥ 50%</b> 时，才算平局，标题写成「A × B」双主型。两个都很低的"平局"不算——那不是双子星，是都没测出来。</li>
-          <li>最多只展示 <b>1</b> 个次要倾向，第三个不展示——多给几个，它就成了星座。</li>
+        <p data-page-node-id="PycTphdF8dktBAE7iFLe6P"><b data-page-node-id="dzc6PoeDhGAU4n1akRDbh0"><!--pnid:Y2n2nn9WXGCu6nLj2o1Wor-->六个倾向</b></p>
+        <div data-page-node-id="SetuTuxQyELwIVDgGgsBXg" id="howtoTend"></div>
+
+        <p data-page-node-id="CmF65hp88WJJQKeKeLqN4B"><b data-page-node-id="8qy64CYBjOvd04QOSCYwGs"><!--pnid:TfOx6dhXMn6BsXZ6DDD8xM-->每题测什么</b><!--pnid:p9I1Cj3GW3Dx8ExHIkj5mU-->（右边写着这个选项加给哪个倾向；这部分只在说明里出现，答题页不显示）</p>
+        <div data-page-node-id="XojIYGJtllojBxdTLo5x9W" id="howtoQuestions"></div>
+
+        <p data-page-node-id="evcXWKTbD79nzU5Wq9rJcc"><b data-page-node-id="gqf5WBfZGi7Z36JR2eTcXS"><!--pnid:btEFz9y2X60tLA6T25tCG2-->第一步 · 归一化</b></p>
+        <p data-page-node-id="GNMOcDNnyvdNg5KAozMZm0"><!--pnid:i2sxfkYTefVleIB1OMtqCb-->六个倾向的满分并不一样——覆盖它的题有多少不同。直接拿原始分比大小是不公平的，所以先各自除以自己的满分：</p>
+        <p data-page-node-id="xTZgoBq7B0n7sQ2MPOPLeH"><code data-page-node-id="Hwbzso19HEh5TyVdDYbGm5" data-pnid-children="5U9SqQxMaWnMrWh7gq0JRi">rate[key] = score[key] / maxScore[key]</code></p>
+        <div data-page-node-id="VdyaM4r8z7ByCKy3xf04GX" class="howto-live" id="howtoMax"></div>
+        <p data-page-node-id="VZkXSUrFcaLqZ9CjeW3HbY"><!--pnid:IYEtBNZ0vX04wbGkN4buGm-->举个例子：「交易控制」最多能拿 9 分，「数量补偿」最多只有 5 分。如果直接比原始分，覆盖题多的倾向几乎总占便宜——数量补偿得把 5 分全拿满，才勉强追得上交易控制拿 5 分。归一化之后每个倾向都落在 0–100%，才有可比性。</p>
+
+        <p data-page-node-id="Na0r2g03UYUk8NEHkKO9F7"><b data-page-node-id="aI7LiTUhaTp5KDslXZEuO8"><!--pnid:v35e0CflMgkyqivqPmM3Kz-->第二步 · 定主次</b></p>
+        <ol data-page-node-id="cMsLOplZC0SOAPApH2Y775">
+          <li data-page-node-id="RdIXbZjVKllyA51i8nUocZ"><!--pnid:3Igd7OPuSYakfIqmKW3Vfm-->rate 最高的那个是<b data-page-node-id="7TsoEkRD5vRTltAY7WD2vL"><!--pnid:T831O8PjnAqJg5gqOhhG6y-->主类型</b><!--pnid:lOOssFOxkN1hLHpt5iU80Y-->：套餐、三段解析、关系区全部按它出。</li>
+          <li data-page-node-id="oy9UCuK5fewlTKLEdluCeJ"><!--pnid:beZB6A3AJCNnOn7CWtP9II-->次要倾向要<b data-page-node-id="ZVXKt8RD35ZdOZgvBu1DZP"><!--pnid:NgYzF5AegZTkLZ7sx7hDcR-->三个条件同时满足</b><!--pnid:gbKQJqjViHp7xMO8RUg3MB-->才展示：① rate 排第二；② rate ≥ 主类型 rate × 0.8；③ 绝对分 ≥ 2 分。只看「第二高」会强行给人贴标签，这三条一起卡住，才说明它是真的接近，而不是蒙对了一题。</li>
+          <li data-page-node-id="DoxNCekFCaQqSHl9vHUX6e"><!--pnid:bAv1O81GS9u9azhE5tquVo-->主类型与次要倾向的 rate 相差 <b data-page-node-id="tHhpJuXyQT7KKFishEqof1"><!--pnid:LLrabTLzeto6XU5j8KiY5W-->&lt; 0.03</b><!--pnid:sYkHMWF2S72TKpMyBzPFMJ-->、且主类型本身 <b data-page-node-id="8Gp1n6xWza8i0jjgWPP9S2"><!--pnid:t1W2tdYEqlFot2Vnd9SIoi-->≥ 50%</b><!--pnid:Md33MD8kUL6IECQHIfDbUm--> 时，才算平局，标题写成「A × B」双主型。两个都很低的"平局"不算——那不是双子星，是都没测出来。</li>
+          <li data-page-node-id="yDXP0YSqXo93EH2uVt5qFI"><!--pnid:6mRtf3GhY7bxBBTPdOzubg-->最多只展示 <b data-page-node-id="opIGK0doqCayEQp5SasWsX"><!--pnid:nI8zIB41caemqW1RhUGUOd-->1</b><!--pnid:oMYFV1icCt9oAkFsVchHrY--> 个次要倾向，第三个不展示——多给几个，它就成了星座。</li>
         </ol>
 
-        <p><b>不参与计分的东西：名字。</b>名字只用来算小票底部的签名——把名字 <code>name.trim().toLowerCase()</code> 编码成 UTF-8 字节，逐个跑 FNV-1a 32 位（<code>h = 2166136261</code>，每个字节先 <code>h ^= byte</code>，再 <code>h = Math.imul(h, 16777619) mod 2³²</code>），取 8 位小写十六进制。名字不一样，只是签名不一样。</p>
+        <p data-page-node-id="ZhfhU5grwFbagucTsuENRF"><b data-page-node-id="Ahic6HmuVoD8Vf35uw6qnj"><!--pnid:MiEJ9zR1S0gUkrylLeJ5fZ-->不参与计分的东西：名字。</b><!--pnid:rVoXk38oI4U6eNYg5kFYAy-->名字只用来算小票底部的签名——把名字 <code data-page-node-id="HFVz2JFEQ6I7e0r4zSoC59" data-pnid-children="qipLKRwkzd0KsUt18o6YRF">name.trim().toLowerCase()</code><!--pnid:g9WJVt64Yr4hseAekINEbF--> 编码成 UTF-8 字节，逐个跑 FNV-1a 32 位（<code data-page-node-id="SrxFNTUCRE3JjX87LDT5Lk" data-pnid-children="uJ6BILOUQYbR2jQZzXCrxg">h = 2166136261</code><!--pnid:rI7vsuyrWgnxurpfBanvb0-->，每个字节先 <code data-page-node-id="pX44QF9Os14gJb9Rl0n76Y" data-pnid-children="aq96sKLg9WzL2MDY4fsNMr">h ^= byte</code><!--pnid:Iga2K3yLAmXPRzxulDCfEW-->，再 <code data-page-node-id="IRIFXV55LHg1754KzI9B48" data-pnid-children="AoDiMklGLZ88xZflYXLkkd">h = Math.imul(h, 16777619) mod 2³²</code><!--pnid:KOcKTkK5j87vKxzyOLr3BW-->），取 8 位小写十六进制。名字不一样，只是签名不一样。</p>
 
-        <p><b>成分表</b>前三项是真的：营养数据来自<b>麦当劳官方 list-nutrition-foods 接口</b>（160 条商品营养记录，本项目取其中 18 项）。把套餐里每样东西的碳水 × 4、脂肪 × 9、蛋白质 × 4 折成热量，算出碳水 / 脂肪 / 蛋白质各自占这三大营养素热量的百分比，四舍五入取整，零头归到「其他」。后两项是娱乐成分，各占 2%~8%，从前面三项里按比例扣掉，所以整张表恒等于 100%。</p>
+        <p data-page-node-id="Xgo8rQlSESYDSq1ueYFvWX"><b data-page-node-id="68T7rNANjXadPrdu2AqK8Y"><!--pnid:FM4ihxWVqdiEeqVqBuOX9N-->成分表</b><!--pnid:AsYVPFypsrac04rn55uiqW-->前三项是真的：营养数据来自<b data-page-node-id="ICcBtu2YexqqsykTpEHEFf"><!--pnid:6HMEqvPikSs6QZ9C4LDGzD-->麦当劳官方 list-nutrition-foods 接口</b><!--pnid:a3YYL0XtaXJOXqd1pm5sD9-->（160 条商品营养记录，本项目取其中 18 项）。把套餐里每样东西的碳水 × 4、脂肪 × 9、蛋白质 × 4 折成热量，算出碳水 / 脂肪 / 蛋白质各自占这三大营养素热量的百分比，四舍五入取整，零头归到「其他」。后两项是娱乐成分，各占 2%~8%，从前面三项里按比例扣掉，所以整张表恒等于 100%。</p>
 
-        <div class="howto-live">结果页会列出你这次六个倾向的原始分、满分和百分比，你可以拿它直接对上面这套规则。</div>
+        <div data-page-node-id="mmHweh1AJl6mX55yOkunoT" class="howto-live"><!--pnid:SfQ5gBJV5A59ESJOLb7r5L-->结果页会列出你这次六个倾向的原始分、满分和百分比，你可以拿它直接对上面这套规则。</div>
       </div>
     </details>
   </section>
 
-  <!-- ============================================================
+  <!--pnid:0MUW4pCzHeBHm2mrGjyq9c--><!-- ============================================================
        第二屏：答题（一题一屏）
        ============================================================ -->
-  <section id="screenQuiz" class="hidden">
-    <div class="quiz-head">
-      <span class="quiz-step" id="quizStep">1/12</span>
-      <div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="12"
-           aria-valuenow="1" aria-label="答题进度">
-        <div class="progress-fill" id="progressFill"></div>
+  <section data-page-node-id="HtwMIluGRt5icvC64jqPiH" class="hidden" id="screenQuiz">
+    <div data-page-node-id="huI9hUF2RphwocDaHkWnZX" class="quiz-head">
+      <span data-page-node-id="KSSTlLnNqzzw0UGzXkN8El" class="quiz-step" id="quizStep"><!--pnid:c3SOKj3KXDya39nVHbSdg2-->第 <b data-page-node-id="YRQuIj45VXjeC4xAGrvvIf"><!--pnid:r5cnM15KLeebyaP0vabSA6-->1</b><!--pnid:5uM1Tx4f5L9uB1P7Y6V1Jy--> / 12 题</span>
+      <div data-page-node-id="0xYfwR9GRPK32kXkVGA9GY" aria-label="答题进度" aria-valuemax="12" aria-valuemin="1" aria-valuenow="1" class="progress" role="progressbar">
+        <div data-page-node-id="M71LfkPVxaOCYwkgFyW5EN" class="progress-fill" id="progressFill"></div>
       </div>
     </div>
 
-    <div class="quiz-card" id="quizCard">
-      <p class="quiz-index" id="quizIndex">Q1</p>
-      <p class="quiz-q" id="quizQuestion"></p>
-      <div class="quiz-options" id="quizOptions"></div>
+    <div data-page-node-id="aImCF8AbtVWuZrqucLR0Ta" class="quiz-card" id="quizCard">
+      <p data-page-node-id="T2FaHw1phGKuabwbbaliJy" class="quiz-index" id="quizIndex"><!--pnid:1bnLAaxRBx2PeWZBIMjPDl-->Q1</p>
+      <p data-page-node-id="CGDnfU6TsqsrLgKf6a9lP1" class="quiz-q" id="quizQuestion"></p>
+      <div data-page-node-id="o8TiZafRWshH4bkvT6p0jl" class="quiz-options" id="quizOptions"></div>
     </div>
 
-    <div class="quiz-nav">
-      <button class="btn btn-ghost" type="button" id="backBtn" disabled>上一题</button>
-      <span class="quiz-hint">选完自动进入下一题</span>
+    <div data-page-node-id="oJWyqw3Lwyp5RK0Oyle5QP" class="quiz-nav">
+      <button data-page-node-id="ut8HA09eanFcPf9sEzSEDO" class="btn btn-ghost" disabled id="backBtn" type="button"><!--pnid:0Zly8vyfjfLfl2uLNQiwTY-->上一题</button>
+      <span data-page-node-id="4QNymTJXWZACkZeKKeX0fd" class="quiz-hint"><!--pnid:5srIWpY4mF3CXMCRlifcLw-->选完自动进入下一题</span>
     </div>
   </section>
 
-  <!-- ============================================================
+  <!--pnid:XRrBBTsTU9VUVwtH8nZjef--><!-- ============================================================
        第三屏：结果
        ============================================================ -->
-  <section id="screenResult" class="hidden">
+  <section data-page-node-id="WYCYSNcFlfecoHEUy9hEV2" class="hidden" id="screenResult">
 
-    <!-- 1. 类型卡（小票风格） + 2. 成分表 -->
-    <section class="ticket" id="ticket" aria-live="polite">
-      <div class="ticket-top">
-        <span class="ticket-owner" id="ownerLabel">麦门人格测试 · 12 题</span>
-        <span class="ticket-stamp">MEAL TICKET</span>
+    <!--pnid:reLEx3FS7YeYMH9K1mCsR2--><!-- 1. 类型卡（小票风格） + 2. 成分表 -->
+    <section data-page-node-id="IkIEIaB5ZVuieC2WmwZLTA" aria-live="polite" class="ticket" id="ticket">
+      <div data-page-node-id="5koEC4sUAglIHrEKbxBaaL" class="ticket-top">
+        <span data-page-node-id="Dqrr1N1dfZOCNuifGhRRbC" class="ticket-owner" id="ownerLabel"><!--pnid:vSuElVPLXsCqH2TakTexcu-->麦门人格测试 · 12 题</span>
+        <span data-page-node-id="YUDa0zOpMGw2yqcTRwVFpb" class="ticket-stamp"><!--pnid:jdME30YwD1gcEbJiNx1Cuw-->MEAL TICKET</span>
       </div>
 
-      <h2 class="meal-name" id="typeTitle"></h2>
-      <p class="type-identity" id="typeIdentity"></p>
+      <h2 data-page-node-id="48TcsUGEu7qIcnL9A9q1ly" class="meal-name" id="typeTitle"></h2>
+      <p data-page-node-id="vHaGI4gGVLy4LrngJJ3vcv" class="type-identity" id="typeIdentity"></p>
 
-      <div class="items" id="items"></div>
+      <div data-page-node-id="YYuS9eai08HpTSi9WEVd25" class="items" id="items"></div>
 
-      <div class="divider" aria-hidden="true"></div>
+      <div data-page-node-id="JP2fvGy6j93RfCKOjF5YLD" aria-hidden="true" class="divider"></div>
 
-      <div class="totals">
-        <div class="total-block">
-          <span class="total-label">合计</span>
-          <span class="total-value is-red" id="totalPrice"></span>
+      <div data-page-node-id="4jMBE8ZZ7PUj9TupENUbYY" class="totals">
+        <div data-page-node-id="sT78J7FNDPaVonEks2JaQa" class="total-block">
+          <span data-page-node-id="32KsOI818G5n14tsNm8CqS" class="total-label"><!--pnid:2YjwGtCuAasX890jCcsBDS-->合计</span>
+          <span data-page-node-id="dbtGhe5PDUf0M1OLNLByof" class="total-value is-red" id="totalPrice"></span>
         </div>
-        <div class="total-block right-align">
-          <span class="total-label">热量</span>
-          <span class="total-value" id="totalKcal"></span>
+        <div data-page-node-id="pcXMMKZDZAIuatisbTbhEm" class="total-block right-align">
+          <span data-page-node-id="Rwjog4rQbOWFCZIkFqSYgo" class="total-label"><!--pnid:iZzXVVQk8ngYWGDqjaJMiI-->热量</span>
+          <span data-page-node-id="QATIe0KSGT4bveg0GgtSBm" class="total-value" id="totalKcal"></span>
         </div>
       </div>
 
-      <p class="rarity-note hidden" id="priceNote">* 该商品价格未在本门店核实，合计为约数</p>
+      <p data-page-node-id="pN8zGQlCvAC0ryFQK3wkGp" class="rarity-note hidden" id="priceNote"><!--pnid:1sbSccUVgrFlHspB3dbFTj-->* 该商品价格未在本门店核实，合计为约数</p>
 
-      <!-- 成分表：仿食品包装营养成分表，前三项是真实营养占比 -->
-      <div class="panel">
-        <div class="panel-head">
-          <span class="panel-name">成分表</span>
-          <span class="panel-sub">每份你这份套餐</span>
+      <!--pnid:QWBsqI3BZWyJZAkHPHnDHK--><!-- 成分表：仿食品包装营养成分表，前三项是真实营养占比 -->
+      <div data-page-node-id="tVavDIRZ08ArDVAyn6cbdQ" class="panel">
+        <div data-page-node-id="J3AUsxkqBMZPWZuHbarjFp" class="panel-head">
+          <span data-page-node-id="wUr9OKqUG7ZKWq6chcd0fg" class="panel-name"><!--pnid:EeOXtorgVtv7kKxjuPLUtU-->成分表</span>
+          <span data-page-node-id="9T6BZ3vWXGAYKkCtuebRmP" class="panel-sub"><!--pnid:SNxYJ8FucngF9M0d29rJsP-->每份你这份套餐</span>
         </div>
-        <div class="panel-rows" id="panelRows"></div>
-        <p class="panel-note">前三项为真实营养占比，后两项为娱乐。</p>
+        <div data-page-node-id="NTjFDSFkzYtnkXFjRWHg7b" class="panel-rows" id="panelRows"></div>
+        <p data-page-node-id="HlHWR6vDkhBaACpGl8prX3" class="panel-note"><!--pnid:Yfmn3KMb3ggZMYNGxbyBuo-->前三项为真实营养占比，后两项为娱乐。</p>
       </div>
 
-      <!-- 只有「我在交易」会显示：解释小票上为什么是这几样 -->
-      <p class="type-note hidden" id="typeNote"></p>
+      <!--pnid:kXpJjeGAxLamROl7jQp0xX--><!-- 只有「我在交易」会显示：解释小票上为什么是这几样 -->
+      <p data-page-node-id="CFWlDVMpTVTFnis17iZYxc" class="type-note hidden" id="typeNote"></p>
 
-      <p class="sign-line hidden" id="signLine">你的小票签名 <code id="signHex"></code></p>
+      <p data-page-node-id="3fpjghIBFPBXw4Im55a0dp" class="sign-line hidden" id="signLine"><!--pnid:8Wlx6LraiZZiU9QQQoPPJc-->你的小票签名 <code data-page-node-id="cR0KKfbl2sd2QFnyISHorB" id="signHex"></code></p>
 
-      <p class="disclaimer">纯属娱乐，不构成任何营养或心理建议。</p>
+      <!--pnid:8m0f9fJaXfGnrwiNn93yBo--><!-- 票尾条码：纯装饰，给人"被打印机吐出来"的感觉 -->
+      <div data-page-node-id="5kTRidzR7mOk2YNmXKMYdR" aria-hidden="true" class="barcode-wrap">
+        <svg data-page-node-id="TpZcOVF8ghKX1XMN0RQBOA" class="barcode" id="barcode" preserveAspectRatio="none" viewBox="0 0 300 44"></svg>
+        <div data-page-node-id="DqgXXtdYRIXlF7O274vRv5" class="barcode-meta">
+          <span data-page-node-id="SjCAxhRFKBCxvUNVopU4i7" id="barcodeNo"><!--pnid:ndwahDuvRqjDPGo1Y5prS8-->NO. 1024-0000</span>
+          <span data-page-node-id="CqZQPqP3micz5d7JT04weG" id="barcodeTime"></span>
+        </div>
+      </div>
+
+      <p data-page-node-id="tWPIhrm8NmdN7F1nC8mov4" class="disclaimer"><!--pnid:YzXus16d2jfQ25Ic6KBYWg-->纯属娱乐，不构成任何营养或心理建议。</p>
     </section>
 
-    <!-- 3. 你的倾向：六条横条，从高到低 -->
-    <section class="card">
-      <div class="card-head">
-        <h2>你的倾向</h2>
-        <span class="tag">六个独立打分，不互斥</span>
+    <!--pnid:CfrUd2vOrOK4IZA1Lpm8y8--><!-- 3. 你的倾向：六条横条，从高到低 -->
+    <section data-page-node-id="2LnWDe1QWr3fN8AaJcwGca" class="card">
+      <div data-page-node-id="0Z6qRgq2WaVs4rkaK3nwwR" class="card-head">
+        <h2 data-page-node-id="dYqw3ypxV4SJWIW4qEIjsw"><!--pnid:CMtdENdfOynzSon5CwBGww-->你的倾向</h2>
+        <span data-page-node-id="fTNpbAYfLcr9x7suS6NO6R" class="tag"><!--pnid:npjEYlzk74QYAkcPhCS6nR-->六个独立打分，不互斥</span>
       </div>
-      <div class="tend-list" id="tendList"></div>
-      <p class="tend-note" id="tendNote"></p>
-      <p class="tie-note hidden" id="tieNote"></p>
-      <p class="second-line hidden" id="secondLine"></p>
+      <div data-page-node-id="nW5XhSytNptazstl2qa8Xk" class="tend-list" id="tendList"></div>
+      <p data-page-node-id="AmD4fFRi6ZxJPoMwQc0XS1" class="tend-note" id="tendNote"></p>
+      <p data-page-node-id="kFGdgcQxksDTHQILIuukYP" class="tie-note hidden" id="tieNote"></p>
+      <p data-page-node-id="0kna6o2V9C7th5wnaHso1J" class="second-line hidden" id="secondLine"></p>
     </section>
 
-    <!-- 4. 为什么是这个 -->
-    <section class="card">
-      <div class="card-head">
-        <h2>为什么是这个</h2>
-        <span class="tag">对回你自己选的那几句</span>
+    <!--pnid:W58BpMHtWrftnNW6hgrOqn--><!-- 4. 为什么是这个 -->
+    <section data-page-node-id="28asoj8atLkCQ9l1n2Fq5p" class="card">
+      <div data-page-node-id="G3yEvbSKnqMY9kLkUCvfpK" class="card-head">
+        <h2 data-page-node-id="ujG7RMqrj4l3yqV9MlxnZO"><!--pnid:bi3kut4S3yulRJ7dTjZUWK-->为什么是这个</h2>
+        <span data-page-node-id="uDLj56635p1qKxaSA0Rupc" class="tag"><!--pnid:CZaOSz2w9d1gaPRnRaviQa-->对回你自己选的那几句</span>
       </div>
-      <p class="why-lead" id="whyLead"></p>
-      <ul class="why-list" id="whyList"></ul>
+      <p data-page-node-id="asNZpZwxLTJsVUhVlZfBpd" class="why-lead" id="whyLead"></p>
+      <ul data-page-node-id="ca5R6CJvmmHsvA0dp85Zks" class="why-list" id="whyList"></ul>
     </section>
 
-    <!-- 5. 三段解析 -->
-    <section class="card">
-      <div class="card-head">
-        <h2>三段解析</h2>
-        <span class="tag">说得难听的那段是真的</span>
+    <!--pnid:2ymjN8P1kXd7xbyTNfTmxd--><!-- 5. 三段解析 -->
+    <section data-page-node-id="qWDkBvzpOJqL14UzHTq4Ta" class="card">
+      <div data-page-node-id="S9mn4fvtX68NRBS8BoNO1C" class="card-head">
+        <h2 data-page-node-id="eEZcXGjoR3m2n3Vm1GzhAz"><!--pnid:mwrsxPPfYpw8z7wn94Re4w-->三段解析</h2>
+        <span data-page-node-id="vAJ8wehEq2plgj7whAOT7D" class="tag"><!--pnid:HcJl28bUEWl6MT2XDilpqx-->说得难听的那段是真的</span>
       </div>
-      <div class="ana">
-        <p class="ana-label">你的优势</p>
-        <p class="ana-text" id="anaStrength"></p>
+      <div data-page-node-id="1vj8RK1Xb7xWrWI0EEdtMS" class="ana">
+        <p data-page-node-id="fmEYKtaHsMCAU9mLRhBVJz" class="ana-label"><!--pnid:uPhKiEGRR9hC3ESvz8wJgo-->你的优势</p>
+        <p data-page-node-id="IsIxd7lktTUfdyZyByItUT" class="ana-text" id="anaStrength"></p>
       </div>
-      <div class="ana">
-        <p class="ana-label">你的阴影</p>
-        <p class="ana-text" id="anaShadow"></p>
+      <div data-page-node-id="UqIhy6MguteSKcvm5c0NCU" class="ana">
+        <p data-page-node-id="tIwtKWFcwynu3B9f780NI5" class="ana-label"><!--pnid:uwHce41YULX8Ww3HlEAdmn-->你的阴影</p>
+        <p data-page-node-id="FRAYQqGJJHSzxWbSa0j509" class="ana-text" id="anaShadow"></p>
       </div>
-      <div class="ana">
-        <p class="ana-label">你最矛盾的地方</p>
-        <p class="ana-text" id="anaParadox"></p>
+      <div data-page-node-id="E5CUeQ5uwFzlE1r0gPeMhM" class="ana">
+        <p data-page-node-id="6IJ904oZGhGheuiJIudztn" class="ana-label"><!--pnid:ykbl91bFA4X3u857qkcQgL-->你最矛盾的地方</p>
+        <p data-page-node-id="kFW4NmKOa2r5LYSBR77qCa" class="ana-text" id="anaParadox"></p>
       </div>
     </section>
 
-    <!-- 6. 关系区 -->
-    <section class="card">
-      <div class="card-head">
-        <h2>你和别人</h2>
-        <span class="tag">6 个倾向各有一个类型，互相评价</span>
+    <!--pnid:lawo00ptOPuRZvjxVZ6BQw--><!-- 6. 关系区 -->
+    <section data-page-node-id="2uiXTOGWl8VmHqKROY7Vjw" class="card">
+      <div data-page-node-id="MZP0zWLuXTIIkdHz47R0oN" class="card-head">
+        <h2 data-page-node-id="FpOvF0F8DMJYRjVIZURmE5"><!--pnid:25lwLs9NSviOQCdbXSvpMV-->你和别人</h2>
+        <span data-page-node-id="VC95WAN4JMrQzf7jwu0GMe" class="tag"><!--pnid:GG20vXrQre9t3lGrKeFv8p-->6 个倾向各有一个类型，互相评价</span>
       </div>
-      <ul class="rel">
-        <li id="relKin"></li>
-        <li id="relOpposite"></li>
-        <li id="relClash"></li>
+      <ul data-page-node-id="u2kUaE2YMvkscNRSYQ6DEH" class="rel">
+        <li data-page-node-id="aEkC87yLuQZ5AUGqj6bA7z" id="relKin"></li>
+        <li data-page-node-id="Ecu0PluyikTnSI5PLweXMQ" id="relOpposite"></li>
+        <li data-page-node-id="LnwnRzqK5iCi17UBtJoBSq" id="relClash"></li>
       </ul>
     </section>
 
-    <!-- 7. 名字个性化（可选，不影响倾向、类型和套餐） -->
-    <section class="card">
-      <div class="card-head">
-        <h2>给你的小票签个名</h2>
-        <span class="tag">可选</span>
+    <!--pnid:ZfzGp3lSGbLz3D7LyTs97I--><!-- 7. 名字个性化（可选，不影响倾向、类型和套餐） -->
+    <section data-page-node-id="BySauCYJ1l3hUmsCYnnhs7" class="card">
+      <div data-page-node-id="i7dRMN9D1LxEVWdk6vknqJ" class="card-head">
+        <h2 data-page-node-id="6SLAwB4R2skLWTrX2x3o4Y"><!--pnid:1sQrpO0yMg0pU6ZvNi3hSH-->给你的小票签个名</h2>
+        <span data-page-node-id="HMYxIxhN04wmyXWW9LY0tw" class="tag"><!--pnid:PLY5SC2iWJxOh0qVmcMXQg-->可选</span>
       </div>
-      <p class="card-sub">名字只印在小票抬头和底部签名上，不会改变你的倾向、类型和套餐。</p>
-      <input
-        class="text-input"
-        id="signInput"
-        type="text"
-        placeholder="输入名字"
-        maxlength="16"
-        autocomplete="off"
-        autocapitalize="off"
-        spellcheck="false"
-        aria-label="输入名字，给小票签名"
-      />
+      <p data-page-node-id="trwylJ30AzF2yLSxHUuG7F" class="card-sub"><!--pnid:LLeWCaqT4FeY0J4WwZbERY-->名字只印在小票抬头和底部签名上，不会改变你的倾向、类型和套餐。</p>
+      <input data-page-node-id="QrVsZiCeEAjOmjaTgi5unr" aria-label="输入名字，给小票签名" autocapitalize="off" autocomplete="off" class="text-input" id="signInput" maxlength="16" placeholder="输入名字" spellcheck="false" type="text">
     </section>
 
-    <!-- 8. 分享 -->
-    <div class="actions">
-      <button class="btn btn-primary" type="button" id="copyBtn">复制文案</button>
-      <button class="btn btn-ghost" type="button" id="resetBtn">再测一次</button>
+    <!--pnid:7LIZ0D5H1YBuXMUJ9Vul9h--><!-- 8. 分享：主入口固定在底部，随时一下存图 -->
+    <div data-page-node-id="6dCSMTZbschxsBPGkjUJOU" class="action-bar">
+      <button data-page-node-id="6FGmhL7ZcGnU8LkkdbWWZv" class="btn btn-primary" id="shareBtn" type="button"><!--pnid:vU7Y12dYNgX2Nzpcd8mP6p-->保存分享图</button>
+      <button data-page-node-id="7695kcf6RuwR4RIGvpG4Hw" class="btn btn-ghost" id="copyBtn" type="button"><!--pnid:c7DvKElFnpUM0k5Ae9cL5K-->复制文案</button>
     </div>
 
-    <!-- 7. Star 引导：一行小字，不阻断任何东西 -->
-    <p class="star-line">
+    <div data-page-node-id="0vo4qgjZQfM9uIw0c1oOMw" class="actions">
+      <button data-page-node-id="CUvWKk3FsBJTxnOKC4YOTZ" class="btn btn-ghost" id="resetBtn" type="button"><!--pnid:5CDTyCwWJ94VLHsUm6HZLN-->再测一次</button>
+    </div>
+
+    <!--pnid:kYWPi1fwuhlMqvsX2eQkOo--><!-- 7. Star 引导：一行小字，不阻断任何东西 -->
+    <p data-page-node-id="dSZttBzVEsVrDY8176j25t" class="star-line"><!--pnid:kGzBnCpaM31d781ZTfOo0d-->
       这个测试是一个人的业余作品，参加麦当劳 1024 创意开发大赛。如果你觉得有意思，
-      <a href="https://github.com/yuunyaj921-ui/mcd-name-meal" target="_blank" rel="noopener">给个 Star</a>
+      <a data-page-node-id="qT82k4bMPaTx0zBZ5t91Wi" href="https://github.com/yuunyaj921-ui/mcd-name-meal" rel="noopener" target="_blank"><!--pnid:XYTNFElzSwQzX7CNEHvVuv-->给个 Star</a><!--pnid:C1E0UZ5YzxmgsHSsfEeeI4-->
       会让更多人看到它。
     </p>
   </section>
 
-  <footer>
-    <div class="rule"></div>
-    <p>纯属娱乐，不构成任何营养或心理建议。</p>
-    <p>本页面为 2026 麦当劳程序员创意开发大赛参赛作品，非麦当劳官方产品。</p>
-    <p>价格为<b>麦当劳成都府青路(恒大)餐厅</b>（门店 3450314）2026-10-22 通过 MCP <code>calculate-price</code> 实时查询，<b>仅代表该门店</b>，不是全国统一价。</p>
-    <p>其中 <b>11 项已核实</b>：巨无霸、麦辣鸡腿汉堡、板烧鸡腿堡、双层吉士汉堡、麦香鱼、中薯条、麦乐鸡 5 块、麦辣鸡翅 2 块、香芋派、圆筒冰淇淋、可口可乐中杯——这些按门店实价计算。</p>
-    <p>带 <sup>*</sup> 的 <b>7 项单价未经核实</b>（大薯条、小薯条、雪碧中杯、鲜萃咖啡大杯、无糖可乐中杯、奥利奥麦旋风、菠萝派），该门店无同规格单品，仅作参考。含这类商品的合计用「≈」标注，<b>只表示这份套餐里有未核实的单价、总价仅供参考</b>，其余已核实商品仍按门店实价相加。</p>
-    <p>营养成分来自官方 <code>list-nutrition-foods</code> 接口（160 条），与价格数据相互独立。</p>
-    <p>本页不含任何预测或健康评价内容，全部结果由你的选项确定性计算得出。</p>
+  <footer data-page-node-id="mGSpOmOzxZAprdUgFwRD0Q">
+    <div data-page-node-id="7cg5yiSAzimXPIK30vjBnQ" class="rule"></div>
+    <p data-page-node-id="nAi3nnfVBraO3b5mYR3Eno"><!--pnid:IwCbUJXFXWzxQJe7GnUCLp-->纯属娱乐，不构成任何营养或心理建议。</p>
+    <p data-page-node-id="IEQqA9KWsXmk9zP316Ssyt"><!--pnid:zVtRukigKmzYDsNucKuJ0h-->本页面为 2026 麦当劳程序员创意开发大赛参赛作品，非麦当劳官方产品。</p>
+    <details data-page-node-id="NkmnLFsp3TaevOXEknfHuW" class="foot-more">
+      <summary data-page-node-id="LsaF2aJJ8PWqJpkyxB0cqh"><!--pnid:QFnyMjTERu0Q5BBveNAiaN-->价格与数据说明</summary>
+      <div data-page-node-id="rt7uPdkqei7SQoKGtyPbYl" class="foot-body">
+        <p data-page-node-id="jCTNF7ReFiYXbXEWhFZ49l"><!--pnid:dBaUxcJI92CLHskb92ZhR2-->价格为<b data-page-node-id="NAK0I1nyBCdZERLAkle3q2"><!--pnid:K1G6L5AECFpzisLQoICKOD-->麦当劳成都府青路(恒大)餐厅</b><!--pnid:kznYvG5hzmoS184DhhSxxe-->（门店 3450314）2026-10-22 通过 MCP <code data-page-node-id="YsXY3NY1YbMHvk2fHUMqw8" data-pnid-children="AY4BB1ErpwzAUB5qkiZkVy">calculate-price</code><!--pnid:Pw086nbOsgRat7KvT3j4HJ--> 实时查询，<b data-page-node-id="YkVfW7LMemupxMQlUO0HSm"><!--pnid:CLO05FyvbsPThh3Qslmd9x-->仅代表该门店</b><!--pnid:W08m0HY2dsznPAKObfYPPu-->，不是全国统一价。</p>
+    <p data-page-node-id="jWiISmKpwPiJEfZDfHQ3Ja"><!--pnid:8ruvGdFLl4zQ2k9ssJgj3l-->其中 <b data-page-node-id="vor2lcNTd4fV4yCb7HjL31"><!--pnid:ENQLiyknYcL1kDgrgAmNhS-->11 项已核实</b><!--pnid:SmEHutTtOXWkTSl1BfUe0F-->：巨无霸、麦辣鸡腿汉堡、板烧鸡腿堡、双层吉士汉堡、麦香鱼、中薯条、麦乐鸡 5 块、麦辣鸡翅 2 块、香芋派、圆筒冰淇淋、可口可乐中杯——这些按门店实价计算。</p>
+    <p data-page-node-id="AIxZtKeSZyrnthZkE91JLp"><!--pnid:wd4H0oJyqokKQHfRiasN4x-->带 <sup data-page-node-id="hDqMUTcCKtaEjeKoj2mx6s"><!--pnid:Sa7GSsGuTBCf41gJFJNCeJ-->*</sup><!--pnid:af6Og2zQe63zdUhE9zBj2U--> 的 <b data-page-node-id="KiLiAz2eanX78m5WZQ6QRo"><!--pnid:OIsoOhsigWSJsgsvCBbamo-->7 项单价未经核实</b><!--pnid:oCsWXafzhO51c6u33KxMnb-->（大薯条、小薯条、雪碧中杯、鲜萃咖啡大杯、无糖可乐中杯、奥利奥麦旋风、菠萝派），该门店无同规格单品，仅作参考。含这类商品的合计用「≈」标注，<b data-page-node-id="mBr5qNFZLIPGx5Suy7pkfe"><!--pnid:tf8HotSnFxiryjDWG2CCIV-->只表示这份套餐里有未核实的单价、总价仅供参考</b><!--pnid:FWrAB9hnRWYOlwmYlpzbz5-->，其余已核实商品仍按门店实价相加。</p>
+    <p data-page-node-id="TBE5As3r4yrLqsRFQG94E5"><!--pnid:QMb2ZCRTAGtVoupOF5IqUn-->营养成分来自官方 <code data-page-node-id="tL9g0i3pK58kgqZQpOsY6x" data-pnid-children="6cpiI5piAqppfjJz854Lea">list-nutrition-foods</code><!--pnid:GC4Fe3FwOlS9eYacXptXBV--> 接口（160 条），与价格数据相互独立。</p>
+    <p data-page-node-id="IK5U5qPyhqM40UbcZ1KsZS"><!--pnid:7vLoznFme3chwHCTb58bPB-->本页不含任何预测或健康评价内容，全部结果由你的选项确定性计算得出。</p>
+      </div>
+    </details>
   </footer>
 </div>
 
-<div id="toast" role="status" aria-live="polite"></div>
+<div data-page-node-id="SJYj5JWnnqk2MbEVe2txx6" aria-live="polite" id="toast" role="status"></div>
 
-<div id="copySheet" class="hidden">
-  <div class="sheet-box">
-    <h3>文案已准备好</h3>
-    <p>如果没自动复制成功，点一下下面的框，全选后按 Ctrl/⌘ + C。</p>
-    <textarea id="copyArea" readonly></textarea>
-    <div class="sheet-actions">
-      <button class="btn btn-ghost" type="button" id="sheetClose">关闭</button>
+<div data-page-node-id="zpa3hqXnpaql0WzMqYttVI" class="hidden" id="copySheet">
+  <div data-page-node-id="xlohjaVOTu8k8vyJ9vDQaO" class="sheet-box">
+    <h3 data-page-node-id="O5KIJfiiE50l0mzGDlMCrh"><!--pnid:dSxeRaaZNum5dQRsWcDGBG-->文案已准备好</h3>
+    <p data-page-node-id="PYeiGiMTGawQEKc0fYrfRy"><!--pnid:HGEaBYCbEFjpSwNI4G1cKS-->如果没自动复制成功，点一下下面的框，全选后按 Ctrl/⌘ + C。</p>
+    <textarea data-page-node-id="JZA5ezbDEo9tBjI5XqDRJ6" id="copyArea" readonly></textarea>
+    <div data-page-node-id="79ILl6jWZHPPN8Fk14gKVc" class="sheet-actions">
+      <button data-page-node-id="Of6BGuYCuDfbigpsGUfbFr" class="btn btn-ghost" id="sheetClose" type="button"><!--pnid:Jh6YCzeWFnjaYduY8wTigM-->关闭</button>
     </div>
   </div>
 </div>
 
-<script>
+<div data-page-node-id="WlKTYfyYKdkgetyfnabB1F" aria-labelledby="shareTitle" aria-modal="true" class="hidden" id="shareSheet" role="dialog">
+  <div data-page-node-id="zy7pXQrQJsbppFNBBpEqz0" class="share-box">
+    <h3 data-page-node-id="cyaT6B5oDqMWEszDhP9xRd" id="shareTitle"><!--pnid:2HU56NjoiU8ef5jgM2jL1w-->分享图已经做好了</h3>
+    <p data-page-node-id="WupvA1pkmo2LwaYGIt6yjY"><!--pnid:IvcPm068XgFjbmzW0MRK8R-->iPhone 长按图片 →「存储到照片」；安卓和电脑可以直接点下面的下载。</p>
+    <div data-page-node-id="xK5hfWWLNPeUOXoXrEDRfp" class="share-preview">
+      <img data-page-node-id="UUNAECmQ5VKGP6vhWCh5y5" alt="你的麦门人格小票分享图" id="shareImg">
+    </div>
+    <div data-page-node-id="nhFuHDuEujcaM5aX6aNonK" class="share-actions">
+      <a data-page-node-id="2GmoThQTE84QV0iFK2pv3j" class="btn btn-primary" download="mcd-meal-ticket.png" href="#" id="shareDownload"><!--pnid:fREg1QzgWKlmPknpg9Zsul-->下载图片</a>
+      <button data-page-node-id="mXgjc6AGbbOPV4r4yZvGbg" class="btn btn-ghost" id="shareClose" type="button"><!--pnid:wbQdvmQX5YRf9AtLtPz3BM-->关闭</button>
+    </div>
+  </div>
+</div>
+
+<script data-page-node-id="FmuFSMhNzyMVIRpLBMwdGp" data-pnid-children="8P0eWTcLWlmhDM6gThxdTT">
 (function () {
   'use strict';
 
@@ -1638,6 +2131,38 @@
       label: '即时满足',
       definition: '把「现在想要」排在「应该先」之前',
       signal: '先吃甜品、甜品当饭、不等'
+    }
+  };
+
+  /**
+   * 六个倾向的视觉标识：同一套 24 格线性图标 + 同一族暖色。
+   * 只换图形不换风格——六条横条既好分辨，又不会变成六套设计。
+   * tone 与 CSS 里的 --t-* 保持一致，分享图也用这一份。
+   */
+  var TENDENCY_VIS = {
+    habit: {
+      tone: '#7D4423',
+      icon: '<path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4.5v4h-4"/>'
+    },
+    more: {
+      tone: '#A93A16',
+      icon: '<rect x="3.5" y="6.5" width="17" height="11" rx="2.5"/><path d="M12 9.8v4.4M9.8 12h4.4"/>'
+    },
+    split: {
+      tone: '#CF2318',
+      icon: '<rect x="3.6" y="6.2" width="7" height="11.6" rx="2"/><rect x="13.4" y="6.2" width="7" height="11.6" rx="2"/>'
+    },
+    calc: {
+      tone: '#DB6412',
+      icon: '<path d="M4 12.6 12.6 4H20v7.4L11.4 20z"/><circle cx="16.2" cy="7.8" r="1.3"/>'
+    },
+    process: {
+      tone: '#E08B0E',
+      icon: '<path d="M9.3 14.7 14.7 9.3"/><circle cx="6.6" cy="17.4" r="2.7"/><circle cx="17.4" cy="6.6" r="2.7"/>'
+    },
+    now: {
+      tone: '#E4B23F',
+      icon: '<path d="M6.6 4.6h10.8l-5.4 14.8z"/><path d="M8.7 8.7h6.6"/>'
     }
   };
 
@@ -2257,6 +2782,7 @@
     screenResult: document.getElementById('screenResult'),
     /* 首屏 */
     startBtn: document.getElementById('startBtn'),
+    heroTend: document.getElementById('heroTend'),
     /* 答题 */
     quizStep: document.getElementById('quizStep'),
     progressFill: document.getElementById('progressFill'),
@@ -2299,11 +2825,19 @@
     signInput: document.getElementById('signInput'),
     copyBtn: document.getElementById('copyBtn'),
     resetBtn: document.getElementById('resetBtn'),
+    shareBtn: document.getElementById('shareBtn'),
+    barcode: document.getElementById('barcode'),
+    barcodeNo: document.getElementById('barcodeNo'),
+    barcodeTime: document.getElementById('barcodeTime'),
     /* 杂项 */
     toast: document.getElementById('toast'),
     copySheet: document.getElementById('copySheet'),
     copyArea: document.getElementById('copyArea'),
-    sheetClose: document.getElementById('sheetClose')
+    sheetClose: document.getElementById('sheetClose'),
+    shareSheet: document.getElementById('shareSheet'),
+    shareImg: document.getElementById('shareImg'),
+    shareDownload: document.getElementById('shareDownload'),
+    shareClose: document.getElementById('shareClose')
   };
 
   /* =====================================================================
@@ -2328,6 +2862,7 @@
    */
   function showScreen(name) {
     state.step = name;
+    document.body.setAttribute('data-view', name);
     dom.screenIntro.classList.toggle('hidden', name !== 'intro');
     dom.screenQuiz.classList.toggle('hidden', name !== 'quiz');
     dom.screenResult.classList.toggle('hidden', name !== 'result');
@@ -2357,8 +2892,8 @@
     var q = QUESTIONS[state.index];
     var picked = state.answers[state.index];
 
-    dom.quizStep.textContent = (state.index + 1) + '/' + total;
-    dom.progressFill.style.width = (state.index / total * 100) + '%';
+    dom.quizStep.innerHTML = '第 <b>' + (state.index + 1) + '</b> / ' + total + ' 题';
+    dom.progressFill.style.width = ((state.index + 1) / total * 100) + '%';
 
     var bar = dom.progressFill.parentNode;
     if (bar && bar.setAttribute) {
@@ -2457,11 +2992,13 @@
 
     if (result && result.isTie && secondType) {
       dom.typeTitle.textContent = '「' + primaryType.name + ' × ' + secondType.name + '」';
+      dom.typeTitle.classList.add('is-long');
       dom.typeIdentity.innerHTML =
         '<span class="type-name">两种倾向几乎一样高</span>——' +
         escapeHtml(primaryType.identity) + '；' + escapeHtml(secondType.identity) + '。';
     } else {
       dom.typeTitle.textContent = '「' + primaryType.name + '」';
+      dom.typeTitle.classList.remove('is-long');
       dom.typeIdentity.textContent = primaryType.identity;
     }
   }
@@ -2517,10 +3054,12 @@
       } else if (highlightSecond && key === result.second) {
         cls += ' is-second';
       }
+      var vis = TENDENCY_VIS[key] || { tone: '#CF2318', icon: '' };
       /* 比例为 0 时也留一条最小可见宽度，避免看起来像渲染失败 */
       var width = clamp(result.pct[key], 1, 100);
       html +=
-        '<div class="' + cls + '">' +
+        '<div class="' + cls + '" style="--tone: ' + vis.tone + '">' +
+          '<span class="tend-icon" aria-hidden="true"><svg viewBox="0 0 24 24">' + vis.icon + '</svg></span>' +
           '<span class="tend-name">' + escapeHtml(tendencyLabel(key)) + '</span>' +
           '<span class="tend-track" aria-hidden="true">' +
             '<span class="tend-fill" style="width: ' + width + '%"></span>' +
@@ -2666,6 +3205,9 @@
     /* 签名 */
     updateSign();
 
+    /* 票尾条码 */
+    renderBarcode();
+
     /* 六倾向横条 + 为什么是这个 */
     renderTendencies(result);
     renderWhy(result);
@@ -2758,6 +3300,461 @@
         '代码自动统计出的六个满分：<b>' + escapeHtml(parts.join(' / ')) + '</b>，加起来 ' +
         sum + ' 分。注意这不是一次答题能拿到的总分——每个选项只加给一个倾向。';
     }
+  }
+
+  /* =====================================================================
+   * 12.5 分享图：1080 × 1920 竖版小票，用 Canvas 现画
+   *      不截图（避免跨端差异和画布污染），不引外部图片，只用系统字体
+   * ===================================================================== */
+
+  var SHARE_W = 1080;
+  var SHARE_H = 1920;
+  var SHARE_FONT = '"PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", "Source Han Sans SC", sans-serif';
+  var SHARE_MONO = 'ui-monospace, "SF Mono", Menlo, Consolas, "Courier New", monospace';
+  var SHARE_PAPER = '#FFFDF8';
+  var SHARE_BG = '#F1E7DA';
+  var SHARE_INK = '#241C15';
+  var SHARE_SOFT = '#5C4B3C';
+  var SHARE_FAINT = '#77685A';
+  var SHARE_LINE = '#DCCBB6';
+  var SHARE_RED = '#DA291C';
+  var SHARE_YELLOW = '#FFC72C';
+
+  function shareFont(size, weight, mono) {
+    return (weight || 500) + ' ' + Math.round(size) + 'px ' + (mono ? SHARE_MONO : SHARE_FONT);
+  }
+
+  /** 圆角矩形路径：不依赖 ctx.roundRect，老 Safari 也能画。 */
+  function pathRoundRect(ctx, x, y, w, h, r) {
+    var rr = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + rr, y);
+    ctx.lineTo(x + w - rr, y);
+    ctx.arcTo(x + w, y, x + w, y + rr, rr);
+    ctx.lineTo(x + w, y + h - rr);
+    ctx.arcTo(x + w, y + h, x + w - rr, y + h, rr);
+    ctx.lineTo(x + rr, y + h);
+    ctx.arcTo(x, y + h, x, y + h - rr, rr);
+    ctx.lineTo(x, y + rr);
+    ctx.arcTo(x, y, x + rr, y, rr);
+    ctx.closePath();
+  }
+
+  /** 小票外形：上下各一排撕口（三角齿）。 */
+  function pathReceipt(ctx, x, y, w, h, tooth) {
+    var step = tooth * 2;
+    var n = Math.max(2, Math.round(w / step));
+    var sw = w / n;
+    var i;
+    ctx.beginPath();
+    ctx.moveTo(x, y + tooth);
+    for (i = 0; i < n; i += 1) {
+      ctx.lineTo(x + sw * (i + 0.5), y);
+      ctx.lineTo(x + sw * (i + 1), y + tooth);
+    }
+    ctx.lineTo(x + w, y + h - tooth);
+    for (i = 0; i < n; i += 1) {
+      ctx.lineTo(x + w - sw * (i + 0.5), y + h);
+      ctx.lineTo(x + w - sw * (i + 1), y + h - tooth);
+    }
+    ctx.closePath();
+  }
+
+  /** 按宽度折行，返回若干行（最多 maxLines 行，超出补省略号）。 */
+  function wrapLines(ctx, text, maxWidth, maxLines) {
+    var chars = String(text).split('');
+    var lines = [];
+    var line = '';
+    for (var i = 0; i < chars.length; i += 1) {
+      var test = line + chars[i];
+      if (ctx.measureText(test).width > maxWidth && line) {
+        lines.push(line);
+        line = chars[i];
+        if (lines.length === maxLines) { break; }
+      } else {
+        line = test;
+      }
+    }
+    if (lines.length < maxLines && line) { lines.push(line); }
+    if (lines.length === maxLines && line && line !== lines[lines.length - 1]) {
+      /* 还有没排完的内容：最后一行加省略号 */
+      var last = lines[maxLines - 1];
+      while (ctx.measureText(last + '…').width > maxWidth && last.length > 1) {
+        last = last.slice(0, -1);
+      }
+      lines[maxLines - 1] = last + '…';
+    }
+    return lines;
+  }
+
+  function dashedRule(ctx, x1, y, x2, color, dash) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.setLineDash(dash || [10, 9]);
+    ctx.beginPath();
+    ctx.moveTo(x1, y);
+    ctx.lineTo(x2, y);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  /** 小票两侧的半圆缺口：用背景色画圆，模拟打孔。 */
+  function drawNotches(ctx, cx1, cx2, cy, r) {
+    ctx.save();
+    ctx.fillStyle = SHARE_BG;
+    ctx.beginPath();
+    ctx.arc(cx1, cy, r, 0, Math.PI * 2);
+    ctx.arc(cx2, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /** 条码：给定种子，稳定生成同样的竖条。 */
+  function drawBarcode(ctx, x, y, w, h, seed) {
+    var rnd = (seed || 1) >>> 0;
+    var cursor = x;
+    ctx.save();
+    ctx.fillStyle = SHARE_INK;
+    while (cursor < x + w - 3) {
+      rnd = (Math.imul(rnd, 1664525) + 1013904223) >>> 0;
+      var bw = 3 + (rnd % 10);
+      rnd = (Math.imul(rnd, 1664525) + 1013904223) >>> 0;
+      var gap = 3 + (rnd % 8);
+      if (cursor + bw > x + w) { bw = x + w - cursor; }
+      ctx.fillRect(cursor, y, bw, h);
+      cursor += bw + gap;
+    }
+    ctx.restore();
+  }
+
+  function orderNumber(meal) {
+    var seed = fnv1a(meal.type.id + '|' + meal.type.name);
+    var n = (seed % 9000) + 1000;
+    return 'NO. 1024-' + n;
+  }
+
+  function nowStamp() {
+    var d = new Date();
+    var pad = function (v) { return (v < 10 ? '0' : '') + v; };
+    return d.getFullYear() + '.' + pad(d.getMonth() + 1) + '.' + pad(d.getDate()) +
+      ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  }
+
+  /**
+   * 画分享图。
+   * @param {object} meal buildMeal 的返回值
+   * @returns {HTMLCanvasElement|null}
+   */
+  function drawShareCard(meal) {
+    if (!meal || !meal.type) { return null; }
+
+    var canvas = document.createElement('canvas');
+    canvas.width = SHARE_W;
+    canvas.height = SHARE_H;
+    var ctx = canvas.getContext('2d');
+    if (!ctx) { return null; }
+
+    var i;
+
+    /* ---------- 背景：奶油纸 + 网点 ---------- */
+    ctx.fillStyle = SHARE_BG;
+    ctx.fillRect(0, 0, SHARE_W, SHARE_H);
+    var glow = ctx.createRadialGradient(SHARE_W / 2, -240, 80, SHARE_W / 2, -240, 1300);
+    glow.addColorStop(0, 'rgba(255, 236, 198, 0.95)');
+    glow.addColorStop(1, 'rgba(255, 236, 198, 0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, SHARE_W, SHARE_H);
+
+    ctx.fillStyle = 'rgba(120, 88, 56, 0.06)';
+    for (i = 0; i < 1600; i += 1) {
+      ctx.fillRect(Math.random() * SHARE_W, Math.random() * SHARE_H, 2, 2);
+    }
+
+    /* ---------- 小票纸 ---------- */
+    var rx = 54;
+    var rw = SHARE_W - 108;
+    var ry = 104;
+    var rh = SHARE_H - 208;
+    var tooth = 13;
+
+    ctx.save();
+    ctx.shadowColor = 'rgba(78, 50, 30, 0.30)';
+    ctx.shadowBlur = 44;
+    ctx.shadowOffsetY = 16;
+    ctx.fillStyle = SHARE_PAPER;
+    pathReceipt(ctx, rx, ry, rw, rh, tooth);
+    ctx.fill();
+    ctx.restore();
+
+    /* 热敏纸的极淡横纹 */
+    ctx.save();
+    pathReceipt(ctx, rx, ry, rw, rh, tooth);
+    ctx.clip();
+    ctx.fillStyle = 'rgba(120, 88, 56, 0.030)';
+    for (var ly = ry + 30; ly < ry + rh; ly += 26) {
+      ctx.fillRect(rx, ly, rw, 1);
+    }
+    ctx.restore();
+
+    var x0 = rx + 66;
+    var x1 = rx + rw - 66;
+    var cw = x1 - x0;
+
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+
+    /* ---------- 抬头 ---------- */
+    var y = ry + 78;
+    ctx.fillStyle = SHARE_FAINT;
+    ctx.font = shareFont(23, 700, true);
+    ctx.fillText('M E A L   T I C K E T', x0, y);
+    ctx.textAlign = 'right';
+    ctx.fillText(orderNumber(meal), x1, y);
+    ctx.textAlign = 'left';
+
+    dashedRule(ctx, x0, y + 30, x1, SHARE_LINE);
+    y += 30;
+
+    /* ---------- 类型名 ---------- */
+    var nameText = meal.type.name;
+    var secondType = meal.result && TYPES[meal.result.second] ? TYPES[meal.result.second] : null;
+    if (meal.result && meal.result.isTie && secondType) {
+      nameText = meal.type.name + ' × ' + secondType.name;
+    }
+
+    y += 78;
+    ctx.fillStyle = SHARE_SOFT;
+    ctx.font = shareFont(38, 600);
+    ctx.fillText('我的麦门人格是', x0, y);
+
+    var nameSize = 152;
+    ctx.font = shareFont(nameSize, 900);
+    while (ctx.measureText(nameText).width > cw && nameSize > 72) {
+      nameSize -= 6;
+      ctx.font = shareFont(nameSize, 900);
+    }
+    var nameW = ctx.measureText(nameText).width;
+    var nameBase = y + 34 + nameSize * 0.84;
+
+    /* 黄色马克笔，和首页同一套语言 */
+    ctx.save();
+    ctx.translate(x0 - 2, nameBase - nameSize * 0.215);
+    ctx.transform(1, 0, -0.11, 1, 0, 0);
+    ctx.fillStyle = SHARE_YELLOW;
+    ctx.fillRect(0, 0, nameW + 12, nameSize * 0.22);
+    ctx.restore();
+
+    ctx.fillStyle = SHARE_RED;
+    ctx.font = shareFont(nameSize, 900);
+    ctx.fillText(nameText, x0, nameBase);
+
+    /* ---------- 身份一句话 ---------- */
+    y = nameBase + 76;
+    ctx.fillStyle = SHARE_SOFT;
+    ctx.font = shareFont(38, 500);
+    var identityLines = wrapLines(ctx, meal.type.identity, cw, 2);
+    for (i = 0; i < identityLines.length; i += 1) {
+      ctx.fillText(identityLines[i], x0, y + i * 54);
+    }
+    y += (identityLines.length - 1) * 54;
+
+    /* ---------- 签名（有名字才画） ---------- */
+    if (meal.display) {
+      y += 46;
+      ctx.font = shareFont(24, 600, true);
+      ctx.fillStyle = SHARE_FAINT;
+      ctx.fillText('TO. ' + meal.display + '   ' + '#' + toHex8(fnv1a(meal.display.toLowerCase())), x0, y);
+    }
+
+    /* ---------- 六倾向 ---------- */
+    y += 56;
+    drawNotches(ctx, rx, rx + rw, y, 17);
+    dashedRule(ctx, x0, y, x1, SHARE_LINE);
+    y += 56;
+
+    var result = meal.result;
+    var rows = result && result.ranked ? result.ranked : TENDENCIES;
+    var labelW = 186;
+    var trackX = x0 + labelW;
+    var trackW = x1 - 86 - trackX;
+    var rowH = 74;
+
+    for (i = 0; i < rows.length; i += 1) {
+      var key = rows[i];
+      var vis = TENDENCY_VIS[key] || { tone: SHARE_RED };
+      var pct = result && result.pct ? result.pct[key] : 0;
+      var isTop = result && key === result.primary;
+      var barH = isTop ? 30 : 26;
+      var barY = y - 22;
+
+      ctx.fillStyle = isTop ? SHARE_INK : SHARE_SOFT;
+      ctx.font = shareFont(38, isTop ? 800 : 500);
+      ctx.fillText(tendencyLabel(key), x0, y);
+
+      pathRoundRect(ctx, trackX, barY, trackW, barH, 3);
+      ctx.fillStyle = '#EFE1D0';
+      ctx.fill();
+
+      var fillW = Math.max(10, trackW * pct / 100);
+      pathRoundRect(ctx, trackX, barY, fillW, barH, 3);
+      ctx.fillStyle = vis.tone;
+      ctx.fill();
+
+      ctx.textAlign = 'right';
+      ctx.fillStyle = isTop ? SHARE_RED : SHARE_INK;
+      ctx.font = shareFont(38, 800, true);
+      ctx.fillText(pct + '%', x1, y);
+      ctx.textAlign = 'left';
+
+      y += rowH;
+    }
+
+    y += 6;
+    drawNotches(ctx, rx, rx + rw, y, 17);
+    dashedRule(ctx, x0, y, x1, SHARE_LINE);
+
+    /* ---------- 代表套餐 ---------- */
+    y += 66;
+    ctx.fillStyle = SHARE_FAINT;
+    ctx.font = shareFont(26, 700, true);
+    ctx.fillText('SET  /  代表套餐', x0, y);
+
+    y += 60;
+    for (i = 0; i < meal.items.length; i += 1) {
+      var item = meal.items[i];
+      ctx.fillStyle = SHARE_FAINT;
+      ctx.font = shareFont(24, 500);
+      ctx.fillText(item.role, x0, y);
+
+      ctx.fillStyle = SHARE_INK;
+      ctx.font = shareFont(40, 700);
+      ctx.fillText(item.data.name, x0 + 96, y);
+
+      ctx.textAlign = 'right';
+      ctx.fillStyle = SHARE_FAINT;
+      ctx.font = shareFont(26, 500, true);
+      ctx.fillText(thousands(item.data.kcal) + ' kcal', x1 - 150, y);
+
+      ctx.fillStyle = SHARE_INK;
+      ctx.font = shareFont(40, 700, true);
+      ctx.fillText(money(item.data.price) + (item.data.unverified ? '*' : ''), x1, y);
+      ctx.textAlign = 'left';
+
+      y += 68;
+    }
+
+    /* ---------- 合计 ---------- */
+    y += 34;
+    ctx.fillStyle = SHARE_SOFT;
+    ctx.font = shareFont(30, 600);
+    ctx.fillText('合计', x0, y);
+    ctx.fillStyle = SHARE_FAINT;
+    ctx.font = shareFont(26, 500, true);
+    ctx.fillText(thousands(meal.totalKcal) + ' kcal', x0, y + 34);
+
+    ctx.textAlign = 'right';
+    ctx.fillStyle = SHARE_RED;
+    ctx.font = shareFont(72, 900, true);
+    ctx.fillText((meal.hasUnverified ? '≈ ' : '') + moneyFixed(meal.totalPrice), x1, y + 22);
+    ctx.textAlign = 'left';
+
+    /* ---------- 票尾：免责 + 条码 ---------- */
+    var footBase = ry + rh - 62;
+    var barH2 = 104;
+    var barY2 = footBase - 34 - barH2;
+
+    ctx.fillStyle = SHARE_FAINT;
+    ctx.font = shareFont(22, 500);
+    ctx.textAlign = 'center';
+    ctx.fillText('纯属娱乐，不构成任何营养或心理建议。', rx + rw / 2, barY2 - 26);
+    ctx.textAlign = 'left';
+
+    drawBarcode(ctx, rx + 92, barY2, rw - 184, barH2, fnv1a(meal.type.id + '|' + meal.totalPrice));
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = SHARE_FAINT;
+    ctx.font = shareFont(21, 600, true);
+    ctx.fillText(orderNumber(meal) + '   ' + nowStamp(), rx + rw / 2, footBase - 6);
+    ctx.fillStyle = SHARE_SOFT;
+    ctx.font = shareFont(22, 500);
+    ctx.fillText('yuunyaj921-ui.github.io/mcd-name-meal', rx + rw / 2, footBase + 26);
+    ctx.textAlign = 'left';
+
+    return canvas;
+  }
+
+  /** 打开分享面板：先画图，再把 PNG 放进 <img> 让用户长按/下载。 */
+  var shareUrl = null;
+
+  function openShare() {
+    if (!current) { return; }
+    if (dom.shareBtn) { dom.shareBtn.setAttribute('aria-busy', 'true'); }
+
+    var canvas = drawShareCard(current);
+    if (!canvas) {
+      if (dom.shareBtn) { dom.shareBtn.removeAttribute('aria-busy'); }
+      toast('这个浏览器画不出分享图，可以先复制文案');
+      return;
+    }
+
+    var show = function (url) {
+      if (shareUrl && shareUrl !== url) {
+        try { URL.revokeObjectURL(shareUrl); } catch (err) { /* 忽略 */ }
+      }
+      shareUrl = url;
+      dom.shareImg.src = url;
+      if (dom.shareDownload) {
+        dom.shareDownload.href = url;
+        dom.shareDownload.setAttribute('download', '麦门人格-' + current.type.name + '.png');
+      }
+      dom.shareSheet.classList.remove('hidden');
+      if (dom.shareBtn) { dom.shareBtn.removeAttribute('aria-busy'); }
+      document.body.classList.add('sheet-open');
+    };
+
+    if (canvas.toBlob) {
+      canvas.toBlob(function (blob) {
+        if (!blob) {
+          show(canvas.toDataURL('image/png'));
+          return;
+        }
+        show(URL.createObjectURL(blob));
+      }, 'image/png');
+    } else {
+      show(canvas.toDataURL('image/png'));
+    }
+  }
+
+  function closeShare() {
+    dom.shareSheet.classList.add('hidden');
+    document.body.classList.remove('sheet-open');
+    dom.shareImg.removeAttribute('src');
+    if (shareUrl) {
+      try { URL.revokeObjectURL(shareUrl); } catch (err) { /* 忽略 */ }
+      shareUrl = null;
+    }
+  }
+
+  /** 小票底部条码 + 单号（结果页里那条） */
+  function renderBarcode() {
+    if (!current || !dom.barcode) { return; }
+    var seed = fnv1a(current.type.id + '|' + current.totalPrice);
+    var rnd = seed >>> 0;
+    var x = 0;
+    var bars = '';
+    while (x < 296) {
+      rnd = (Math.imul(rnd, 1664525) + 1013904223) >>> 0;
+      var bw = 1 + (rnd % 4);
+      rnd = (Math.imul(rnd, 1664525) + 1013904223) >>> 0;
+      var gap = 1 + (rnd % 3);
+      if (x + bw > 300) { bw = 300 - x; }
+      bars += '<rect x="' + x + '" y="0" width="' + bw + '" height="44" />';
+      x += bw + gap;
+    }
+    dom.barcode.innerHTML = bars;
+    dom.barcodeNo.textContent = orderNumber(current);
+    dom.barcodeTime.textContent = nowStamp();
   }
 
   /* =====================================================================
@@ -2914,6 +3911,27 @@
     }
   });
 
+  /* 分享图：保存按钮 → 画图 → 预览面板 */
+  dom.shareBtn.addEventListener('click', function () {
+    openShare();
+  });
+
+  dom.shareClose.addEventListener('click', function () {
+    closeShare();
+  });
+
+  dom.shareSheet.addEventListener('click', function (event) {
+    if (event.target === dom.shareSheet) {
+      closeShare();
+    }
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && !dom.shareSheet.classList.contains('hidden')) {
+      closeShare();
+    }
+  });
+
   dom.copyArea.addEventListener('click', function () {
     dom.copyArea.select();
   });
@@ -2928,7 +3946,27 @@
    * 14. 初始化
    * ===================================================================== */
   resetAnswers();
+  /**
+   * 首屏六倾向预览条：只用图标和名字，不透露任何计分细节。
+   */
+  function renderHeroTend() {
+    if (!dom.heroTend) { return; }
+    var html = '';
+    for (var i = 0; i < TENDENCIES.length; i += 1) {
+      var key = TENDENCIES[i];
+      var vis = TENDENCY_VIS[key];
+      if (!vis) { continue; }
+      html +=
+        '<div class="hero-tend-item" style="--tone: ' + vis.tone + '">' +
+          '<span class="hero-tend-dot"><svg viewBox="0 0 24 24">' + vis.icon + '</svg></span>' +
+          '<span class="hero-tend-label">' + escapeHtml(tendencyLabel(key)) + '</span>' +
+        '</div>';
+    }
+    dom.heroTend.innerHTML = html;
+  }
+
   renderHowto();
+  renderHeroTend();
   showScreen('intro');
 
   /* 便于自测与第三方验证：在控制台可直接调用 */
@@ -2959,6 +3997,8 @@
     macroOf: macroOf,
     nutritionPanel: nutritionPanel,
     panelLine: panelLine,
+    /* 分享图：传 buildMeal 的结果就能拿到 canvas，方便自测排版 */
+    shareCard: drawShareCard,
     /* 哈希：只服务于小票签名 */
     fnv1a: fnv1a,
     fnv1aBytes: fnv1aBytes,
